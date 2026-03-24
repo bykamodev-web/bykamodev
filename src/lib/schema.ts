@@ -26,6 +26,11 @@ export function buildProfilePageSchema() {
       name: AUTHOR_NAME,
       url: SITE_URL,
       description: 'AIとコードで、情報・運用・体験を組み直す。',
+      jobTitle: 'Software Developer',
+      knowsAbout: ['AI', 'Automation', 'Web Development', 'DeFi'],
+      sameAs: [
+        'https://github.com/bykamodev-web',
+      ],
     },
   }
 }
@@ -141,7 +146,7 @@ export function buildTopicPageSchemas(topic: Topic) {
   const url = `${SITE_URL}/topics/${topic.slug}`
   const breadcrumbs: BreadcrumbItem[] = [
     { label: 'Home', href: '/' },
-    { label: 'Topics', href: '/builds' },
+    { label: 'Topics', href: '/topics' },
     { label: topic.title, href: `/topics/${topic.slug}` },
   ]
 

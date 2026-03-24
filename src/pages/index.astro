@@ -21,7 +21,7 @@ const { contents: featuredNotes } = await getNotes({ featured: true, limit: 3 })
 const profileSchema = buildProfilePageSchema()
 ---
 
-<BaseLayout>
+<BaseLayout description="AIとコードで、情報・運用・体験を組み直す開発者 KAMO のサイト。AI実装、自動化、プロダクト設計の実績と開発ログを公開。">
   <Fragment slot="head">
     <JsonLd schemas={[profileSchema]} />
   </Fragment>

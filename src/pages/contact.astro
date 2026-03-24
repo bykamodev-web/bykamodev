@@ -1,10 +1,25 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import Breadcrumbs from '@/components/seo/Breadcrumbs.astro'
+import JsonLd from '@/components/seo/JsonLd.astro'
 import Icon from '@/components/icons/Icons.astro'
 import { getSiteSettings } from '@/lib/microcms'
+import { buildBreadcrumbSchema } from '@/lib/schema'
 
 const settings = await getSiteSettings()
+
+const contactPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  name: 'Contact',
+  description: 'ご相談・お問い合わせ。AI実装・自動化・プロダクト開発について。',
+  url: 'https://bykamo.dev/contact',
+}
+
+const breadcrumbSchema = buildBreadcrumbSchema([
+  { label: 'Home', href: '/' },
+  { label: 'Contact', href: '/contact' },
+])
 
 const contactThemes = [
   { icon: 'brain' as const, title: 'AI実装の相談', text: 'LLM・OCR・自動生成を、プロダクトや業務導線へ組み込みたい。' },
@@ -14,6 +29,10 @@ const contactThemes = [
 ---
 
 <BaseLayout title="Contact" description="ご相談・お問い合わせ。AI実装・自動化・プロダクト開発について。">
+  <Fragment slot="head">
+    <JsonLd schemas={[contactPageSchema, breadcrumbSchema]} />
+  </Fragment>
+
   <div class="max-w-6xl mx-auto px-6 py-12 md:py-16">
     <div class="max-w-4xl">
       <Breadcrumbs items={[
