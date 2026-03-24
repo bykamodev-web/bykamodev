@@ -12,4 +12,4 @@ enabled = true
 
 [[send_email]]
 name = "EMAIL"
-destination_address = "hello@bykamo.dev"
+destination_address = "bykamodev@gmail.com"
