@@ -29,6 +29,7 @@ export function buildProfilePageSchema() {
       jobTitle: 'Software Developer',
       knowsAbout: ['AI', 'Automation', 'Web Development', 'DeFi'],
       sameAs: [
+        'https://x.com/bykamodev',
         'https://github.com/bykamodev-web',
       ],
     },
