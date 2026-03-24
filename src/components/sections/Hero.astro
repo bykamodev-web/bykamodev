@@ -9,7 +9,7 @@ interface Props {
 
 const { builds = [] } = Astro.props
 
-const showcaseBuilds = builds.slice(0, 2).map((build) => ({
+const showcaseBuilds = builds.slice(0, 3).map((build) => ({
   title: build.title,
   summary: build.summary,
   href: `/builds/${build.slug}`,
@@ -93,7 +93,7 @@ const proofRows = [
                   href={build.href}
                   class:list={[
                     'group hero-shot',
-                    index === 0 ? 'hero-shot-primary' : 'hero-shot-secondary',
+                    index === 0 ? 'hero-shot-primary' : index === 1 ? 'hero-shot-secondary' : 'hero-shot-tertiary',
                   ]}
                 >
                   <img
@@ -105,10 +105,6 @@ const proofRows = [
                     loading={index === 0 ? 'eager' : 'lazy'}
                     fetchpriority={index === 0 ? 'high' : 'auto'}
                   />
-                  <div class="hero-shot-meta">
-                    <p class="hero-shot-title">{build.title}</p>
-                    <p class="hero-shot-summary">{build.summary}</p>
-                  </div>
                 </a>
               ))}
             </div>
@@ -286,14 +282,13 @@ const proofRows = [
 
   .hero-shot {
     position: absolute;
-    overflow: hidden;
-    border-radius: 1.5rem;
-    background: rgba(255, 255, 255, 0.5);
-    box-shadow: 0 30px 55px -36px rgba(17, 23, 38, 0.34);
+    overflow: visible;
+    transition: z-index 0ms;
   }
 
   .hero-shot-primary {
-    inset: 3.8rem 3rem 1.1rem auto;
+    top: 3.8rem;
+    right: 3rem;
     width: min(100%, 22rem);
     animation: floatPrimary 8.5s ease-in-out infinite;
   }
@@ -305,25 +300,19 @@ const proofRows = [
     animation: floatSecondary 9.5s ease-in-out infinite;
   }
 
-  .hero-shot::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, transparent 20%, rgba(11, 14, 18, 0.85) 100%);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 300ms ease;
-  }
-
-  .hero-shot:hover::after {
-    opacity: 1;
+  .hero-shot-tertiary {
+    right: 1rem;
+    bottom: 0.5rem;
+    width: min(48%, 11rem);
+    animation: floatSecondary 10.5s ease-in-out infinite;
   }
 
   .hero-shot-image {
     width: 100%;
-    height: 100%;
     aspect-ratio: 3 / 2;
     object-fit: cover;
+    border-radius: 1.5rem;
+    box-shadow: 0 30px 55px -36px rgba(17, 23, 38, 0.34);
     transition: transform 600ms ease;
   }
 
@@ -331,36 +320,8 @@ const proofRows = [
     transform: scale(1.03);
   }
 
-  .hero-shot-meta {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 1;
-    padding: 1rem 1rem 1.1rem;
-    color: white;
-    opacity: 0;
-    transform: translateY(8px);
-    transition: opacity 300ms ease, transform 300ms ease;
-  }
-
-  .hero-shot:hover .hero-shot-meta {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .hero-shot-title {
-    font-size: 0.95rem;
-    font-weight: 700;
-    line-height: 1.25;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
-  }
-
-  .hero-shot-summary {
-    margin-top: 0.35rem;
-    font-size: 0.8rem;
-    line-height: 1.5;
-    color: rgba(255, 255, 255, 0.72);
+  .hero-shot:hover {
+    z-index: 10;
   }
 
   .hero-fallback {
@@ -473,18 +434,36 @@ const proofRows = [
       margin-bottom: 0.85rem;
     }
 
+    .hero-visual-stack {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 0.6rem;
+      min-height: auto;
+    }
+
+    .hero-shot {
+      position: relative;
+    }
+
     .hero-shot-primary {
-      right: 0.5rem;
-      left: 24%;
-      top: 0.35rem;
-      bottom: 0.7rem;
-      width: auto;
+      grid-column: 1 / -1;
+      top: auto;
+      right: auto;
+      width: 80%;
+      margin: 0 auto;
     }
 
     .hero-shot-secondary {
-      left: 0;
-      bottom: 0;
-      width: 46%;
+      bottom: auto;
+      left: auto;
+      width: 100%;
+    }
+
+    .hero-shot-tertiary {
+      bottom: auto;
+      right: auto;
+      width: 100%;
     }
 
     .hero-capabilities {
@@ -494,7 +473,8 @@ const proofRows = [
 
   @media (prefers-reduced-motion: reduce) {
     .hero-shot-primary,
-    .hero-shot-secondary {
+    .hero-shot-secondary,
+    .hero-shot-tertiary {
       animation: none;
     }
 
