@@ -1,0 +1,261 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Breadcrumbs from '@/components/seo/Breadcrumbs.astro'
+import { CATEGORIES } from '@/lib/contact-schema'
+
+const siteKey = import.meta.env.TURNSTILE_SITE_KEY
+---
+
+<BaseLayout title="お問い合わせフォーム" description="AI実装・自動化・プロダクト開発のご相談フォーム。">
+  <Fragment slot="head">
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  </Fragment>
+
+  <div class="max-w-3xl mx-auto px-6 py-12 md:py-16">
+    <Breadcrumbs items={[
+      { label: 'Home', href: '/' },
+      { label: 'Contact', href: '/contact' },
+      { label: 'Form' },
+    ]} />
+
+    <p class="section-label text-[var(--color-brand)] mb-4">Contact Form</p>
+    <h1 class="page-title mb-6">お問い合わせ</h1>
+    <p class="body-text-lg mb-10">内容を入力して送信してください。折り返しご連絡いたします。</p>
+
+    <div id="form-container" class="panel-surface p-6 md:p-8 reveal" data-reveal>
+      <form id="contact-form" novalidate>
+        <div class="space-y-6">
+          <div>
+            <label for="name" class="form-label">お名前</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              maxlength="100"
+              placeholder="山田太郎"
+              class="form-input"
+            />
+            <p class="form-error" data-error="name"></p>
+          </div>
+
+          <div>
+            <label for="email" class="form-label">メールアドレス</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              placeholder="you@example.com"
+              class="form-input"
+            />
+            <p class="form-error" data-error="email"></p>
+          </div>
+
+          <div>
+            <label for="category" class="form-label">ご相談の種類</label>
+            <select id="category" name="category" required class="form-input">
+              <option value="" disabled selected>選択してください</option>
+              {CATEGORIES.map((cat) => (
+                <option value={cat.value}>{cat.label}</option>
+              ))}
+            </select>
+            <p class="form-error" data-error="category"></p>
+          </div>
+
+          <div>
+            <label for="message" class="form-label">お問い合わせ内容</label>
+            <textarea
+              id="message"
+              name="message"
+              required
+              minlength="10"
+              maxlength="2000"
+              rows="6"
+              placeholder="ご相談の背景や、実現したいことをお書きください。"
+              class="form-input"
+            ></textarea>
+            <p class="form-error" data-error="message"></p>
+          </div>
+
+          <!-- Honeypot -->
+          <div aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;">
+            <label for="_honey">Do not fill this</label>
+            <input type="text" id="_honey" name="_honey" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <input type="hidden" id="_timestamp" name="_timestamp" />
+
+          <!-- Turnstile -->
+          <div id="turnstile-container" class="cf-turnstile" data-sitekey={siteKey} data-theme="light"></div>
+
+          <div id="form-alert" class="form-alert hidden"></div>
+
+          <button type="submit" id="submit-btn" class="btn-primary w-full justify-center">
+            送信する
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div id="success-container" class="panel-surface p-6 md:p-8 text-center hidden">
+      <div class="py-8">
+        <p class="text-xl font-bold text-[var(--color-ink)] mb-3">送信しました</p>
+        <p class="body-text mb-8">折り返しご連絡いたします。</p>
+        <a href="/contact" class="btn-ghost inline-flex">
+          Contactに戻る
+        </a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-ink);
+    margin-bottom: 0.5rem;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    font-size: 0.9375rem;
+    color: var(--color-ink);
+    transition: border-color 180ms ease;
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: var(--color-brand);
+    box-shadow: 0 0 0 3px var(--color-brand-light);
+  }
+
+  .form-input::placeholder {
+    color: var(--color-ink-subtle);
+  }
+
+  select.form-input {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' fill='none' stroke='%2389919d' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+  }
+
+  textarea.form-input {
+    resize: vertical;
+    min-height: 8rem;
+  }
+
+  .form-error {
+    font-size: 0.75rem;
+    color: #dc2626;
+    margin-top: 0.35rem;
+    min-height: 1.1rem;
+  }
+
+  .form-alert {
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    background: rgba(220, 38, 38, 0.08);
+    color: #dc2626;
+    border: 1px solid rgba(220, 38, 38, 0.2);
+  }
+
+  .hidden {
+    display: none;
+  }
+</style>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement
+  const formContainer = document.getElementById('form-container') as HTMLDivElement
+  const successContainer = document.getElementById('success-container') as HTMLDivElement
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement
+  const alertEl = document.getElementById('form-alert') as HTMLDivElement
+  const timestampInput = document.getElementById('_timestamp') as HTMLInputElement
+
+  timestampInput.value = String(Date.now())
+
+  function clearErrors() {
+    document.querySelectorAll('.form-error').forEach((el) => {
+      el.textContent = ''
+    })
+    alertEl.classList.add('hidden')
+    alertEl.textContent = ''
+  }
+
+  function showFieldError(field: string, message: string) {
+    const el = document.querySelector(`[data-error="${field}"]`)
+    if (el) el.textContent = message
+  }
+
+  function showAlert(message: string) {
+    alertEl.textContent = message
+    alertEl.classList.remove('hidden')
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    clearErrors()
+
+    submitBtn.disabled = true
+    submitBtn.textContent = '送信中...'
+
+    const formData = new FormData(form)
+    const turnstileToken = formData.get('cf-turnstile-response') as string
+    if (!turnstileToken) {
+      showAlert('認証を完了してください。')
+      submitBtn.disabled = false
+      submitBtn.textContent = '送信する'
+      return
+    }
+
+    const payload = {
+      name: formData.get('name') as string,
+      email: formData.get('email') as string,
+      category: formData.get('category') as string,
+      message: formData.get('message') as string,
+      _timestamp: Number(formData.get('_timestamp')),
+      _honey: formData.get('_honey') as string ?? '',
+      _turnstile: turnstileToken,
+    }
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+
+      const data = await res.json()
+
+      if (data.success) {
+        formContainer.classList.add('hidden')
+        successContainer.classList.remove('hidden')
+        return
+      }
+
+      if (data.details) {
+        data.details.forEach((d: { field: string; message: string }) => {
+          showFieldError(d.field, d.message)
+        })
+      }
+
+      showAlert(data.error || '送信に失敗しました。')
+    } catch {
+      showAlert('ネットワークエラーが発生しました。接続を確認して再度お試しください。')
+    } finally {
+      submitBtn.disabled = false
+      submitBtn.textContent = '送信する'
+    }
+  })
+</script>

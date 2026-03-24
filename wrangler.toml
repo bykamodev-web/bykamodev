@@ -6,3 +6,7 @@ directory = "./dist"
 
 [observability]
 enabled = false
+
+[[send_email]]
+name = "EMAIL"
+destination_address = "hello@bykamo.dev"

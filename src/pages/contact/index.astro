@@ -3,10 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 import Breadcrumbs from '@/components/seo/Breadcrumbs.astro'
 import JsonLd from '@/components/seo/JsonLd.astro'
 import Icon from '@/components/icons/Icons.astro'
-import { getSiteSettings } from '@/lib/microcms'
 import { buildBreadcrumbSchema } from '@/lib/schema'
-
-const settings = await getSiteSettings()
 
 const contactPageSchema = {
   '@context': 'https://schema.org',
@@ -69,25 +66,10 @@ const contactThemes = [
           やりたいことが一文でも、既に要件がまとまっていても大丈夫です。連絡しやすい方法からどうぞ。
         </p>
 
-        {settings.contactEmail ? (
-          <div>
-            <a href={`mailto:${settings.contactEmail}`} class="group btn-primary">
-              メールで相談する
-              <Icon name="arrow-right" size={14} class="hover-arrow" />
-            </a>
-            <p class="caption mt-4">{settings.contactEmail}</p>
-          </div>
-        ) : settings.xurl ? (
-          <div>
-            <a href={settings.xurl} target="_blank" rel="noopener noreferrer" class="group btn-primary">
-              Xで連絡する
-              <Icon name="external-link" size={14} class="hover-arrow" />
-            </a>
-            <p class="caption mt-4">DMからご連絡ください。</p>
-          </div>
-        ) : (
-          <p class="body-text">現在公開中の連絡先はありません。</p>
-        )}
+        <a href="/contact/form" class="group btn-primary">
+          フォームで相談する
+          <Icon name="arrow-right" size={14} class="hover-arrow" />
+        </a>
       </section>
     </div>
   </div>
