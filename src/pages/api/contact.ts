@@ -46,7 +46,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       JSON.stringify({
         success: false,
         error: 'バリデーションエラー',
-        details: result.error.errors.map((e) => ({
+        details: result.error.issues.map((e) => ({
           field: e.path.join('.'),
           message: e.message,
         })),
