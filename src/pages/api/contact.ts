@@ -10,8 +10,18 @@ const TO_ADDRESS = 'hello@bykamo.dev'
 const MIN_SUBMIT_MS = 3000
 const MAX_SUBMIT_MS = 60 * 60 * 1000
 
-export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
-  const runtime = (locals as unknown as { runtime: { env: Record<string, unknown> } }).runtime
+function getEnv(locals: App.Locals): Record<string, unknown> {
+  const l = locals as unknown as Record<string, unknown>
+  if (l.runtime && typeof l.runtime === 'object') {
+    const rt = l.runtime as Record<string, unknown>
+    if (rt.env && typeof rt.env === 'object') return rt.env as Record<string, unknown>
+  }
+  return l
+}
+
+export const POST: APIRoute = async ({ request, locals }) => {
+  const env = getEnv(locals)
+
   const contentType = request.headers.get('content-type')
   if (!contentType?.includes('application/json')) {
     return new Response(
@@ -55,16 +65,26 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
     )
   }
 
+  const turnstileSecret = (env.TURNSTILE_SECRET_KEY as string) || import.meta.env.TURNSTILE_SECRET_KEY
+  if (!turnstileSecret) {
+    console.error('TURNSTILE_SECRET_KEY not found. env keys:', Object.keys(env))
+    return new Response(
+      JSON.stringify({ success: false, error: 'Server configuration error' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } },
+    )
+  }
+
   const turnstileRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
-      secret: (runtime.env.TURNSTILE_SECRET_KEY as string) || import.meta.env.TURNSTILE_SECRET_KEY,
+      secret: turnstileSecret,
       response: data._turnstile,
     }),
   })
-  const turnstileData = await turnstileRes.json() as { success: boolean }
+  const turnstileData = await turnstileRes.json() as { success: boolean; 'error-codes'?: string[] }
   if (!turnstileData.success) {
+    console.error('Turnstile verification failed:', turnstileData)
     return new Response(
       JSON.stringify({ success: false, error: '認証に失敗しました。ページを再読み込みしてお試しください。' }),
       { status: 403, headers: { 'Content-Type': 'application/json' } },
@@ -88,7 +108,8 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
 
   try {
     const msg = new EmailMessage(FROM_ADDRESS, TO_ADDRESS, new TextEncoder().encode(mimeContent))
-    await (runtime.env.EMAIL as { send: (msg: EmailMessage) => Promise<void> }).send(msg)
+    const emailBinding = env.EMAIL as { send: (msg: EmailMessage) => Promise<void> }
+    await emailBinding.send(msg)
   } catch (error) {
     console.error('Email send failed:', error)
     return new Response(
