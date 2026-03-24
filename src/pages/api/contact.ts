@@ -1,5 +1,4 @@
 import type { APIRoute } from 'astro'
-import { EmailMessage } from 'cloudflare:email'
 import { contactFormSchema, getCategoryLabel } from '@/lib/contact-schema'
 import { buildMimeMessage, buildContactEmailBody } from '@/lib/email'
 
@@ -107,8 +106,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
   })
 
   try {
-    const msg = new EmailMessage(FROM_ADDRESS, TO_ADDRESS, new TextEncoder().encode(mimeContent))
-    const emailBinding = env.EMAIL as { send: (msg: EmailMessage) => Promise<void> }
+    const { EmailMessage } = await import('cloudflare:email')
+    const msg = new EmailMessage(FROM_ADDRESS, TO_ADDRESS, mimeContent)
+    const emailBinding = env.EMAIL as { send: (msg: unknown) => Promise<void> }
     await emailBinding.send(msg)
   } catch (error) {
     console.error('Email send failed:', error)
