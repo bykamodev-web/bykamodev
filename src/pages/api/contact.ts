@@ -10,7 +10,8 @@ const TO_ADDRESS = 'hello@bykamo.dev'
 const MIN_SUBMIT_MS = 3000
 const MAX_SUBMIT_MS = 60 * 60 * 1000
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
+  const runtime = (locals as unknown as { runtime: { env: Record<string, unknown> } }).runtime
   const contentType = request.headers.get('content-type')
   if (!contentType?.includes('application/json')) {
     return new Response(
@@ -58,7 +59,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
-      secret: import.meta.env.TURNSTILE_SECRET_KEY,
+      secret: (runtime.env.TURNSTILE_SECRET_KEY as string) || import.meta.env.TURNSTILE_SECRET_KEY,
       response: data._turnstile,
     }),
   })
@@ -87,7 +88,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   try {
     const msg = new EmailMessage(FROM_ADDRESS, TO_ADDRESS, new TextEncoder().encode(mimeContent))
-    await (locals as unknown as { runtime: { env: { EMAIL: { send: (msg: EmailMessage) => Promise<void> } } } }).runtime.env.EMAIL.send(msg)
+    await (runtime.env.EMAIL as { send: (msg: EmailMessage) => Promise<void> }).send(msg)
   } catch (error) {
     console.error('Email send failed:', error)
     return new Response(
