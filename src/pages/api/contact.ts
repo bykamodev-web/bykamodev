@@ -5,7 +5,7 @@ import { buildMimeMessage, buildContactEmailBody } from '@/lib/email'
 export const prerender = false
 
 const FROM_ADDRESS = 'noreply@bykamo.dev'
-const TO_ADDRESS = 'hello@bykamo.dev'
+const TO_ADDRESS = 'bykamodev@gmail.com'
 const MIN_SUBMIT_MS = 3000
 const MAX_SUBMIT_MS = 60 * 60 * 1000
 
