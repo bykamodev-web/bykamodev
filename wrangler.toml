@@ -8,7 +8,7 @@ directory = "./dist"
 binding = "ASSETS"
 
 [observability]
-enabled = false
+enabled = true
 
 [[send_email]]
 name = "EMAIL"
