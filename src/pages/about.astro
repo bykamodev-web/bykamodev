@@ -1,0 +1,132 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Breadcrumbs from '@/components/seo/Breadcrumbs.astro'
+import JsonLd from '@/components/seo/JsonLd.astro'
+import Icon from '@/components/icons/Icons.astro'
+import { getBuilds, getNotes } from '@/lib/microcms'
+import { buildProfilePageSchema } from '@/lib/schema'
+
+const { contents: featuredBuilds } = await getBuilds({ featured: true, limit: 3 })
+const { contents: featuredNotes } = await getNotes({ featured: true, limit: 3 })
+
+const profileSchema = buildProfilePageSchema()
+
+const skills = [
+  { icon: 'brain' as const, label: 'AI実装', text: 'LLM、OCR、自動生成、RAG、画像認識の実装と運用設計。' },
+  { icon: 'gear' as const, label: '自動化', text: '取引bot、配信、自動ワークフローの設計と継続運用。' },
+  { icon: 'code' as const, label: 'Web開発', text: 'Astro、Next.js、React、TypeScript、Cloudflareを軸に構築。' },
+  { icon: 'chart' as const, label: 'Web3 / DeFi', text: '予測市場、DEX、データ監視系の実験と実装。' },
+]
+---
+
+<BaseLayout title="About" description="KAMOについて。AIとコードで、情報・運用・体験を組み直す開発者。">
+  <Fragment slot="head">
+    <JsonLd schemas={[profileSchema]} />
+  </Fragment>
+
+  <div class="max-w-6xl mx-auto px-6 py-12 md:py-16">
+    <div class="max-w-4xl">
+      <Breadcrumbs items={[
+        { label: 'Home', href: '/' },
+        { label: 'About' },
+      ]} />
+
+      <p class="section-label text-[var(--color-brand)] mb-4">About</p>
+      <h1 class="page-title mb-6">実装と運用のあいだを、切らさずつなぐ。</h1>
+      <p class="body-text-lg max-w-2xl">
+        KAMOは、AIとコードを使って、情報の扱い方とプロダクトの動き方を組み直す開発者です。見た目だけでなく、判断の流れと運用まで含めて設計します。
+      </p>
+    </div>
+
+    <div class="grid gap-14 mt-14 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)]">
+      <section class="reveal" data-reveal>
+        <div class="border-t border-[var(--color-border)] pt-6">
+          <p class="section-label text-[var(--color-ink-subtle)] mb-4">Profile</p>
+          <div class="body-text max-w-2xl space-y-4">
+            <p>取引bot・自動化システム・Webアプリ・PWAなど、課題に合わせてプロダクトを設計し、最後の運用フェーズまで実装します。</p>
+            <p>専門領域は、LLM・OCR・リアルタイムデータ処理といったAI技術を、単発のデモではなく現実の導線に載せることです。</p>
+            <p>このサイトでは、成果物を <a href="/builds">Builds</a> に、設計判断や比較メモを <a href="/notes">Notes</a> に整理しています。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel-surface reveal p-6 md:p-7" data-reveal style="--delay:120ms;">
+        <p class="section-label text-[var(--color-brand)] mb-4">Focus</p>
+        <div class="space-y-5">
+          {skills.map((skill) => (
+            <div class="grid grid-cols-[auto_minmax(0,1fr)] gap-4 border-t border-[rgba(18,20,23,0.08)] pt-5 first:border-t-0 first:pt-0">
+              <div class="icon-box">
+                <Icon name={skill.icon} size={16} class="text-[var(--color-ink)]" />
+              </div>
+              <div>
+                <h2 class="text-base font-semibold tracking-tight text-[var(--color-ink)] mb-1">{skill.label}</h2>
+                <p class="text-sm leading-7 text-[var(--color-ink-muted)]">{skill.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+
+    {featuredBuilds.length > 0 && (
+      <section class="mt-16 reveal" data-reveal>
+        <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-6">
+          <div>
+            <p class="section-label text-[var(--color-brand)] mb-3">Featured Builds</p>
+            <h2 class="text-lg md:text-xl font-semibold tracking-tight text-[var(--color-ink)]">公開している代表的な実装</h2>
+          </div>
+          <a href="/builds" class="group hairline-link">
+            Explore builds
+            <Icon name="arrow-right" size={14} class="hover-arrow" />
+          </a>
+        </div>
+
+        <div class="space-y-0 border-t border-[var(--color-border)]">
+          {featuredBuilds.map((build, index) => (
+            <a
+              href={`/builds/${build.slug}`}
+              class="group grid gap-4 border-b border-[rgba(18,20,23,0.08)] py-5 md:grid-cols-[4rem_minmax(0,1fr)_auto] md:items-center"
+            >
+              <span class="caption">0{index + 1}</span>
+              <div>
+                <h3 class="text-lg font-semibold tracking-tight text-[var(--color-ink)] group-hover:text-[var(--color-brand)] transition-colors">{build.title}</h3>
+                <p class="text-sm leading-7 text-[var(--color-ink-muted)] mt-2 max-w-2xl">{build.summary}</p>
+              </div>
+              <Icon name="arrow-right" size={16} class="hover-arrow text-[var(--color-ink-subtle)]" />
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {featuredNotes.length > 0 && (
+      <section class="mt-16 reveal" data-reveal>
+        <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-6">
+          <div>
+            <p class="section-label text-[var(--color-ink-subtle)] mb-3">Featured Notes</p>
+            <h2 class="text-lg md:text-xl font-semibold tracking-tight text-[var(--color-ink)]">設計の裏側にあるメモ</h2>
+          </div>
+          <a href="/notes" class="group hairline-link">
+            Explore notes
+            <Icon name="arrow-right" size={14} class="hover-arrow" />
+          </a>
+        </div>
+
+        <div class="space-y-0 border-t border-[var(--color-border)]">
+          {featuredNotes.map((note) => (
+            <a
+              href={`/notes/${note.slug}`}
+              class="group grid gap-4 border-b border-[rgba(18,20,23,0.08)] py-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-center"
+            >
+              <div>
+                <h3 class="text-lg font-semibold tracking-tight text-[var(--color-ink)] group-hover:text-[var(--color-brand)] transition-colors">{note.title}</h3>
+                <p class="text-sm leading-7 text-[var(--color-ink-muted)] mt-2 max-w-2xl">{note.excerpt}</p>
+              </div>
+              <Icon name="arrow-right" size={16} class="hover-arrow text-[var(--color-ink-subtle)]" />
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+  </div>
+</BaseLayout>

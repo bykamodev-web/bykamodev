@@ -1,0 +1,27 @@
+---
+import Icon from '@/components/icons/Icons.astro'
+---
+
+<section class="py-[var(--space-section)]">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="panel-surface reveal overflow-hidden px-6 py-8 md:px-10 md:py-10" data-reveal>
+      <div class="grid gap-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+        <div>
+          <p class="section-label text-[var(--color-brand)] mb-4">Contact</p>
+          <h2 class="page-title mb-4">相談は、まだ輪郭が曖昧な段階でも大丈夫です。</h2>
+          <p class="body-text max-w-2xl">
+            AI実装、自動化、プロダクト設計のどれから着手すべきか。要件整理の前段からでも、そのまま話せる入口を用意しています。
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-3 md:items-end">
+          <a href="/contact" class="group btn-primary">
+            Start a conversation
+            <Icon name="arrow-right" size={14} class="hover-arrow" />
+          </a>
+          <p class="caption">AI integration / Automation / Product build</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

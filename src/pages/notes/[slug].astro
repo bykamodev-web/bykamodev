@@ -1,0 +1,123 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Breadcrumbs from '@/components/seo/Breadcrumbs.astro'
+import BuildCard from '@/components/cards/BuildCard.astro'
+import NoteCard from '@/components/cards/NoteCard.astro'
+import JsonLd from '@/components/seo/JsonLd.astro'
+import { getAllNoteSlugs, getNoteBySlug } from '@/lib/microcms'
+import { buildNotePageSchemas } from '@/lib/schema'
+
+export async function getStaticPaths() {
+  const slugs = await getAllNoteSlugs()
+  return slugs.map((item) => ({
+    params: { slug: item.slug },
+  }))
+}
+
+const { slug } = Astro.params
+const note = await getNoteBySlug(slug)
+
+if (!note) {
+  return Astro.redirect('/404')
+}
+
+const schemas = buildNotePageSchemas(note)
+
+const publishedDate = note.publishedAt
+  ? new Date(note.publishedAt).toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' })
+  : ''
+
+const updatedDate = note.updatedAt
+  ? new Date(note.updatedAt).toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' })
+  : ''
+
+const ogImage = note.seoMeta?.ogImage?.url || note.coverImage?.url
+
+const kindLabels: Record<string, string> = {
+  log: 'Log',
+  howto: 'How-to',
+  'case-study': 'Case Study',
+  thinking: 'Thinking',
+}
+const kind = note.kind?.[0]
+---
+
+<BaseLayout
+  title={note.seoMeta?.metaTitle || note.title}
+  description={note.seoMeta?.metaDescription || note.excerpt}
+  ogImage={ogImage}
+  noindex={note.seoMeta?.noIndex}
+>
+  <Fragment slot="head">
+    <JsonLd schemas={schemas} />
+  </Fragment>
+
+  <article class="max-w-3xl mx-auto px-6 py-12">
+    <Breadcrumbs items={[
+      { label: 'Home', href: '/' },
+      { label: 'Notes', href: '/notes' },
+      { label: note.title },
+    ]} />
+
+    <!-- Header -->
+    <div class="mb-10">
+      <div class="flex items-center gap-2 mb-4">
+        {kind && (
+          <span class="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
+            {kindLabels[kind] || kind}
+          </span>
+        )}
+        {note.topics?.map((topic) => (
+          <a href={`/topics/${topic.slug}`} class="text-xs text-blue-600 hover:underline">{topic.title}</a>
+        ))}
+      </div>
+      <h1 class="text-xl md:text-2xl font-bold leading-snug mb-4">{note.title}</h1>
+      <p class="text-lg text-zinc-600 mb-4">{note.excerpt}</p>
+      <div class="flex items-center gap-4 text-sm text-zinc-400">
+        {publishedDate && (
+          <time datetime={note.publishedAt}>公開: {publishedDate}</time>
+        )}
+        {updatedDate && publishedDate !== updatedDate && (
+          <time datetime={note.updatedAt}>更新: {updatedDate}</time>
+        )}
+      </div>
+    </div>
+
+    <!-- Cover Image -->
+    {note.coverImage && (
+      <img
+        src={note.coverImage.url}
+        alt={note.title}
+        class="w-full rounded-lg mb-10"
+        loading="eager"
+      />
+    )}
+
+    <!-- Body -->
+    <div class="rich-content" set:html={note.body} />
+
+    <!-- Related Builds -->
+    {note.relateBuilds && note.relateBuilds.length > 0 && (
+      <section class="mt-12 pt-8 border-t border-zinc-200">
+        <h2 class="text-xl font-semibold mb-6">関連Builds</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {note.relateBuilds.map((build) => (
+            <BuildCard build={build} />
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Related Notes -->
+    {note.relatedNotes && note.relatedNotes.length > 0 && (
+      <section class="mt-12 pt-8 border-t border-zinc-200">
+        <h2 class="text-xl font-semibold mb-6">関連Notes</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {note.relatedNotes.map((n) => (
+            <NoteCard note={n} />
+          ))}
+        </div>
+      </section>
+    )}
+  </article>
+</BaseLayout>

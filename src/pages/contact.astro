@@ -1,0 +1,75 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Breadcrumbs from '@/components/seo/Breadcrumbs.astro'
+import Icon from '@/components/icons/Icons.astro'
+import { getSiteSettings } from '@/lib/microcms'
+
+const settings = await getSiteSettings()
+
+const contactThemes = [
+  { icon: 'brain' as const, title: 'AI実装の相談', text: 'LLM・OCR・自動生成を、プロダクトや業務導線へ組み込みたい。' },
+  { icon: 'refresh' as const, title: '自動化の相談', text: '業務・取引・配信などの反復処理を、小さく確実に自動化したい。' },
+  { icon: 'rocket' as const, title: 'プロダクト開発', text: 'Webアプリ・PWA・モバイルを含めて、設計から実装まで任せたい。' },
+]
+---
+
+<BaseLayout title="Contact" description="ご相談・お問い合わせ。AI実装・自動化・プロダクト開発について。">
+  <div class="max-w-6xl mx-auto px-6 py-12 md:py-16">
+    <div class="max-w-4xl">
+      <Breadcrumbs items={[
+        { label: 'Home', href: '/' },
+        { label: 'Contact' },
+      ]} />
+
+      <p class="section-label text-[var(--color-brand)] mb-4">Contact</p>
+      <h1 class="page-title mb-6">要件が整理しきれていなくても、そこから一緒に詰められます。</h1>
+      <p class="body-text-lg max-w-2xl">
+        AI実装、自動化、プロダクト開発の相談を受けています。技術選定の前段でも、実装フェーズ直前でも問題ありません。
+      </p>
+    </div>
+
+    <div class="grid gap-12 mt-14 lg:grid-cols-[minmax(0,1.05fr)_minmax(20rem,0.95fr)]">
+      <section class="space-y-0 border-t border-[var(--color-border)] reveal" data-reveal>
+        {contactThemes.map((item, index) => (
+          <div class="grid gap-4 border-b border-[rgba(18,20,23,0.08)] py-6 md:grid-cols-[auto_minmax(0,1fr)] md:gap-5">
+            <div class="icon-box">
+              <Icon name={item.icon} size={16} class="text-[var(--color-ink)]" />
+            </div>
+            <div>
+              <h2 class="text-lg font-semibold tracking-tight text-[var(--color-ink)] mb-2">{item.title}</h2>
+              <p class="body-text max-w-xl">{item.text}</p>
+            </div>
+          </div>
+        ))}
+      </section>
+
+      <section class="panel-surface reveal p-6 md:p-8" data-reveal style="--delay:120ms;">
+        <p class="section-label text-[var(--color-brand)] mb-4">Reach Out</p>
+        <h2 class="text-lg md:text-xl font-semibold tracking-tight text-[var(--color-ink)] mb-4">まずは相談の入口だけ作る。</h2>
+        <p class="body-text mb-8">
+          やりたいことが一文でも、既に要件がまとまっていても大丈夫です。連絡しやすい方法からどうぞ。
+        </p>
+
+        {settings.contactEmail ? (
+          <div>
+            <a href={`mailto:${settings.contactEmail}`} class="group btn-primary">
+              メールで相談する
+              <Icon name="arrow-right" size={14} class="hover-arrow" />
+            </a>
+            <p class="caption mt-4">{settings.contactEmail}</p>
+          </div>
+        ) : settings.xurl ? (
+          <div>
+            <a href={settings.xurl} target="_blank" rel="noopener noreferrer" class="group btn-primary">
+              Xで連絡する
+              <Icon name="external-link" size={14} class="hover-arrow" />
+            </a>
+            <p class="caption mt-4">DMからご連絡ください。</p>
+          </div>
+        ) : (
+          <p class="body-text">現在公開中の連絡先はありません。</p>
+        )}
+      </section>
+    </div>
+  </div>
+</BaseLayout>

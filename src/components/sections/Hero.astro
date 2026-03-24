@@ -1,0 +1,490 @@
+---
+import Icon from '@/components/icons/Icons.astro'
+import { getOptimizedImageUrl } from '@/lib/microcms'
+import type { Build } from '@/types'
+
+interface Props {
+  builds?: Build[]
+}
+
+const { builds = [] } = Astro.props
+
+const showcaseBuilds = builds.slice(0, 2).map((build) => ({
+  title: build.title,
+  summary: build.summary,
+  href: `/builds/${build.slug}`,
+  imageSm: getOptimizedImageUrl(build.coverImage.url, { width: 700, quality: 78, aspectRatio: '3:2' }),
+  imageLg: getOptimizedImageUrl(build.coverImage.url, { width: 1200, quality: 82, aspectRatio: '3:2' }),
+}))
+
+const capabilityRows = [
+  { label: 'AI integration', text: 'LLM・OCR・自動生成を、実運用まで落とし込む。', icon: 'brain' as const },
+  { label: 'Automation', text: '運用と配信を、小さな判断単位まで自動化する。', icon: 'gear' as const },
+  { label: 'Product systems', text: 'Webアプリとデータ導線を、一つの体験として設計する。', icon: 'layers' as const },
+]
+
+const proofRows = [
+  'Buildsで実装と結果を公開',
+  'Notesで設計判断を言語化',
+  '検索にもAIにも伝わる構造で整理',
+]
+---
+
+<section class="hero-shell">
+  <div class="hero-atmosphere" aria-hidden="true">
+    <div class="hero-orb hero-orb-a" data-parallax></div>
+    <div class="hero-orb hero-orb-b" data-parallax></div>
+    <div class="hero-grid"></div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-6 py-10 md:py-14">
+    <div class="hero-layout">
+      <div class="hero-copy reveal" data-reveal>
+        <p class="section-label text-[var(--color-brand)] mb-5">Developer / KAMO</p>
+        <div class="space-y-6">
+          <p class="hero-brand">bykamo.dev</p>
+          <h1 class="hero-title">
+            AIとコードで、
+            <br />
+            情報・運用・体験を
+            <br />
+            組み直す。
+          </h1>
+          <p class="body-text-lg max-w-xl">
+            取引、自動化、プロダクト設計まで。実装の痕跡と判断の理由を、公開できる形に整えながら積み上げています。
+          </p>
+        </div>
+
+        <div class="hero-actions">
+          <a href="/builds" class="group btn-primary">
+            View Builds
+            <Icon name="arrow-right" size={14} class="hover-arrow" />
+          </a>
+          <a href="/about" class="group btn-ghost">
+            About KAMO
+            <Icon name="arrow-right" size={14} class="hover-arrow" />
+          </a>
+        </div>
+
+        <div class="hero-proof">
+          {proofRows.map((item, index) => (
+            <p
+              class="hero-proof-line reveal"
+              data-reveal
+              style={`--delay:${140 + index * 90}ms;`}
+            >
+              <span class="hero-proof-index">0{index + 1}</span>
+              <span>{item}</span>
+            </p>
+          ))}
+        </div>
+      </div>
+
+      <div class="hero-visual-wrap reveal" data-reveal style="--delay:160ms;">
+        <div class="hero-visual panel-surface" data-parallax>
+          <div class="hero-visual-copy">
+            <p class="hero-visual-kicker">Selected Work</p>
+            <p class="hero-visual-text">公開しているBuildの一部を、そのまま視覚の軸にしています。</p>
+          </div>
+
+          {showcaseBuilds.length > 0 ? (
+            <div class="hero-visual-stack">
+              {showcaseBuilds.map((build, index) => (
+                <a
+                  href={build.href}
+                  class:list={[
+                    'group hero-shot',
+                    index === 0 ? 'hero-shot-primary' : 'hero-shot-secondary',
+                  ]}
+                >
+                  <img
+                    srcset={`${build.imageSm} 700w, ${build.imageLg} 1200w`}
+                    sizes="(max-width: 768px) 88vw, 420px"
+                    src={build.imageSm}
+                    alt={build.title}
+                    class="hero-shot-image"
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                  />
+                  <div class="hero-shot-meta">
+                    <p class="hero-shot-title">{build.title}</p>
+                    <p class="hero-shot-summary">{build.summary}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <div class="hero-fallback" aria-hidden="true">
+              <div class="hero-fallback-block hero-fallback-block-lg"></div>
+              <div class="hero-fallback-block hero-fallback-block-sm"></div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-capabilities panel-surface reveal" data-reveal style="--delay:220ms;">
+      {capabilityRows.map((item, index) => (
+        <div class="hero-capability" style={`--delay:${index * 80}ms;`}>
+          <div class="icon-box">
+            <Icon name={item.icon} size={16} class="text-[var(--color-ink)]" />
+          </div>
+          <div>
+            <p class="hero-capability-label">{item.label}</p>
+            <p class="hero-capability-text">{item.text}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-shell {
+    position: relative;
+    overflow: clip;
+    min-height: calc(100svh - 4rem);
+  }
+
+  .hero-atmosphere {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 4% 0 0;
+    background:
+      linear-gradient(90deg, rgba(18, 20, 23, 0.04) 1px, transparent 1px),
+      linear-gradient(rgba(18, 20, 23, 0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(circle at 68% 28%, black 0, black 28%, transparent 70%);
+    -webkit-mask-image: radial-gradient(circle at 68% 28%, black 0, black 28%, transparent 70%);
+    opacity: 0.55;
+  }
+
+  .hero-orb {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(12px);
+  }
+
+  .hero-orb-a {
+    top: 11%;
+    right: -4rem;
+    width: clamp(14rem, 24vw, 22rem);
+    height: clamp(14rem, 24vw, 22rem);
+    background: radial-gradient(circle, rgba(45, 78, 216, 0.22) 0%, rgba(45, 78, 216, 0.05) 55%, transparent 74%);
+  }
+
+  .hero-orb-b {
+    bottom: 10%;
+    left: -6rem;
+    width: clamp(12rem, 18vw, 18rem);
+    height: clamp(12rem, 18vw, 18rem);
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.84) 0%, rgba(255, 255, 255, 0.14) 60%, transparent 78%);
+  }
+
+  .hero-layout {
+    position: relative;
+    display: grid;
+    gap: 2.75rem;
+    align-items: end;
+  }
+
+  .hero-brand {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 2rem;
+  }
+
+  .hero-proof {
+    margin-top: 2.75rem;
+    display: grid;
+    gap: 0.85rem;
+    max-width: 35rem;
+  }
+
+  .hero-proof-line {
+    display: flex;
+    gap: 0.9rem;
+    align-items: baseline;
+    padding-top: 0.8rem;
+    border-top: 1px solid rgba(18, 20, 23, 0.08);
+    font-size: 0.92rem;
+    line-height: 1.55;
+    color: var(--color-ink-secondary);
+  }
+
+  .hero-proof-index {
+    min-width: 1.7rem;
+    font-size: 0.73rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: var(--color-ink-subtle);
+  }
+
+  .hero-visual-wrap {
+    position: relative;
+  }
+
+  .hero-visual {
+    position: relative;
+    overflow: hidden;
+    padding: 1.15rem;
+  }
+
+  .hero-visual::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.44), rgba(255, 255, 255, 0.08));
+    pointer-events: none;
+  }
+
+  .hero-visual-copy {
+    position: absolute;
+    top: 1.15rem;
+    left: 1.15rem;
+    z-index: 2;
+    max-width: 15rem;
+    padding: 0.85rem 1rem;
+    border-radius: 1.15rem;
+    background: rgba(255, 255, 255, 0.74);
+    border: 1px solid rgba(18, 20, 23, 0.08);
+    backdrop-filter: blur(16px);
+  }
+
+  .hero-visual-kicker {
+    margin-bottom: 0.35rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-brand);
+  }
+
+  .hero-visual-text {
+    font-size: 0.84rem;
+    line-height: 1.55;
+    color: var(--color-ink-secondary);
+  }
+
+  .hero-visual-stack {
+    position: relative;
+    min-height: 29rem;
+  }
+
+  .hero-shot {
+    position: absolute;
+    overflow: hidden;
+    border-radius: 1.5rem;
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 30px 55px -36px rgba(17, 23, 38, 0.34);
+  }
+
+  .hero-shot-primary {
+    inset: 3.8rem 3rem 1.1rem auto;
+    width: min(100%, 22rem);
+    animation: floatPrimary 8.5s ease-in-out infinite;
+  }
+
+  .hero-shot-secondary {
+    left: 0.6rem;
+    bottom: 1rem;
+    width: min(58%, 13.5rem);
+    animation: floatSecondary 9.5s ease-in-out infinite;
+  }
+
+  .hero-shot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 35%, rgba(11, 14, 18, 0.72) 100%);
+    pointer-events: none;
+  }
+
+  .hero-shot-image {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    transition: transform 600ms ease;
+  }
+
+  .hero-shot:hover .hero-shot-image {
+    transform: scale(1.03);
+  }
+
+  .hero-shot-meta {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    padding: 1rem 1rem 1.1rem;
+    color: white;
+  }
+
+  .hero-shot-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .hero-shot-summary {
+    margin-top: 0.35rem;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .hero-fallback {
+    position: relative;
+    min-height: 28rem;
+  }
+
+  .hero-fallback-block {
+    position: absolute;
+    border-radius: 1.5rem;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.2)),
+      linear-gradient(135deg, rgba(45, 78, 216, 0.16), rgba(255, 255, 255, 0));
+    border: 1px solid rgba(18, 20, 23, 0.08);
+  }
+
+  .hero-fallback-block-lg {
+    inset: 4rem 2.25rem 1.25rem auto;
+    width: min(100%, 22rem);
+  }
+
+  .hero-fallback-block-sm {
+    left: 0.75rem;
+    bottom: 1rem;
+    width: min(58%, 13rem);
+    height: 13rem;
+  }
+
+  .hero-capabilities {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 1.1rem;
+    margin-top: 2rem;
+    padding: 1rem;
+  }
+
+  .hero-capability {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.95rem;
+    align-items: start;
+    padding: 0.55rem;
+  }
+
+  .hero-capability-label {
+    margin-bottom: 0.3rem;
+    font-size: 0.73rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-ink-subtle);
+  }
+
+  .hero-capability-text {
+    font-size: 0.92rem;
+    line-height: 1.65;
+    color: var(--color-ink-secondary);
+  }
+
+  @keyframes floatPrimary {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(0, -8px, 0); }
+  }
+
+  @keyframes floatSecondary {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(0, 10px, 0); }
+  }
+
+  @media (min-width: 960px) {
+    .hero-layout {
+      grid-template-columns: minmax(0, 1.05fr) minmax(22rem, 0.95fr);
+      gap: 3rem;
+    }
+
+    .hero-capabilities {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-top: 1.2rem;
+    }
+  }
+
+  @media (max-width: 959px) {
+    .hero-shell {
+      min-height: auto;
+    }
+
+    .hero-visual-stack,
+    .hero-fallback {
+      min-height: 26rem;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .hero-grid {
+      mask-image: radial-gradient(circle at 50% 25%, black 0, black 20%, transparent 68%);
+      -webkit-mask-image: radial-gradient(circle at 50% 25%, black 0, black 20%, transparent 68%);
+      opacity: 0.4;
+    }
+
+    .hero-proof {
+      margin-top: 2.1rem;
+    }
+
+    .hero-visual-copy {
+      position: relative;
+      top: 0;
+      left: 0;
+      max-width: none;
+      margin-bottom: 0.85rem;
+    }
+
+    .hero-shot-primary {
+      right: 0.5rem;
+      left: 24%;
+      top: 0.35rem;
+      bottom: 0.7rem;
+      width: auto;
+    }
+
+    .hero-shot-secondary {
+      left: 0;
+      bottom: 0;
+      width: 46%;
+    }
+
+    .hero-capabilities {
+      padding: 0.65rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-shot-primary,
+    .hero-shot-secondary {
+      animation: none;
+    }
+
+    .hero-shot-image {
+      transition: none;
+    }
+  }
+</style>

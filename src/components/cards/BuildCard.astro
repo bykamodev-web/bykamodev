@@ -1,0 +1,144 @@
+---
+import type { Build } from '@/types'
+import { getOptimizedImageUrl } from '@/lib/microcms'
+import Icon from '@/components/icons/Icons.astro'
+
+interface Props {
+  build: Build
+}
+
+const { build } = Astro.props
+
+const imgSm = getOptimizedImageUrl(build.coverImage.url, { width: 560, quality: 78, aspectRatio: '16:9' })
+const imgLg = getOptimizedImageUrl(build.coverImage.url, { width: 1120, quality: 82, aspectRatio: '16:9' })
+
+const status = build.statusLabel?.[0] || 'planning'
+const badgeClass = `badge badge-${status}`
+---
+
+<a href={`/builds/${build.slug}`} class="group block">
+  <article class="build-tile">
+    <div class="build-media">
+      <img
+        srcset={`${imgSm} 560w, ${imgLg} 1120w`}
+        sizes="(max-width: 768px) 100vw, 32vw"
+        src={imgSm}
+        alt={build.title}
+        loading="lazy"
+        class="build-media-image"
+      />
+    </div>
+
+    <div class="build-content">
+      <div class="build-meta">
+        <span class={badgeClass}>{status}</span>
+        {build.topics?.slice(0, 2).map((topic) => (
+          <span class="caption">{topic.title}</span>
+        ))}
+      </div>
+
+      <div class="flex items-start justify-between gap-4">
+        <h3 class="build-title">{build.title}</h3>
+        <Icon name="arrow-right" size={16} class="hover-arrow mt-1 text-[var(--color-ink-subtle)]" />
+      </div>
+
+      <p class="build-summary">{build.summary}</p>
+
+      {build.stack && build.stack.length > 0 && (
+        <div class="build-stack">
+          {build.stack.slice(0, 4).map((item) => (
+            <span class="tech-tag">{item.name}</span>
+          ))}
+        </div>
+      )}
+    </div>
+  </article>
+</a>
+
+<style>
+  .build-tile {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+
+  .build-media {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.5rem;
+    background: rgba(255, 255, 255, 0.42);
+    box-shadow: 0 18px 48px -34px rgba(17, 23, 38, 0.32);
+  }
+
+  .build-media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(17, 23, 38, 0.12));
+    opacity: 0;
+    transition: opacity 260ms ease;
+  }
+
+  .build-media-image {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .build-content {
+    padding-top: 1rem;
+    border-top: 1px solid rgba(18, 20, 23, 0.1);
+  }
+
+  .build-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    align-items: center;
+    margin-bottom: 0.95rem;
+  }
+
+  .build-title {
+    font-size: 1.08rem;
+    font-weight: 700;
+    line-height: 1.28;
+    letter-spacing: -0.03em;
+    color: var(--color-ink);
+    transition: color 180ms ease;
+  }
+
+  .build-summary {
+    margin-top: 0.9rem;
+    font-size: 0.94rem;
+    line-height: 1.7;
+    color: var(--color-ink-muted);
+  }
+
+  .build-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 1rem;
+  }
+
+  .group:hover .build-media-image {
+    transform: scale(1.04);
+  }
+
+  .group:hover .build-media::after {
+    opacity: 1;
+  }
+
+  .group:hover .build-title {
+    color: var(--color-brand);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .build-media::after,
+    .build-media-image,
+    .build-title {
+      transition: none;
+    }
+  }
+</style>

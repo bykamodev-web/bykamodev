@@ -1,0 +1,26 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Hero from '@/components/sections/Hero.astro'
+import FeaturedBuilds from '@/components/sections/FeaturedBuilds.astro'
+import FeaturedNotes from '@/components/sections/FeaturedNotes.astro'
+import ContactCta from '@/components/sections/ContactCta.astro'
+import JsonLd from '@/components/seo/JsonLd.astro'
+import { getBuilds, getNotes } from '@/lib/microcms'
+import { buildProfilePageSchema } from '@/lib/schema'
+
+const { contents: featuredBuilds } = await getBuilds({ featured: true, limit: 3 })
+const { contents: featuredNotes } = await getNotes({ featured: true, limit: 3 })
+
+const profileSchema = buildProfilePageSchema()
+---
+
+<BaseLayout>
+  <Fragment slot="head">
+    <JsonLd schemas={[profileSchema]} />
+  </Fragment>
+
+  <Hero builds={featuredBuilds} />
+  <FeaturedBuilds builds={featuredBuilds} />
+  <FeaturedNotes notes={featuredNotes} />
+  <ContactCta />
+</BaseLayout>

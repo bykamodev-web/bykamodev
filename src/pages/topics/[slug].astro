@@ -1,0 +1,83 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Breadcrumbs from '@/components/seo/Breadcrumbs.astro'
+import BuildCard from '@/components/cards/BuildCard.astro'
+import NoteCard from '@/components/cards/NoteCard.astro'
+import JsonLd from '@/components/seo/JsonLd.astro'
+import { getAllTopicSlugs, getTopicBySlug, getBuilds, getNotes } from '@/lib/microcms'
+import { buildTopicPageSchemas } from '@/lib/schema'
+
+export async function getStaticPaths() {
+  const slugs = await getAllTopicSlugs()
+  return slugs.map((item) => ({
+    params: { slug: item.slug },
+  }))
+}
+
+const { slug } = Astro.params
+const topic = await getTopicBySlug(slug)
+
+if (!topic) {
+  return Astro.redirect('/404')
+}
+
+const [buildsRes, notesRes] = await Promise.all([
+  getBuilds({ topicId: topic.id }),
+  getNotes({ topicId: topic.id }),
+])
+
+const schemas = buildTopicPageSchemas(topic)
+---
+
+<BaseLayout
+  title={topic.seoMeta?.metaTitle || topic.title}
+  description={topic.seoMeta?.metaDescription || topic.intro}
+  noindex={topic.seoMeta?.noIndex}
+>
+  <Fragment slot="head">
+    <JsonLd schemas={schemas} />
+  </Fragment>
+
+  <div class="max-w-5xl mx-auto px-6 py-12">
+    <Breadcrumbs items={[
+      { label: 'Home', href: '/' },
+      { label: 'Topics' },
+      { label: topic.title },
+    ]} />
+
+    <h1 class="text-xl md:text-2xl font-bold mb-4">{topic.title}</h1>
+    <p class="text-lg text-zinc-600 mb-6">{topic.intro}</p>
+
+    {topic.description && (
+      <div class="rich-content mb-10" set:html={topic.description} />
+    )}
+
+    <!-- Builds for this topic -->
+    {buildsRes.contents.length > 0 && (
+      <section class="mb-12">
+        <h2 class="text-lg font-semibold mb-6">Builds</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {buildsRes.contents.map((build) => (
+            <BuildCard build={build} />
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Notes for this topic -->
+    {notesRes.contents.length > 0 && (
+      <section>
+        <h2 class="text-lg font-semibold mb-6">Notes</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {notesRes.contents.map((note) => (
+            <NoteCard note={note} />
+          ))}
+        </div>
+      </section>
+    )}
+
+    {buildsRes.contents.length === 0 && notesRes.contents.length === 0 && (
+      <p class="text-zinc-500">このトピックにはまだコンテンツがありません。</p>
+    )}
+  </div>
+</BaseLayout>

@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.astro/
+.wrangler/
+.env
+.env.*
+!.env.local.example
+doc/
+.DS_Store
+.claude/
+*.log
+KAMO_X_strategy.md

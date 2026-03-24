@@ -1,0 +1,45 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import NoteCard from '@/components/cards/NoteCard.astro'
+import Breadcrumbs from '@/components/seo/Breadcrumbs.astro'
+import JsonLd from '@/components/seo/JsonLd.astro'
+import { getNotes } from '@/lib/microcms'
+import { buildCollectionPageSchema } from '@/lib/schema'
+
+const { contents: notes } = await getNotes()
+
+const collectionSchema = buildCollectionPageSchema({
+  name: 'Notes',
+  description: '開発ログ・設計メモ・技術記事',
+  url: 'https://bykamo.dev/notes',
+})
+---
+
+<BaseLayout title="Notes" description="開発ログ・設計メモ・技術記事。設計判断の記録。">
+  <Fragment slot="head">
+    <JsonLd schemas={[collectionSchema]} />
+  </Fragment>
+
+  <div class="max-w-6xl mx-auto px-6 py-12 md:py-16">
+    <Breadcrumbs items={[
+      { label: 'Home', href: '/' },
+      { label: 'Notes' },
+    ]} />
+
+    <p class="section-label text-[var(--color-ink-muted)] mb-4">Notes</p>
+    <h1 class="page-title mb-5">設計の途中経過を、捨てずに残す。</h1>
+    <p class="body-text-lg max-w-2xl mb-12">開発ログ、設計メモ、技術記事。あとから見返しても使える粒度で、判断の履歴を保存しています。</p>
+
+    {notes.length > 0 ? (
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-12">
+        {notes.map((note, index) => (
+          <div class="reveal" data-reveal style={`--delay:${index * 70}ms;`}>
+            <NoteCard note={note} />
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p class="body-text">まだ公開されたNotesはありません。</p>
+    )}
+  </div>
+</BaseLayout>

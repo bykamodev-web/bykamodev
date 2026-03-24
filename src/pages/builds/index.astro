@@ -1,0 +1,45 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import BuildCard from '@/components/cards/BuildCard.astro'
+import Breadcrumbs from '@/components/seo/Breadcrumbs.astro'
+import JsonLd from '@/components/seo/JsonLd.astro'
+import { getBuilds } from '@/lib/microcms'
+import { buildCollectionPageSchema } from '@/lib/schema'
+
+const { contents: builds } = await getBuilds()
+
+const collectionSchema = buildCollectionPageSchema({
+  name: 'Builds',
+  description: '実績・ケーススタディ一覧',
+  url: 'https://bykamo.dev/builds',
+})
+---
+
+<BaseLayout title="Builds" description="実績・ケーススタディ一覧。課題の整理から設計・実装・結果まで。">
+  <Fragment slot="head">
+    <JsonLd schemas={[collectionSchema]} />
+  </Fragment>
+
+  <div class="max-w-6xl mx-auto px-6 py-12 md:py-16">
+    <Breadcrumbs items={[
+      { label: 'Home', href: '/' },
+      { label: 'Builds' },
+    ]} />
+
+    <p class="section-label text-[var(--color-brand)] mb-4">Builds</p>
+    <h1 class="page-title mb-5">公開できるかたちまで、実装を整える。</h1>
+    <p class="body-text-lg max-w-2xl mb-12">課題の整理、設計、実装、運用まで。成果物だけでなく、その輪郭が伝わる単位でまとめています。</p>
+
+    {builds.length > 0 ? (
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-12">
+        {builds.map((build, index) => (
+          <div class="reveal" data-reveal style={`--delay:${index * 70}ms;`}>
+            <BuildCard build={build} />
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p class="body-text">まだ公開されたBuildsはありません。</p>
+    )}
+  </div>
+</BaseLayout>

@@ -1,0 +1,161 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Breadcrumbs from '@/components/seo/Breadcrumbs.astro'
+import NoteCard from '@/components/cards/NoteCard.astro'
+import JsonLd from '@/components/seo/JsonLd.astro'
+import { getAllBuildSlugs, getBuildBySlug, getOptimizedImageUrl } from '@/lib/microcms'
+import { buildBuildPageSchemas } from '@/lib/schema'
+
+export async function getStaticPaths() {
+  const slugs = await getAllBuildSlugs()
+  return slugs.map((item) => ({
+    params: { slug: item.slug },
+  }))
+}
+
+const { slug } = Astro.params
+const build = await getBuildBySlug(slug)
+
+if (!build) {
+  return Astro.redirect('/404')
+}
+
+const schemas = buildBuildPageSchemas(build)
+
+const publishedDate = build.publishedAt
+  ? new Date(build.publishedAt).toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' })
+  : ''
+
+const ogImage = build.seoMeta?.ogImage?.url || build.coverImage?.url
+const heroImg = getOptimizedImageUrl(build.coverImage.url, { width: 1200, quality: 80, aspectRatio: '16:9' })
+
+const statusColors: Record<string, string> = {
+  planning: 'bg-amber-100 text-amber-800',
+  building: 'bg-blue-100 text-blue-800',
+  live: 'bg-green-100 text-green-800',
+  archived: 'bg-zinc-100 text-zinc-600',
+}
+const status = build.statusLabel?.[0] || 'planning'
+---
+
+<BaseLayout
+  title={build.seoMeta?.metaTitle || build.title}
+  description={build.seoMeta?.metaDescription || build.summary}
+  ogImage={ogImage}
+  noindex={build.seoMeta?.noIndex}
+>
+  <Fragment slot="head">
+    <JsonLd schemas={schemas} />
+  </Fragment>
+
+  <article class="max-w-3xl mx-auto px-6 py-12">
+    <Breadcrumbs items={[
+      { label: 'Home', href: '/' },
+      { label: 'Builds', href: '/builds' },
+      { label: build.title },
+    ]} />
+
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex items-center gap-2 mb-4">
+        <span class:list={['text-xs font-medium px-2 py-0.5 rounded-full', statusColors[status] || statusColors.planning]}>
+          {status}
+        </span>
+        {build.topics?.map((topic) => (
+          <a href={`/topics/${topic.slug}`} class="text-xs text-blue-600 hover:underline">{topic.title}</a>
+        ))}
+        {publishedDate && (
+          <time class="text-xs text-zinc-400" datetime={build.publishedAt}>{publishedDate}</time>
+        )}
+      </div>
+      <h1 class="text-xl md:text-2xl font-bold leading-snug mb-4">{build.title}</h1>
+      <p class="text-lg text-zinc-600">{build.summary}</p>
+    </div>
+
+    <!-- Cover Image -->
+    <img
+      src={heroImg}
+      alt={build.title}
+      class="w-full rounded-lg mb-10"
+      loading="eager"
+    />
+
+    <!-- Problem / Solution / Outcome -->
+    <div class="space-y-8 mb-10">
+      <section>
+        <h2 class="text-xl font-semibold mb-3 flex items-center gap-2">
+          <span class="w-1 h-6 bg-red-400 rounded-full inline-block"></span>
+          課題
+        </h2>
+        <p class="text-zinc-700 leading-relaxed whitespace-pre-line">{build.problem}</p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-semibold mb-3 flex items-center gap-2">
+          <span class="w-1 h-6 bg-blue-400 rounded-full inline-block"></span>
+          解決
+        </h2>
+        <p class="text-zinc-700 leading-relaxed whitespace-pre-line">{build.solution}</p>
+      </section>
+
+      {build.outcome && (
+        <section>
+          <h2 class="text-xl font-semibold mb-3 flex items-center gap-2">
+            <span class="w-1 h-6 bg-green-400 rounded-full inline-block"></span>
+            結果・学び
+          </h2>
+          <p class="text-zinc-700 leading-relaxed whitespace-pre-line">{build.outcome}</p>
+        </section>
+      )}
+    </div>
+
+    <!-- Body (rich editor) -->
+    {build.body && (
+      <div class="rich-content mb-10" set:html={build.body} />
+    )}
+
+    <!-- Stack -->
+    {build.stack && build.stack.length > 0 && (
+      <section class="mb-10">
+        <h2 class="text-xl font-semibold mb-4">技術スタック</h2>
+        <div class="flex flex-wrap gap-2">
+          {build.stack.map((item) => (
+            <div class="flex items-center gap-1 bg-zinc-100 rounded-lg px-3 py-1.5">
+              <span class="text-sm font-medium">{item.name}</span>
+              {item.role && <span class="text-xs text-zinc-500">({item.role})</span>}
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Links -->
+    {build.links && build.links.length > 0 && (
+      <section class="mb-10">
+        <h2 class="text-xl font-semibold mb-4">リンク</h2>
+        <ul class="space-y-2">
+          {build.links.map((link) => (
+            <li>
+              <a href={link.url} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
+                {link.label || link.url}
+              </a>
+              {link.note && <span class="text-sm text-zinc-500 ml-2">{link.note}</span>}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <!-- Related Notes -->
+    {build.relatedNotes && build.relatedNotes.length > 0 && (
+      <section class="mt-12 pt-8 border-t border-zinc-200">
+        <h2 class="text-xl font-semibold mb-6">関連Notes</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {build.relatedNotes.map((note) => (
+            <NoteCard note={note} />
+          ))}
+        </div>
+      </section>
+    )}
+  </article>
+</BaseLayout>
