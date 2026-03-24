@@ -27,7 +27,7 @@ const publishedDate = build.publishedAt
   : ''
 
 const ogImage = build.seoMeta?.ogImage?.url || build.coverImage?.url
-const heroImg = getOptimizedImageUrl(build.coverImage.url, { width: 1200, quality: 80, aspectRatio: '16:9' })
+const heroImg = getOptimizedImageUrl(build.coverImage.url, { width: 768, quality: 78, aspectRatio: '16:9' })
 
 const statusColors: Record<string, string> = {
   planning: 'bg-amber-100 text-amber-800',

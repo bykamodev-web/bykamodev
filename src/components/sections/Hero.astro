@@ -13,8 +13,8 @@ const showcaseBuilds = builds.slice(0, 2).map((build) => ({
   title: build.title,
   summary: build.summary,
   href: `/builds/${build.slug}`,
-  imageSm: getOptimizedImageUrl(build.coverImage.url, { width: 700, quality: 78, aspectRatio: '3:2' }),
-  imageLg: getOptimizedImageUrl(build.coverImage.url, { width: 1200, quality: 82, aspectRatio: '3:2' }),
+  imageSm: getOptimizedImageUrl(build.coverImage.url, { width: 420, quality: 72, aspectRatio: '3:2' }),
+  imageLg: getOptimizedImageUrl(build.coverImage.url, { width: 700, quality: 78, aspectRatio: '3:2' }),
 }))
 
 const capabilityRows = [
@@ -98,8 +98,8 @@ const proofRows = [
                   ]}
                 >
                   <img
-                    srcset={`${build.imageSm} 700w, ${build.imageLg} 1200w`}
-                    sizes="(max-width: 768px) 88vw, 420px"
+                    srcset={`${build.imageSm} 420w, ${build.imageLg} 700w`}
+                    sizes="(max-width: 768px) 80vw, 350px"
                     src={build.imageSm}
                     alt={build.title}
                     class="hero-shot-image"
