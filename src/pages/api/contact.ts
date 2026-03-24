@@ -66,7 +66,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   const turnstileSecret = (env.TURNSTILE_SECRET_KEY as string) || import.meta.env.TURNSTILE_SECRET_KEY
   if (!turnstileSecret) {
-    console.error('TURNSTILE_SECRET_KEY not found. env keys:', Object.keys(env))
     return new Response(
       JSON.stringify({ success: false, error: 'Server configuration error' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } },
@@ -83,7 +82,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
   })
   const turnstileData = await turnstileRes.json() as { success: boolean; 'error-codes'?: string[] }
   if (!turnstileData.success) {
-    console.error('Turnstile verification failed:', turnstileData)
     return new Response(
       JSON.stringify({ success: false, error: '認証に失敗しました。ページを再読み込みしてお試しください。' }),
       { status: 403, headers: { 'Content-Type': 'application/json' } },
