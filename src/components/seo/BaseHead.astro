@@ -21,7 +21,7 @@ const brandName = 'bykamo.dev'
 
 const pageTitle = title ? `${title} | ${brandName}` : brandName
 const pageDescription = description || 'AIとコードで、情報・運用・体験を組み直す。'
-const rawOgImage = ogImage || `${siteUrl}/og-default.png`
+const rawOgImage = ogImage || `${siteUrl}/bykamo-ogp-compressed.gif`
 const pageOgImage = rawOgImage.startsWith('/') ? `${siteUrl}${rawOgImage}` : rawOgImage
 const pageCanonical = canonical || new URL(Astro.url.pathname, siteUrl).toString()
 ---
