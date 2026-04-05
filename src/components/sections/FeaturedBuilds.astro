@@ -12,27 +12,25 @@ const { builds } = Astro.props
 
 {builds.length > 0 && (
   <section class="py-[var(--space-section-sm)] md:py-[var(--space-section)]">
-    <div class="max-w-6xl mx-auto px-6">
-      <div class="grid gap-12 lg:grid-cols-[minmax(0,0.72fr)_minmax(0,1.28fr)]">
-        <div class="reveal" data-reveal>
-          <p class="section-label text-[var(--color-brand)] mb-3">Selected Builds</p>
-          <h2 class="page-title mb-5">実装を、輪郭ごと見せる。</h2>
-          <p class="body-text max-w-sm mb-8">
-            機能の紹介だけではなく、何を解いたか、どう設計したか、どこまで運用に乗ったかまでを公開しています。
-          </p>
-          <a href="/builds" class="group hairline-link">
-            View all builds
-            <Icon name="arrow-right" size={14} class="hover-arrow" />
-          </a>
-        </div>
+    <div class="max-w-[1280px] mx-auto px-6 md:px-12">
+      <div class="mb-12 reveal" data-reveal>
+        <p class="section-label text-[var(--color-brand)] mb-3">Selected Builds</p>
+        <h2 class="page-title">実装を、輪郭ごと見せる。</h2>
+      </div>
 
-        <div class="grid gap-10 md:grid-cols-2 xl:grid-cols-3">
-          {builds.map((build, index) => (
-            <div class="reveal" data-reveal style={`--delay:${index * 90}ms;`}>
-              <BuildCard build={build} />
-            </div>
-          ))}
-        </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {builds.map((build, index) => (
+          <div class="reveal" data-reveal style={`--delay:${index * 90}ms;`}>
+            <BuildCard build={build} />
+          </div>
+        ))}
+      </div>
+
+      <div class="mt-10 reveal" data-reveal>
+        <a href="/builds" class="group hairline-link">
+          View all builds
+          <Icon name="arrow-right" size={14} class="hover-arrow" />
+        </a>
       </div>
     </div>
   </section>

@@ -16,8 +16,8 @@ const status = build.statusLabel?.[0] || 'planning'
 const badgeClass = `badge badge-${status}`
 ---
 
-<a href={`/builds/${build.slug}`} class="group block">
-  <article class="build-tile">
+<a href={`/builds/${build.slug}`} class="group block h-full">
+  <article class="glass-panel flex flex-col overflow-hidden h-full">
     <div class="build-media">
       <img
         srcset={`${imgSm} 320w, ${imgLg} 560w`}
@@ -29,7 +29,7 @@ const badgeClass = `badge badge-${status}`
       />
     </div>
 
-    <div class="build-content">
+    <div class="p-6 flex flex-col flex-grow">
       <div class="build-meta">
         <span class={badgeClass}>{status}</span>
         {build.topics?.slice(0, 2).map((topic) => (
@@ -37,17 +37,13 @@ const badgeClass = `badge badge-${status}`
         ))}
       </div>
 
-      <div class="flex items-start justify-between gap-4">
-        <h3 class="build-title">{build.title}</h3>
-        <Icon name="arrow-right" size={16} class="hover-arrow mt-1 text-[var(--color-ink-subtle)]" />
-      </div>
-
+      <h3 class="build-title">{build.title}</h3>
       <p class="build-summary">{build.summary}</p>
 
       {build.stack && build.stack.length > 0 && (
         <div class="build-stack">
           {build.stack.slice(0, 4).map((item) => (
-            <span class="tech-tag">{item.name}</span>
+            <span class="text-[0.75rem] font-mono text-[var(--color-ink-subtle)]">{item.name}</span>
           ))}
         </div>
       )}
@@ -56,27 +52,11 @@ const badgeClass = `badge badge-${status}`
 </a>
 
 <style>
-  .build-tile {
-    display: flex;
-    flex-direction: column;
-    gap: 1.1rem;
-  }
-
   .build-media {
     position: relative;
     overflow: hidden;
-    border-radius: 1.5rem;
-    background: rgba(255, 255, 255, 0.42);
-    box-shadow: 0 18px 48px -34px rgba(17, 23, 38, 0.32);
-  }
-
-  .build-media::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(17, 23, 38, 0.12));
-    opacity: 0;
-    transition: opacity 260ms ease;
+    border-bottom: 1px solid rgba(18, 20, 23, 0.08);
+    background: rgba(18, 20, 23, 0.05);
   }
 
   .build-media-image {
@@ -86,48 +66,49 @@ const badgeClass = `badge badge-${status}`
     transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .build-content {
-    padding-top: 1rem;
-    border-top: 1px solid rgba(18, 20, 23, 0.1);
-  }
-
   .build-meta {
     display: flex;
     flex-wrap: wrap;
     gap: 0.55rem;
     align-items: center;
-    margin-bottom: 0.95rem;
+    margin-bottom: 1rem;
   }
 
   .build-title {
-    font-size: 1.08rem;
+    font-size: 1.15rem;
     font-weight: 700;
     line-height: 1.28;
     letter-spacing: -0.03em;
     color: var(--color-ink);
     transition: color 180ms ease;
+    margin-bottom: 0.5rem;
   }
 
   .build-summary {
-    margin-top: 0.9rem;
-    font-size: 0.94rem;
+    font-size: 0.9rem;
     line-height: 1.7;
     color: var(--color-ink-muted);
+    flex-grow: 1;
   }
 
   .build-stack {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.45rem;
-    margin-top: 1rem;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(18, 20, 23, 0.08);
+  }
+
+  .build-stack span + span::before {
+    content: "/";
+    margin-right: 0.5rem;
+    color: var(--color-ink-subtle);
+    opacity: 0.5;
   }
 
   .group:hover .build-media-image {
-    transform: scale(1.04);
-  }
-
-  .group:hover .build-media::after {
-    opacity: 1;
+    transform: scale(1.05);
   }
 
   .group:hover .build-title {
@@ -135,7 +116,6 @@ const badgeClass = `badge badge-${status}`
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .build-media::after,
     .build-media-image,
     .build-title {
       transition: none;

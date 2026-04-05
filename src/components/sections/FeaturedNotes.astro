@@ -18,55 +18,52 @@ const kindConfig: Record<string, { label: string; css: string }> = {
 
 {notes.length > 0 && (
   <section class="py-[var(--space-section-sm)] md:py-[var(--space-section)]">
-    <div class="max-w-6xl mx-auto px-6">
-      <div class="grid gap-10 lg:grid-cols-[minmax(0,0.76fr)_minmax(0,1.24fr)]">
-        <div class="reveal" data-reveal>
-          <p class="section-label text-[var(--color-ink-muted)] mb-3">Notes</p>
-          <h2 class="page-title mb-5">設計判断を、短く残す。</h2>
-          <p class="body-text max-w-sm mb-8">
-            実装メモ、設計の比較、運用のログ。あとで自分が見返しても役に立つ粒度で記録しています。
-          </p>
-          <a href="/notes" class="group hairline-link">
-            View all notes
-            <Icon name="arrow-right" size={14} class="hover-arrow" />
-          </a>
-        </div>
+    <div class="max-w-[1280px] mx-auto px-6 md:px-12">
+      <div class="mb-10 reveal" data-reveal>
+        <p class="section-label text-[var(--color-ink-muted)] mb-3">Notes</p>
+        <h2 class="page-title">設計判断を、短く残す。</h2>
+      </div>
 
-        <div class="space-y-0 border-t border-[var(--color-border)]">
-          {notes.map((note, index) => {
-            const publishedDate = note.publishedAt
-              ? new Date(note.publishedAt).toLocaleDateString('ja-JP', { year: 'numeric', month: 'short', day: 'numeric' })
-              : ''
-            const kind = note.kind?.[0]
-            const config = kind ? kindConfig[kind] : null
+      <div class="w-full max-w-[900px] border-t border-[var(--color-border)]">
+        {notes.map((note, index) => {
+          const publishedDate = note.publishedAt
+            ? new Date(note.publishedAt).toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' })
+            : ''
+          const kind = note.kind?.[0]
+          const config = kind ? kindConfig[kind] : null
 
-            return (
-              <a
-                href={`/notes/${note.slug}`}
-                class="group reveal flex flex-col gap-4 border-b border-[rgba(18,20,23,0.08)] py-6 md:grid md:grid-cols-[9rem_minmax(0,1fr)_auto] md:items-start md:gap-6"
-                data-reveal
-                style={`--delay:${index * 90}ms;`}
-              >
-                <div class="caption pt-0.5">{publishedDate || 'Draft note'}</div>
-                <div class="max-w-2xl">
-                  <div class="flex flex-wrap items-center gap-2 mb-3">
-                    {config && <span class:list={['badge', config.css]}>{config.label}</span>}
-                    {note.topics?.slice(0, 2).map((topic) => (
-                      <span class="caption">{topic.title}</span>
-                    ))}
-                  </div>
-                  <h3 class="text-lg md:text-xl font-semibold tracking-tight text-[var(--color-ink)] transition-colors group-hover:text-[var(--color-brand)]">
+          return (
+            <a
+              href={`/notes/${note.slug}`}
+              class="note-row reveal"
+              data-reveal
+              style={`--delay:${index * 90}ms;`}
+            >
+              <div class="flex flex-col gap-4 md:flex-row md:items-center md:gap-8">
+                <div class="flex items-center gap-4 md:w-1/4 shrink-0">
+                  <span class="text-sm font-mono text-[var(--color-ink-subtle)] w-20">{publishedDate || 'Draft'}</span>
+                  {config && <span class:list={['badge', config.css]}>{config.label}</span>}
+                </div>
+                <div class="flex-grow">
+                  <h3 class="text-lg font-bold text-[var(--color-ink)] mb-1 transition-colors group-hover:text-[var(--color-brand)]">
                     {note.title}
                   </h3>
-                  <p class="body-text mt-3 max-w-xl">{note.excerpt}</p>
+                  <p class="text-[0.85rem] text-[var(--color-ink-muted)] truncate max-w-lg">{note.excerpt}</p>
                 </div>
-                <div class="flex items-center text-[var(--color-ink-subtle)] md:justify-end">
-                  <Icon name="arrow-right" size={16} class="hover-arrow" />
+                <div class="hidden md:flex justify-end text-[var(--color-ink-subtle)] note-row-arrow">
+                  <Icon name="arrow-right" size={16} />
                 </div>
-              </a>
-            )
-          })}
-        </div>
+              </div>
+            </a>
+          )
+        })}
+      </div>
+
+      <div class="mt-8 reveal" data-reveal>
+        <a href="/notes" class="group hairline-link text-[var(--color-brand)] hover:text-[var(--color-ink)]">
+          View all notes
+          <Icon name="arrow-right" size={14} class="hover-arrow" />
+        </a>
       </div>
     </div>
   </section>

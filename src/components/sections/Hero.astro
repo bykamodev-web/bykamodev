@@ -18,15 +18,15 @@ const showcaseBuilds = builds.slice(0, 3).map((build) => ({
 }))
 
 const capabilityRows = [
-  { label: 'AI integration', text: 'LLM・OCR・自動生成を、実運用まで落とし込む。', icon: 'brain' as const },
+  { label: 'AI Integration', text: 'LLMを活用した動的なUI生成や、業務プロセスの自動化実装。', icon: 'brain' as const },
   { label: 'Automation', text: '運用と配信を、小さな判断単位まで自動化する。', icon: 'gear' as const },
-  { label: 'Product systems', text: 'Webアプリとデータ導線を、一つの体験として設計する。', icon: 'layers' as const },
+  { label: 'Product Systems', text: 'Webアプリとデータ導線を、一つの体験として設計する。', icon: 'layers' as const },
 ]
 
 const proofRows = [
-  'Buildsで実装と結果を公開',
-  'Notesで設計判断を言語化',
-  '検索にもAIにも伝わる構造で整理',
+  { index: '01', label: 'Builds', text: '本番運用中のプロダクト' },
+  { index: '02', label: 'Notes', text: '設計やコードの断片' },
+  { index: '03', label: 'Structure', text: '堅牢なアーキテクチャ' },
 ]
 ---
 
@@ -37,21 +37,22 @@ const proofRows = [
     <div class="hero-grid"></div>
   </div>
 
-  <div class="max-w-6xl mx-auto px-6 py-10 md:py-14">
+  <div class="max-w-[1280px] mx-auto px-6 md:px-12 py-10 md:py-14">
     <div class="hero-layout">
       <div class="hero-copy reveal" data-reveal>
-        <p class="section-label text-[var(--color-brand)] mb-5">Developer / KAMO</p>
+        <p class="section-label text-[var(--color-brand)] mb-5 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-[var(--color-brand)] animate-pulse"></span>
+          Developer / KAMO
+        </p>
         <div class="space-y-6">
-          <p class="hero-brand">bykamo.dev</p>
-          <h1 class="hero-title">
+          <h1 class="hero-site-title">bykamo<span class="text-[var(--color-ink-subtle)]">.</span>dev</h1>
+          <p class="hero-title">
             AIとコードで、
             <br />
-            情報・運用・体験を
-            <br />
-            組み直す。
-          </h1>
+            情報・運用・体験を組み直す。
+          </p>
           <p class="body-text-lg max-w-xl">
-            取引、自動化、プロダクト設計まで。実装の痕跡と判断の理由を、公開できる形に整えながら積み上げています。
+            複雑なシステム要件を解きほぐし、スケールするフロントエンドと自動化基盤を設計します。ただ動くものではなく、運用者とユーザーの双方にとって「最適化された構造」を実装します。
           </p>
         </div>
 
@@ -62,74 +63,102 @@ const proofRows = [
           </a>
           <a href="/about" class="group btn-ghost">
             About KAMO
-            <Icon name="arrow-right" size={14} class="hover-arrow" />
           </a>
-        </div>
-
-        <div class="hero-proof">
-          {proofRows.map((item, index) => (
-            <p
-              class="hero-proof-line reveal"
-              data-reveal
-              style={`--delay:${140 + index * 90}ms;`}
-            >
-              <span class="hero-proof-index">0{index + 1}</span>
-              <span>{item}</span>
-            </p>
-          ))}
         </div>
       </div>
 
       <div class="hero-visual-wrap reveal" data-reveal style="--delay:160ms;">
-        <div class="hero-visual panel-surface" data-parallax>
-          <div class="hero-visual-copy">
-            <p class="hero-visual-kicker">Selected Work</p>
+        <div class="hero-cards-stack">
+          <!-- Card 3 (Back) - Placeholder -->
+          <div class="hero-card-back glass-panel" aria-hidden="true">
+            <div class="h-4 w-1/3 bg-[var(--color-ink-subtle)]/20 rounded mb-4"></div>
+            <div class="space-y-2">
+              <div class="h-2 w-full bg-[var(--color-ink-subtle)]/10 rounded"></div>
+              <div class="h-2 w-5/6 bg-[var(--color-ink-subtle)]/10 rounded"></div>
+              <div class="h-2 w-4/6 bg-[var(--color-ink-subtle)]/10 rounded"></div>
+            </div>
           </div>
 
-          {showcaseBuilds.length > 0 ? (
-            <div class="hero-visual-stack">
-              {showcaseBuilds.map((build, index) => (
-                <a
-                  href={build.href}
-                  class:list={[
-                    'group hero-shot',
-                    index === 0 ? 'hero-shot-primary' : index === 1 ? 'hero-shot-secondary' : 'hero-shot-tertiary',
-                  ]}
-                >
-                  <img
-                    srcset={`${build.imageSm} 350w, ${build.imageLg} 500w`}
-                    sizes="(max-width: 768px) 80vw, 350px"
-                    src={build.imageSm}
-                    alt={build.title}
-                    class="hero-shot-image"
-                    loading={index === 0 ? 'eager' : 'lazy'}
-                    fetchpriority={index === 0 ? 'high' : 'auto'}
-                  />
-                </a>
-              ))}
+          <!-- Card 2 (Middle) - Dashboard -->
+          <div class="hero-card-mid glass-panel">
+            <div class="flex justify-between items-center mb-6">
+              <span class="text-xs font-mono text-[var(--color-ink-muted)]">sys.monitor_</span>
+              <Icon name="chart" size={16} class="text-[var(--color-brand)]" />
             </div>
-          ) : (
-            <div class="hero-fallback" aria-hidden="true">
-              <div class="hero-fallback-block hero-fallback-block-lg"></div>
-              <div class="hero-fallback-block hero-fallback-block-sm"></div>
+            <div class="grid grid-cols-2 gap-3 flex-grow">
+              <div class="bg-white/50 rounded-xl p-4 border border-[rgba(18,20,23,0.05)]">
+                <div class="text-[0.65rem] text-[var(--color-ink-muted)] mb-1 uppercase font-bold">Uptime</div>
+                <div class="text-xl font-bold text-[var(--color-ink)]">99.9%</div>
+              </div>
+              <div class="bg-white/50 rounded-xl p-4 border border-[rgba(18,20,23,0.05)]">
+                <div class="text-[0.65rem] text-[var(--color-ink-muted)] mb-1 uppercase font-bold">Latency</div>
+                <div class="text-xl font-bold text-[var(--color-ink)]">42ms</div>
+              </div>
+              <div class="col-span-2 bg-gradient-to-r from-[var(--color-brand-light)] to-transparent rounded-xl p-4 border border-[rgba(45,78,216,0.2)] mt-2">
+                <div class="w-full h-12 flex items-end gap-1">
+                  <div class="w-full bg-[var(--color-brand)]/40 h-[30%] rounded-t-sm"></div>
+                  <div class="w-full bg-[var(--color-brand)]/60 h-[50%] rounded-t-sm"></div>
+                  <div class="w-full bg-[var(--color-brand)]/80 h-[80%] rounded-t-sm"></div>
+                  <div class="w-full bg-[var(--color-brand)] h-[100%] rounded-t-sm"></div>
+                  <div class="w-full bg-[var(--color-brand)]/70 h-[60%] rounded-t-sm"></div>
+                  <div class="w-full bg-[var(--color-brand)]/90 h-[90%] rounded-t-sm"></div>
+                </div>
+              </div>
             </div>
-          )}
+          </div>
+
+          <!-- Card 1 (Front) - Code Editor -->
+          <div class="hero-card-front">
+            <div class="flex items-center gap-2 px-4 py-3 border-b border-white/10 bg-white/5">
+              <div class="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
+              <div class="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
+              <div class="w-3 h-3 rounded-full bg-[#27c93f]"></div>
+              <span class="ml-2 text-xs font-mono text-[var(--color-ink-subtle)]">optimize_graph.ts</span>
+            </div>
+            <div class="p-5 font-mono text-[0.8rem] leading-relaxed text-[#c9d1d9] overflow-hidden">
+              <pre><code><span class="text-[#ff7b72]">async function</span> <span class="text-[#d2a8ff]">resolveDependency</span>(
+  <span class="text-[#79c0ff]">node</span>: ActionNode
+): <span class="text-[#79c0ff]">Promise</span>&lt;Result&gt; {'{'}
+  <span class="text-[#ff7b72]">const</span> ctx = <span class="text-[#ff7b72]">await</span> initContext();
+
+  <span class="text-[#8b949e]">/* AI driven sub-routine */</span>
+  <span class="text-[#ff7b72]">if</span> (node.<span class="text-[#79c0ff]">isDynamic</span>) {'{'}
+    <span class="text-[#ff7b72]">return</span> <span class="text-[#ff7b72]">await</span> llm.predictPath(ctx);
+  {'}'}
+
+  <span class="text-[#ff7b72]">return</span> execute(node, ctx);
+{'}'}</code></pre>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="hero-capabilities panel-surface reveal" data-reveal style="--delay:220ms;">
-      {capabilityRows.map((item, index) => (
-        <div class="hero-capability" style={`--delay:${index * 80}ms;`}>
-          <div class="icon-box">
-            <Icon name={item.icon} size={16} class="text-[var(--color-ink)]" />
-          </div>
+    <!-- Proof Points + Capabilities -->
+    <div class="hero-bottom reveal" data-reveal style="--delay:220ms;">
+      <div class="hero-proof">
+        {proofRows.map((item) => (
           <div>
-            <p class="hero-capability-label">{item.label}</p>
-            <p class="hero-capability-text">{item.text}</p>
+            <div class="text-xs font-bold text-[var(--color-ink-subtle)] uppercase font-mono mb-1">{item.index}</div>
+            <div class="font-bold text-[var(--color-ink)] text-lg">{item.label}</div>
+            <div class="text-sm text-[var(--color-ink-muted)]">{item.text}</div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
+
+      <div class="hero-capabilities">
+        {capabilityRows.map((item) => (
+          <div class="hero-capability">
+            <div class="icon-box">
+              <Icon name={item.icon} size={16} class="text-[var(--color-ink)]" />
+            </div>
+            <div>
+              <h2 class="hero-capability-label">{item.label}</h2>
+              <p class="hero-capability-text">{item.text}</p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   </div>
 </section>
@@ -166,241 +195,168 @@ const proofRows = [
   }
 
   .hero-orb-a {
-    top: 11%;
-    right: -4rem;
-    width: clamp(14rem, 24vw, 22rem);
-    height: clamp(14rem, 24vw, 22rem);
-    background: radial-gradient(circle, rgba(45, 78, 216, 0.22) 0%, rgba(45, 78, 216, 0.05) 55%, transparent 74%);
+    top: -10%;
+    right: -5%;
+    width: clamp(14rem, 35vw, 35rem);
+    height: clamp(14rem, 35vw, 35rem);
+    background: radial-gradient(circle, rgba(45, 78, 216, 0.12) 0%, rgba(243, 238, 228, 0) 70%);
+    animation: floatOrb 20s ease-in-out infinite alternate;
   }
 
   .hero-orb-b {
-    bottom: 10%;
-    left: -6rem;
-    width: clamp(12rem, 18vw, 18rem);
-    height: clamp(12rem, 18vw, 18rem);
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.84) 0%, rgba(255, 255, 255, 0.14) 60%, transparent 78%);
+    top: -20%;
+    left: -10%;
+    width: clamp(12rem, 30vw, 30rem);
+    height: clamp(12rem, 30vw, 30rem);
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, rgba(243, 238, 228, 0) 70%);
+    animation: floatOrb 15s ease-in-out infinite alternate-reverse;
+  }
+
+  @keyframes floatOrb {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(-30px, 50px) scale(1.05); }
   }
 
   .hero-layout {
     position: relative;
     display: grid;
     gap: 2.75rem;
-    align-items: end;
+    align-items: center;
   }
 
-  .hero-brand {
-    font-size: 0.78rem;
+  .hero-site-title {
+    font-size: clamp(3rem, 6vw, 5.5rem);
     font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--color-ink-muted);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: var(--color-ink);
   }
 
   .hero-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.9rem;
-    margin-top: 2rem;
+    margin-top: 2.5rem;
   }
 
-  .hero-proof {
-    margin-top: 2.75rem;
-    display: grid;
-    gap: 0.85rem;
-    max-width: 35rem;
-  }
-
-  .hero-proof-line {
-    display: flex;
-    gap: 0.9rem;
-    align-items: baseline;
-    padding-top: 0.8rem;
-    border-top: 1px solid rgba(18, 20, 23, 0.08);
-    font-size: 0.92rem;
-    line-height: 1.55;
-    color: var(--color-ink-secondary);
-  }
-
-  .hero-proof-index {
-    min-width: 1.7rem;
-    font-size: 0.73rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    color: var(--color-ink-subtle);
-  }
-
-  .hero-visual-wrap {
+  /* Stacked cards */
+  .hero-cards-stack {
     position: relative;
+    height: 500px;
   }
 
-  .hero-visual {
-    position: relative;
-    overflow: hidden;
-    padding: 1.15rem;
-  }
-
-  .hero-visual::before {
-    content: "";
+  .hero-card-back {
     position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.44), rgba(255, 255, 255, 0.08));
+    top: 12px;
+    right: 0;
+    width: 420px;
+    height: 320px;
+    padding: 1.5rem;
+    transform: rotate(-6deg) translateX(40px) translateY(-20px) scale(0.9);
+    opacity: 0.4;
+    z-index: 1;
     pointer-events: none;
   }
 
-  .hero-visual-copy {
+  .hero-card-back:hover {
+    transform: rotate(-6deg) translateX(40px) translateY(-20px) scale(0.9);
+  }
+
+  .hero-card-mid {
     position: absolute;
-    top: 1.15rem;
-    left: 1.15rem;
+    top: 16px;
+    left: 48px;
+    width: 380px;
+    height: 360px;
+    padding: 1.5rem;
+    transform: rotate(3deg) translateX(-20px) translateY(20px) scale(0.95);
+    opacity: 0.8;
     z-index: 2;
-    max-width: 15rem;
-    padding: 0.85rem 1rem;
-    border-radius: 1.15rem;
-    background: rgba(255, 255, 255, 0.74);
-    border: 1px solid rgba(18, 20, 23, 0.08);
-    backdrop-filter: blur(16px);
+    display: flex;
+    flex-direction: column;
   }
 
-  .hero-visual-kicker {
-    margin-bottom: 0.35rem;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--color-brand);
+  .hero-card-mid:hover {
+    transform: rotate(3deg) translateX(-20px) translateY(20px) scale(0.95);
   }
 
-  .hero-visual-text {
-    font-size: 0.84rem;
-    line-height: 1.55;
-    color: var(--color-ink-secondary);
-  }
-
-  .hero-visual-stack {
-    position: relative;
-    min-height: 29rem;
-  }
-
-  .hero-shot {
+  .hero-card-front {
     position: absolute;
-    overflow: visible;
-    transition: z-index 0ms;
+    bottom: 0;
+    left: 0;
+    width: 400px;
+    height: 280px;
+    transform: translateX(-10%) translateY(10%);
+    z-index: 3;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    box-shadow: 0 30px 80px -20px rgba(45, 78, 216, 0.15);
+    display: flex;
+    flex-direction: column;
+    background: #121417;
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  .hero-shot-primary {
-    top: 3.8rem;
-    right: 3rem;
-    width: min(100%, 22rem);
-    animation: floatPrimary 8.5s ease-in-out infinite;
+  /* Bottom section */
+  .hero-bottom {
+    margin-top: 8rem;
+    padding-top: 3rem;
+    border-top: 1px solid rgba(18, 20, 23, 0.08);
+    display: grid;
+    gap: 3rem;
   }
 
-  .hero-shot-secondary {
-    left: 0.6rem;
-    bottom: 1rem;
-    width: min(58%, 13.5rem);
-    animation: floatSecondary 9.5s ease-in-out infinite;
-  }
-
-  .hero-shot-tertiary {
-    right: 1rem;
-    bottom: 0.5rem;
-    width: min(48%, 11rem);
-    animation: floatSecondary 10.5s ease-in-out infinite;
-  }
-
-  .hero-shot-image {
-    width: 100%;
-    aspect-ratio: 3 / 2;
-    object-fit: cover;
-    border-radius: 1.5rem;
-    box-shadow: 0 30px 55px -36px rgba(17, 23, 38, 0.34);
-    transition: transform 600ms ease;
-  }
-
-  .hero-shot:hover .hero-shot-image {
-    transform: scale(1.03);
-  }
-
-  .hero-shot:hover {
-    z-index: 10;
-  }
-
-  .hero-fallback {
-    position: relative;
-    min-height: 28rem;
-  }
-
-  .hero-fallback-block {
-    position: absolute;
-    border-radius: 1.5rem;
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.2)),
-      linear-gradient(135deg, rgba(45, 78, 216, 0.16), rgba(255, 255, 255, 0));
-    border: 1px solid rgba(18, 20, 23, 0.08);
-  }
-
-  .hero-fallback-block-lg {
-    inset: 4rem 2.25rem 1.25rem auto;
-    width: min(100%, 22rem);
-  }
-
-  .hero-fallback-block-sm {
-    left: 0.75rem;
-    bottom: 1rem;
-    width: min(58%, 13rem);
-    height: 13rem;
+  .hero-proof {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3rem;
   }
 
   .hero-capabilities {
-    position: relative;
-    z-index: 1;
     display: grid;
-    gap: 1.1rem;
-    margin-top: 2rem;
-    padding: 1rem;
+    gap: 1rem;
   }
 
   .hero-capability {
+    padding: 1.25rem;
+    border: 1px solid rgba(18, 20, 23, 0.08);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(8px);
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     gap: 0.95rem;
     align-items: start;
-    padding: 0.55rem;
   }
 
   .hero-capability-label {
     margin-bottom: 0.3rem;
-    font-size: 0.73rem;
+    font-size: 0.82rem;
     font-weight: 700;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--color-ink-subtle);
+    color: var(--color-ink);
   }
 
   .hero-capability-text {
-    font-size: 0.92rem;
+    font-size: 0.85rem;
     line-height: 1.65;
-    color: var(--color-ink-secondary);
-  }
-
-  @keyframes floatPrimary {
-    0%, 100% { transform: translate3d(0, 0, 0); }
-    50% { transform: translate3d(0, -8px, 0); }
-  }
-
-  @keyframes floatSecondary {
-    0%, 100% { transform: translate3d(0, 0, 0); }
-    50% { transform: translate3d(0, 10px, 0); }
+    color: var(--color-ink-muted);
   }
 
   @media (min-width: 960px) {
     .hero-layout {
-      grid-template-columns: minmax(0, 1.05fr) minmax(22rem, 0.95fr);
-      gap: 3rem;
+      grid-template-columns: minmax(0, 1fr) minmax(22rem, 1fr);
+      gap: 4rem;
+    }
+
+    .hero-bottom {
+      grid-template-columns: auto 1fr;
+      gap: 4rem;
     }
 
     .hero-capabilities {
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      margin-top: 1.2rem;
     }
   }
 
@@ -409,9 +365,8 @@ const proofRows = [
       min-height: auto;
     }
 
-    .hero-visual-stack,
-    .hero-fallback {
-      min-height: 26rem;
+    .hero-cards-stack {
+      display: none;
     }
   }
 
@@ -421,65 +376,12 @@ const proofRows = [
       -webkit-mask-image: radial-gradient(circle at 50% 25%, black 0, black 20%, transparent 68%);
       opacity: 0.4;
     }
-
-    .hero-proof {
-      margin-top: 2.1rem;
-    }
-
-    .hero-visual-copy {
-      position: relative;
-      top: 0;
-      left: 0;
-      max-width: none;
-      margin-bottom: 0.85rem;
-    }
-
-    .hero-visual-stack {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: auto auto;
-      gap: 0.6rem;
-      min-height: auto;
-    }
-
-    .hero-shot {
-      position: relative;
-    }
-
-    .hero-shot-primary {
-      grid-column: 1 / -1;
-      top: auto;
-      right: auto;
-      width: 80%;
-      margin: 0 auto;
-    }
-
-    .hero-shot-secondary {
-      bottom: auto;
-      left: auto;
-      width: 100%;
-    }
-
-    .hero-shot-tertiary {
-      bottom: auto;
-      right: auto;
-      width: 100%;
-    }
-
-    .hero-capabilities {
-      padding: 0.65rem;
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .hero-shot-primary,
-    .hero-shot-secondary,
-    .hero-shot-tertiary {
+    .hero-orb-a,
+    .hero-orb-b {
       animation: none;
-    }
-
-    .hero-shot-image {
-      transition: none;
     }
   }
 </style>
