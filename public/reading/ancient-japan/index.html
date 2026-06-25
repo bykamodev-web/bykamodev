@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>古代日本の謎 ― 伊勢神宮・天照大神をめぐる14の謎</title>
+<meta name="description" content="伊勢神宮はなぜ天照大神を「宮の外」へ出したのか。高田崇史『QED 伊勢の曙光』を入口に、元伊勢・倭姫命の巡幸、興玉神と猿田彦、太陽の道（レイライン）、天照の正体まで、史料と諸説で辿る全14話の探究ノート。">
+<meta name="keywords" content="伊勢神宮,天照大神,QED 伊勢の曙光,高田崇史,日本神話,古代史,元伊勢,倭姫命,崇神天皇,垂仁天皇,同床共殿,猿田彦,興玉神,太陽の道,レイライン,日本書紀,古事記,神宮の謎,伊勢 旅行">
+<meta name="author" content="bykamo">
+<link rel="canonical" href="https://bykamo.dev/reading/ancient-japan">
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="bykamo.dev">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="古代日本の謎 ― 伊勢神宮・天照大神をめぐる14の謎">
+<meta property="og:description" content="伊勢神宮はなぜ天照大神を「宮の外」へ出したのか。『QED 伊勢の曙光』を入口に、元伊勢・倭姫命の巡幸、太陽の道、天照の正体まで、史料と諸説で辿る全14話の探究ノート。">
+<meta property="og:url" content="https://bykamo.dev/reading/ancient-japan">
+<meta property="og:image" content="https://bykamo.dev/reading/ancient-japan/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="古代日本の謎 ― 伊勢神宮・天照大神をめぐる14の謎">
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="古代日本の謎 ― 伊勢神宮・天照大神をめぐる14の謎">
+<meta name="twitter:description" content="『QED 伊勢の曙光』を入口に、元伊勢・倭姫命の巡幸、太陽の道、天照の正体まで、史料と諸説で辿る全14話の探究ノート。">
+<meta name="twitter:image" content="https://bykamo.dev/reading/ancient-japan/ogp.png">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  :root{
+    --ink:#1c1a17; --ink-soft:#4a463f; --paper:#f7f4ec; --paper-2:#fffdf8;
+    --line:#e2dccd; --accent:#8a2b22; --accent-2:#2c3e50; --pic-bg:#eef0ea;
+    --pic-ink:#3a4a3f; --gold:#9a7b3f;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Hiragino Mincho ProN","Yu Mincho","YuMincho","Noto Serif JP",serif;
+    line-height:2.0; font-size:17px; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 20px;}
+
+  /* ---- ruby ---- */
+  ruby{ruby-position:over;}
+  rt{
+    font-size:.55em; color:var(--accent-2); font-weight:400;
+    font-family:"Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif;
+    letter-spacing:0; line-height:1;
+  }
+  body.no-ruby rt{display:none;}
+
+  /* ---- toolbar toggles ---- */
+  .toolbar{position:fixed; top:14px; left:14px; z-index:50; display:flex; gap:8px; flex-wrap:wrap;}
+  .toolbar button{
+    background:var(--paper-2); border:1px solid var(--line); color:var(--ink-soft);
+    font-family:"Hiragino Sans","Yu Gothic",sans-serif; font-size:12px;
+    padding:7px 12px; border-radius:20px; cursor:pointer; letter-spacing:.08em;
+    box-shadow:0 1px 4px rgba(0,0,0,.08);
+  }
+  .toolbar button:hover{background:#efe9da;}
+
+  /* ---- storyboard hide ---- */
+  body.hide-pic .pic{display:none;}
+  /* 「ナレ」ラベルは非表示にし、本文を一つのセクションとして読ませる */
+  .narr .tag{display:none;}
+  .narr{margin:0 0 1.1em;}
+  /* 台本由来の表示（シーン番号・対応Q・尺）は公開ページでは隠す */
+  .scene .s-num{display:none;}
+  .ep-head .meta span:not(.era){display:none;}
+
+  /* ---- epilogue hide ---- */
+  body.hide-epilogue #epilogue,
+  body.hide-epilogue .epilogue-part,
+  body.hide-epilogue .epilogue-toc,
+  body.hide-epilogue .tl-node[data-jump="epilogue"]{display:none;}
+
+  /* ---- annotation notes (hover popover) ---- */
+  .note{border-bottom:1px dotted var(--accent); cursor:help; text-underline-offset:3px;}
+  .note:hover,.note.open{background:rgba(138,43,34,.07);}
+  .popover{
+    position:absolute; z-index:60; max-width:300px; width:max-content;
+    background:var(--paper-2); border:1px solid var(--line); border-radius:8px;
+    box-shadow:0 6px 24px rgba(0,0,0,.18); padding:13px 15px;
+    font-family:"Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif;
+    font-size:13.5px; line-height:1.75; color:var(--ink); display:none;
+  }
+  .popover.show{display:block;}
+  .popover img{width:100%; border-radius:5px; margin-bottom:8px; display:block; background:#e8e4d8;}
+  .popover .cap{font-size:11px; color:var(--ink-soft); margin-bottom:8px;}
+  .popover .src{font-size:11px; margin-top:6px;}
+  .popover .src a{color:var(--gold);}
+
+  /* ---- per-episode notes list ---- */
+  .notes{margin:18px 0 4px; border-top:1px solid var(--line); padding-top:14px;}
+  .notes h4{font-family:"Hiragino Sans","Yu Gothic",sans-serif; font-size:12px; letter-spacing:.2em; color:var(--accent-2); margin:0 0 10px;}
+  .notes dl{margin:0; font-size:13.5px; line-height:1.85;}
+  .notes dt{font-weight:700; color:var(--accent); font-family:"Hiragino Sans","Yu Gothic",sans-serif; font-size:12.5px; margin-top:9px;}
+  .notes dd{margin:1px 0 0; color:var(--ink-soft);}
+  .notes dd a{color:var(--gold); font-size:11.5px; text-decoration:none;}
+
+  /* ---- chronological index ---- */
+  .chrono{margin-top:16px;}
+  .chrono summary{cursor:pointer; font-family:"Hiragino Sans","Yu Gothic",sans-serif; font-size:13px; color:var(--accent-2); letter-spacing:.05em;}
+  .chrono table{border-collapse:collapse; width:100%; margin-top:10px; font-family:"Hiragino Sans","Yu Gothic",sans-serif; font-size:12.5px;}
+  .chrono th,.chrono td{border:1px solid var(--line); padding:4px 9px; text-align:left;}
+  .chrono th{background:#efe9da; color:var(--accent-2); white-space:nowrap;}
+
+  /* ---- 地図（レイライン） ---- */
+  .mapwrap{margin:6px 0 10px;}
+  #ep6map{height:380px; border:1px solid var(--line); border-radius:6px; background:#dfe6e2; z-index:1;}
+  .mapcap{font-size:11.5px; color:var(--ink-soft); line-height:1.7; margin-top:7px; font-family:"Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif;}
+  .mapcap a{color:var(--gold);}
+  .leaflet-popup-content{font-family:"Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif; font-size:12.5px; line-height:1.6;}
+  .leaflet-popup-content b{color:var(--accent);}
+
+  /* ---- 探究メモ（開閉トグル） ---- */
+  .memo{margin:22px 0 4px; border:1px solid var(--line); border-left:4px solid var(--gold); border-radius:0 6px 6px 0; background:var(--paper-2);}
+  .memo > summary{cursor:pointer; list-style:none; padding:13px 16px; font-family:"Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif; font-size:13px; color:var(--accent-2); letter-spacing:.04em; font-weight:700;}
+  .memo > summary::-webkit-details-marker{display:none;}
+  .memo > summary::before{content:"▸ "; color:var(--gold);}
+  .memo[open] > summary::before{content:"▾ ";}
+  .memo .body{padding:2px 18px 16px; font-size:14.5px; line-height:1.95;}
+  .memo .body h5{font-family:"Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif; font-size:13px; color:var(--accent); margin:16px 0 4px; letter-spacing:.03em;}
+  .memo .body p{margin:6px 0;}
+  .memo .body .q{color:var(--ink-soft); border-bottom:1px dashed var(--line); padding-bottom:9px; margin-bottom:4px;}
+  .memo .body .caveat{font-size:13px; color:var(--ink-soft); background:#f1ece0; border-radius:5px; padding:10px 13px; margin-top:14px;}
+
+  /* ---- Cover ---- */
+  header.cover{
+    background:linear-gradient(160deg,#22201c 0%,#332e26 60%,#3d352a 100%);
+    color:#f3ede0; padding:78px 20px 60px; text-align:center;
+    border-bottom:3px solid var(--accent);
+  }
+  header.cover .eyebrow{letter-spacing:.5em;font-size:12px;color:var(--gold);margin:0 0 18px;padding-left:.5em;}
+  header.cover h1{font-size:clamp(28px,6vw,44px);margin:0 0 8px;font-weight:700;letter-spacing:.08em;}
+  header.cover .sub{font-size:14px;color:#cfc6b4;letter-spacing:.2em;margin-top:14px;}
+  header.cover .seal{display:inline-block;margin-top:28px;border:1px solid var(--gold);color:var(--gold);font-size:12px;letter-spacing:.3em;padding:6px 16px;border-radius:2px;}
+
+  /* ---- Intro ---- */
+  .intro{background:var(--paper-2);border:1px solid var(--line);border-radius:6px;padding:24px 26px;margin:40px 0;font-size:15px;color:var(--ink-soft);line-height:1.95;}
+  .intro h2{font-size:15px;margin:0 0 12px;color:var(--accent);letter-spacing:.1em;}
+  .intro ul{margin:0;padding-left:1.2em;}
+  .intro li{margin:4px 0;}
+  .intro b{color:var(--ink);}
+
+  /* ---- TOC ---- */
+  nav.toc{margin:40px 0 56px;}
+  nav.toc h2{font-size:14px;letter-spacing:.3em;color:var(--accent-2);border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:18px;}
+  .toc-chapter{margin-bottom:18px;}
+  .toc-chapter .ch-name{font-size:13px;color:var(--gold);letter-spacing:.2em;margin-bottom:6px;}
+  nav.toc ol{list-style:none;margin:0;padding:0;}
+  nav.toc li{margin:2px 0;}
+  nav.toc a{display:flex;gap:10px;align-items:baseline;text-decoration:none;color:var(--ink);padding:5px 8px;border-radius:4px;transition:background .15s;}
+  nav.toc a:hover{background:#efe9da;}
+  nav.toc .n{color:var(--accent);font-size:13px;min-width:2.4em;}
+
+  /* ---- Chapter divider ---- */
+  .chapter{margin:72px 0 40px;text-align:center;}
+  .chapter .kicker{font-size:12px;letter-spacing:.5em;color:var(--gold);}
+  .chapter h2{font-size:26px;margin:8px 0 0;letter-spacing:.12em;display:inline-block;border-bottom:2px solid var(--accent);padding-bottom:8px;}
+
+  /* ---- Episode ---- */
+  .episode{margin:48px 0;scroll-margin-top:20px;}
+  .ep-head{border-left:5px solid var(--accent);padding:4px 0 4px 16px;margin-bottom:28px;}
+  .ep-head .ep-no{font-size:13px;color:var(--accent);letter-spacing:.2em;display:block;margin-bottom:4px;}
+  .ep-head h3{font-size:23px;margin:0 0 10px;letter-spacing:.04em;}
+  .ep-head .meta{font-size:12.5px;color:var(--ink-soft);letter-spacing:.05em;}
+  .ep-head .meta span{display:inline-block;background:#efe9da;border:1px solid var(--line);border-radius:20px;padding:2px 11px;margin:0 6px 4px 0;}
+  .ep-head .meta .era{background:#2c3e50;color:#f3ede0;border-color:#2c3e50;}
+
+  /* ---- Scene ---- */
+  .scene{margin:0 0 26px;padding-bottom:24px;border-bottom:1px dashed var(--line);}
+  .scene:last-child{border-bottom:none;}
+  .scene .s-num{font-family:"Helvetica Neue",Arial,sans-serif;font-weight:700;font-size:12px;letter-spacing:.15em;color:#fff;background:var(--accent-2);display:inline-block;padding:3px 10px;border-radius:3px;margin-bottom:12px;}
+  .pic{background:var(--pic-bg);border-left:3px solid var(--pic-ink);border-radius:0 4px 4px 0;padding:11px 15px;font-family:"Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif;font-size:14px;color:var(--pic-ink);line-height:1.9;margin-bottom:14px;}
+  .pic .tag{font-weight:700;font-size:11px;letter-spacing:.2em;color:#fff;background:var(--pic-ink);border-radius:3px;padding:1px 7px;margin-right:9px;vertical-align:1px;}
+  .narr{font-size:17.5px;line-height:2.2;color:var(--ink);padding-left:2px;}
+  .narr .tag{display:inline-block;color:var(--accent);font-size:13px;letter-spacing:.1em;margin-right:6px;font-weight:700;}
+
+  .totop{text-align:right;margin:8px 0 0;}
+  .totop a{font-size:12px;color:var(--gold);text-decoration:none;letter-spacing:.1em;}
+  .totop a:hover{text-decoration:underline;}
+
+  /* ---- Timeline rail ---- */
+  .timeline{
+    position:fixed; top:0; right:24px; height:100vh;
+    width:188px; display:none; flex-direction:column; justify-content:center;
+    z-index:40; pointer-events:none;
+  }
+  .tl-inner{
+    max-height:100%; overflow:auto; padding:6px 0 6px 16px;
+    border-left:2px solid var(--line); position:relative; pointer-events:auto;
+    scrollbar-width:none;
+  }
+  .tl-inner::-webkit-scrollbar{display:none;}
+  .tl-title{font-family:"Hiragino Sans","Yu Gothic",sans-serif;font-size:11px;letter-spacing:.25em;color:var(--gold);margin:0 0 14px 2px;}
+  .tl-node{
+    position:relative; padding:7px 0 7px 2px; cursor:pointer;
+    font-family:"Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif;
+    opacity:.42; transition:opacity .25s, color .25s;
+  }
+  .tl-node::before{
+    content:""; position:absolute; left:-22px; top:11px;
+    width:8px; height:8px; border-radius:50%; background:var(--line);
+    border:2px solid var(--paper); transition:all .25s;
+  }
+  .tl-node .yr{font-size:12px;font-weight:700;color:var(--accent-2);display:block;letter-spacing:.02em;}
+  .tl-node .lb{font-size:10.5px;color:var(--ink-soft);display:block;margin-top:1px;}
+  .tl-node.on{opacity:1;}
+  .tl-node.on::before{background:var(--accent);width:11px;height:11px;left:-23.5px;box-shadow:0 0 0 3px rgba(138,43,34,.15);}
+  .tl-node.on .yr{color:var(--accent);}
+  @media(min-width:1180px){ .timeline{display:flex;} }
+
+  footer{margin-top:80px;padding:40px 20px 60px;text-align:center;background:#22201c;color:#9a9484;font-size:12px;letter-spacing:.15em;}
+  footer .line{margin:4px 0;}
+  footer .accent{color:var(--gold);}
+
+  @media(max-width:520px){ body{font-size:16px;} .narr{font-size:16.5px;} }
+</style>
+</head>
+<body class="hide-pic">
+
+<aside class="timeline" aria-label="年表">
+  <div class="tl-inner" id="tlInner">
+    <p class="tl-title">年 表</p>
+    <div class="tl-node" data-era="e-shindai" data-jump="ep14"><span class="yr">神代</span><span class="lb">神話の時代</span></div>
+    <div class="tl-node" data-era="e-suijin" data-jump="ep1"><span class="yr">崇神朝</span><span class="lb">疫病と追放</span></div>
+    <div class="tl-node" data-era="e-suinin" data-jump="ep2"><span class="yr">垂仁朝</span><span class="lb">倭姫の巡幸</span></div>
+    <div class="tl-node" data-era="e-yuryaku" data-jump="ep12"><span class="yr">5C 雄略朝</span><span class="lb">外宮の成立</span></div>
+    <div class="tl-node" data-era="e-jito" data-jump="ep4"><span class="yr">7C末 持統朝</span><span class="lb">692 初参拝・神話編纂</span></div>
+    <div class="tl-node" data-era="e-jogan" data-jump="ep5"><span class="yr">859 貞観</span><span class="lb">神階奉授</span></div>
+    <div class="tl-node" data-era="e-heian" data-jump="ep9"><span class="yr">9–10C 平安</span><span class="lb">天皇への祟り</span></div>
+    <div class="tl-node" data-era="e-sarashina" data-jump="ep13"><span class="yr">11C 平安後期</span><span class="lb">更級日記</span></div>
+    <div class="tl-node" data-era="e-tsukai" data-jump="ep13"><span class="yr">1289 鎌倉</span><span class="lb">通海参詣記</span></div>
+    <div class="tl-node" data-era="e-meiji" data-jump="ep4"><span class="yr">1869 明治</span><span class="lb">千年ぶりの親拝</span></div>
+    <div class="tl-node" data-era="e-kindai" data-jump="ep6"><span class="yr">近代〜現代</span><span class="lb">陽の道しるべ</span></div>
+    <div class="tl-node" data-era="e-now" data-jump="epilogue"><span class="yr">おわりに｜いま</span><span class="lb">伊勢を訪ねて</span></div>
+  </div>
+</aside>
+
+<header class="cover" id="top">
+  <p class="eyebrow">READING NOTES</p>
+  <h1>古代日本の謎</h1>
+  <div class="sub">伊勢神宮・天照大神をめぐる14の謎</div>
+  <div class="seal">史料を片手に、伊勢の不思議を辿る</div>
+</header>
+
+<div class="wrap">
+
+  <section class="intro">
+    <h2>このページについて</h2>
+    <p class="pr-note" style="font-size:.82em;opacity:.7;margin:-4px 0 16px;">※本ページにはプロモーション（アフィリエイト広告）を含みます。</p>
+    <p>伊勢へ旅行に行こうと思い立ったとき、私は伊勢のことも、日本の神話のこともほとんど知りませんでした。そんなときに出会ったのが、高田崇史さんの小説『<b>QED 伊勢の曙光</b>』（講談社文庫）です。伊勢を題材にしたこの一冊を手に取ったことで、日本の神話や、伊勢神宮の成り立ちといった、それまで知らなかった世界に触れることができました。</p>
+    <p>やがて、本のなかで示される数々の見方や推論にすっかり夢中になり、自分でも史料や資料を調べ、気になった「謎」を一つひとつ書きとめていきました。このページは、そうして集めた疑問と、それをめぐるいくつかの解釈をまとめたものです。</p>
+    <p>ひとつ断っておきたいのは、私は歴史の研究者ではない、ということです。ここに記したのは確定した史実ではなく、<b>「こう読むこともできる」という見方を、断定せずに並べたもの</b>です。事実・違和感・複数の解釈を分けながら、最後は問いを開いたまま終えるよう心がけました。本書を入口に、あなた自身でも伊勢の不思議を辿ってみてください。</p>
+
+    <!-- ▼ 書籍アフィリエイト枠（href を Amazon／楽天の実リンクに差し替える） -->
+    <aside class="book-card" style="display:flex;gap:16px;align-items:flex-start;border:1px solid rgba(0,0,0,.15);border-radius:12px;padding:16px;margin:18px 0;background:var(--pic-bg,#faf7f0);">
+      <a href="https://amzn.to/4w9guIH" rel="nofollow sponsored noopener" target="_blank" style="flex:0 0 auto;display:block;line-height:0;">
+        <img src="topimg.jpg" alt="QED 伊勢の曙光 書影" loading="lazy" width="110" style="width:110px;height:auto;border-radius:6px;box-shadow:0 3px 12px rgba(0,0,0,.18);display:block;">
+      </a>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:.76em;letter-spacing:.08em;opacity:.6;">この探究の入口になった一冊</div>
+        <div style="font-weight:700;font-size:1.08em;margin:2px 0 4px;">QED 伊勢の曙光</div>
+        <div style="font-size:.9em;opacity:.8;">高田崇史 著／講談社文庫</div>
+        <p style="font-size:.9em;line-height:1.7;margin:8px 0 12px;">伊勢神宮と日本神話の「謎」を、ミステリーの形で読み解いていく一冊。このページの問いの多くは、ここから生まれました。</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <!-- Amazonアソシエイトのリンクに差し替え -->
+          <a href="https://amzn.to/4w9guIH" rel="nofollow sponsored noopener" target="_blank" style="display:inline-block;padding:9px 18px;border-radius:8px;background:#ff9900;color:#111;font-weight:700;text-decoration:none;">Amazonで見る</a>
+          <!-- 楽天アフィリエイトのリンクに差し替え -->
+          <a href="https://hb.afl.rakuten.co.jp/ichiba/55389061.1b370cf4.55389062.2d34e8e4/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Frakutenkobo-ebooks%2F6f1c2c47eaa0315395e190a007118361%2F&link_type=hybrid_url&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJoeWJyaWRfdXJsIiwic2l6ZSI6IjI0MHgyNDAiLCJuYWiOjEsIm5hbXAiOiJyaWdodCIsImNvbSI6MSwiY29tcCI6ImRvd24iLCJwcmljZSI6MSwiYm9yIjoxLCJjb2wiOjEsImJidG4iOjEsInByb2QiOjAsImFtcCI6ZmFsc2V9" rel="nofollow sponsored noopener" target="_blank" style="display:inline-block;padding:9px 18px;border-radius:8px;background:#bf0000;color:#fff;font-weight:700;text-decoration:none;">楽天で見る</a>
+        </div>
+      </div>
+    </aside>
+    <ul>
+      <li><b>注釈</b>：本文中の<span class="note" data-note="このように、点線の語にカーソルを合わせる（スマホはタップ）と注釈が開きます。画像がある語は写真も表示。">点線の語</span>にカーソルを合わせる（スマホはタップ）と、比定地・諸説・出典の注が開きます。各話末にも「注・出典」を一覧で常時表示。</li>
+      <li><b>年表</b>（画面右・横幅の広い画面のみ）：スクロールすると、いま読んでいる回の時代が光ります。</li>
+      <li><b>関連画像</b>はWikimedia Commons等への外部リンクで表示するため、ネット接続時のみ見えます（オフラインでも本文・注釈は読めます）。</li>
+    </ul>
+    <p style="margin-top:14px;"><b>構成について</b>：本作は<b>年代順ではなく、謎を追う順（浅い→深い）</b>で進みます。だから最古の「神代」は冒頭ではなく、最終話（第14話）に置かれています。年表をスクロールすると最後に時代が最上段へ跳ね上がるのはそのためです。</p>
+    <details class="chrono">
+      <summary>▸ 年代順インデックス（時系列で辿りたいとき）</summary>
+      <table>
+        <tr><th>時代</th><th>主に対応する話</th></tr>
+        <tr><td>神代（神話）</td><td>14</td></tr>
+        <tr><td>崇神朝</td><td>1</td></tr>
+        <tr><td>垂仁朝</td><td>2・3・7・8</td></tr>
+        <tr><td>5C 雄略朝</td><td>12</td></tr>
+        <tr><td>7C末 持統朝／書紀</td><td>4(冒頭)・13(書紀)・14(国号)</td></tr>
+        <tr><td>859 貞観</td><td>5</td></tr>
+        <tr><td>9–10C 平安</td><td>9・10・11</td></tr>
+        <tr><td>11C／鎌倉1289</td><td>13(更級・通海)</td></tr>
+        <tr><td>1869 明治</td><td>4(結び)</td></tr>
+        <tr><td>近代〜現代</td><td>6</td></tr>
+      </table>
+    </details>
+  </section>
+
+  <nav class="toc">
+    <h2>目 次</h2>
+    <div class="toc-chapter">
+      <div class="ch-name">第1章　追放 ― 神が宮を出る</div>
+      <ol>
+        <li><a href="#ep1"><span class="n">第1話</span>宮を追われた最高神</a></li>
+        <li><a href="#ep2"><span class="n">第2話</span>元伊勢 ― 漂流する太陽神</a></li>
+        <li><a href="#ep3"><span class="n">第3話</span>巡幸の経済 ― 旅の費用は誰が出したのか</a></li>
+      </ol>
+    </div>
+    <div class="toc-chapter">
+      <div class="ch-name">第2章　空白 ― 天皇が伊勢を踏まなかった千年</div>
+      <ol>
+        <li><a href="#ep4"><span class="n">第4話</span>千年、誰も詣でなかった</a></li>
+        <li><a href="#ep5"><span class="n">第5話</span>怨霊神だったのか ― 親神イザナギ・イザナミ</a></li>
+        <li><a href="#ep6"><span class="n">第6話</span>同じ緯度の謎 ― 太陽の道</a></li>
+      </ol>
+    </div>
+    <div class="toc-chapter">
+      <div class="ch-name">第3章　内宮に隠された石 ― 興玉神と猿田彦</div>
+      <ol>
+        <li><a href="#ep7"><span class="n">第7話</span>聖域の隅の、社殿なき石</a></li>
+        <li><a href="#ep8"><span class="n">第8話</span>倭姫は、なぜ二度振り返ったのか</a></li>
+        <li><a href="#ep9"><span class="n">第9話</span>御卜 ― 確かめ続けずにいられない</a></li>
+        <li><a href="#ep10"><span class="n">第10話</span>猿田彦 ― 三つに分かれて生き残った神</a></li>
+      </ol>
+    </div>
+    <div class="toc-chapter">
+      <div class="ch-name">第4章　正体 ― 天照大神とは何者か</div>
+      <ol>
+        <li><a href="#ep11"><span class="n">第11話</span>祖神が、子孫を祟る</a></li>
+        <li><a href="#ep12"><span class="n">第12話</span>屋根は、神の性別を語るか</a></li>
+        <li><a href="#ep13"><span class="n">第13話</span>蛇であり、男神であった天照</a></li>
+        <li><a href="#ep14"><span class="n">第14話</span>もう一つの天孫降臨 ― 組み込まれた神</a></li>
+      </ol>
+    </div>
+    <div class="toc-chapter epilogue-toc">
+      <div class="ch-name">おわりに</div>
+      <ol>
+        <li><a href="#epilogue"><span class="n">おわりに</span>本を閉じ、伊勢へ</a></li>
+      </ol>
+    </div>
+  </nav>
+
+  <div class="chapter"><div class="kicker">CHAPTER 1</div><h2>追放 ― 神が宮を出る</h2></div>
+
+  <article class="episode" id="ep1">
+    <div class="ep-head"><span class="ep-no">第1話</span>
+      <h3>宮を追われた最高神</h3>
+      <div class="meta"><span class="era">崇神朝</span><span>対応Q 1〜3</span><span>約5分</span></div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>夜明け前の<ruby>伊勢神宮<rt>いせじんぐう</rt></ruby>。鳥居、深い森、川面。静かで<ruby>荘厳<rt>そうごん</rt></ruby>。カメラがゆっくり前進する。</div>
+      <div class="narr"><ruby>伊勢神宮<rt>いせじんぐう</rt></ruby>。日本でもっとも尊いとされる神社。ここに<ruby>祀<rt>まつ</rt></ruby>られているのは、太陽の<ruby>女神<rt>めがみ</rt></ruby>・<ruby>天照大神<rt>あまてらすおおみかみ</rt></ruby>。<ruby>皇室<rt>こうしつ</rt></ruby>の<ruby>祖神<rt>そしん</rt></ruby>であり、この国の神々の頂点に立つ神とされている。けれど、その「始まり」を記した古い記録をたどると、奇妙な一文に行き当たる。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>古代の宮殿の内部。ふたつの神の光がならんで祀られている。背景に『<ruby>日本書紀<rt>にほんしょき</rt></ruby>』の文字。</div>
+      <div class="narr">『<ruby>日本書紀<rt>にほんしょき</rt></ruby>』、<span class="note" data-note="崇神朝の宮は磯城瑞籬宮（しきのみずがきのみや）＝奈良県桜井市・三輪山の西麓に比定されるが、実在・年代・所在とも考古学的には未確定。天照はこの後、笠縫邑（檜原神社ほか諸説）へ移される。" data-img="https://commons.wikimedia.org/wiki/Special:FilePath/Mount_Miwa.jpg?width=640" data-cap="三輪山（崇神の宮の比定地・三輪山西麓の一帯）" data-src="https://commons.wikimedia.org/wiki/File:Mount_Miwa.jpg"><ruby>崇神天皇<rt>すじんてんのう</rt></ruby></span>の時代。<ruby>宮中<rt>きゅうちゅう</rt></ruby>の<ruby>大殿<rt>おおとの</rt></ruby>には、<ruby>二柱<rt>ふたはしら</rt></ruby>の神が「<ruby>同床共殿<rt>どうしょうきょうでん</rt></ruby>」――ひとつ屋根の下に並べて祀られていた。太陽の女神・天照大神と、この地を古くから治める神・<span class="note" data-note="『大和（やまと）』という国土そのものの魂を神格化した国つ神。宮を出されたのち市磯長尾市（いちしのながおち）が祀り、現在の大和神社（奈良県天理市）に至るとされる。すぐ近くの三輪山・大神神社に祀る大物主とは別の神。" data-img="https://commons.wikimedia.org/wiki/Special:FilePath/Oyamato-jinja%2C_haiden.jpg?width=640" data-cap="大和神社 拝殿（奈良県天理市）" data-src="https://commons.wikimedia.org/wiki/File:Oyamato-jinja%2C_haiden.jpg"><ruby>倭大国魂<rt>やまとのおおくにたま</rt></ruby></span>。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>国に<ruby>疫病<rt>えきびょう</rt></ruby>が広がる。民が土地を捨ててさまよい、王に背く者まで現れる。</div>
+      <div class="narr">ところが、国に<ruby>疫病<rt>えきびょう</rt></ruby>が広がり、多くの民が倒れた。生き残った者も土地を離れてさまよい、天皇に背く者まで現れる。天皇は二柱の神の「<ruby>神威<rt>しんい</rt></ruby>の強さ」を<ruby>畏<rt>おそ</rt></ruby>れた。そして天照大神を、<ruby>皇女<rt>こうじょ</rt></ruby>に託して宮の外へ移したのだ。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>神が宮の門の外へ送り出されていく。画面に大きく「なぜ？」。</div>
+      <div class="narr">ここで、立ち止まってみよう。日本でもっとも尊いはずの神が、なぜ、天皇の住まいから「出された」のか。本当の<ruby>祖神<rt>そしん</rt></ruby>なら、なぜ宮中に置いておけなかったのか。最高神の物語は、追放から始まっている。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>巻物に「① 疫病 → ② 民の<ruby>流離<rt>るり</rt></ruby>・<ruby>背叛<rt>はいはん</rt></ruby> → ③ 神を宮の外へ」と矢印が並ぶ。</div>
+      <div class="narr">しかも、記録の順番が気になる。まず疫病、次に民の<ruby>流離<rt>るり</rt></ruby>と<ruby>背叛<rt>はいはん</rt></ruby>、最後に神を動かす。書紀は「社会が乱れたから、その対処として神を分けた」と読める順序で書いている。流離・背叛が原因で、<ruby>放逐<rt>ほうちく</rt></ruby>が結果、というわけだ。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>その矢印が逆向きに回転する。地図の上で「神を祀る」と「土地を治める」が重なる図。</div>
+      <div class="narr">だが、こう読むこともできる。順序は、本当は逆だったのではないか――と。土地の<ruby>地主神<rt>じぬしがみ</rt></ruby>を大殿から追い出した、その<ruby>祭祀権<rt>さいしけん</rt></ruby>の移動こそが、<ruby>在地<rt>ざいち</rt></ruby>勢力の反発と離反を招いたのではないか。古代では、どの神を祀るかは、誰がその土地と人を統べるかと、ほとんど同じ意味だった。事実、この直後には<ruby>武埴安彦<rt>たけはにやすひこ</rt></ruby>の<ruby>謀反<rt>むほん</rt></ruby>が起きている。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>揺れて止まらない天秤。一方に「乱れたから動かした」、もう一方に「動かしたから乱れた」。視聴者へ正面から語りかける構図。</div>
+      <div class="narr">神を動かしたから人心が乱れたのか。人心が乱れたから神を動かしたのか。この記録は、八世紀の<ruby>編纂者<rt>へんさんしゃ</rt></ruby>が、伊勢神宮と<ruby>大和神社<rt>おおやまとじんじゃ</rt></ruby>の起源を正当化するために整えたもの。因果の向きさえ、書き手の都合で整えられた可能性がある。あなたは、どちらだと思うだろう。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>夜明け。伊勢の方角に光がひとつ灯る。カメラが静かに引いていく。</div>
+      <div class="narr">確かなことは、ひとつだけ。<ruby>崇神朝<rt>すじんちょう</rt></ruby>の実在も年代も、まだ確定していない。けれど書紀そのものが、この国の最高神を、物語の最初で「宮から出された神」として描いている。なぜ、追われたのか。その答えは、いまもナゾのままだ。</div>
+    </div>
+
+    <details class="memo">
+      <summary>探究メモ：大殿はどこか／神武から崇神まで安泰だったのか（クリックで開閉）</summary>
+      <div class="body">
+        <p class="q">問い：大殿はどこだったのか。神武天皇から崇神天皇までは安泰だったのか。天照の物語は崇神から始まったのか。</p>
+
+        <h5>大殿はどこか</h5>
+        <p>二神が同床共殿で祀られた「大殿」は、崇神天皇の宮＝<ruby>磯城瑞籬宮<rt>しきのみずがきのみや</rt></ruby>。奈良県桜井市・三輪山の西麓に比定されるが、所在も実在も考古学的には未確定（本文の点線注も参照）。</p>
+
+        <h5>崇神は10代目／「神武から崇神まで安定」だったのか</h5>
+        <p>崇神は神武（初代）から数えて10代目――ここは記紀の系譜どおり。だが「その前（2〜9代）は安定だったのか」と問うと、引っかかる。第2代<ruby>綏靖<rt>すいぜい</rt></ruby>から第9代<ruby>開化<rt>かいか</rt></ruby>までは、系譜（誰の子で、誰を后にして、何歳で死んだか）はあるのに、事件・物語がほぼ無い。いわゆる<ruby>欠史八代<rt>けっしはちだい</rt></ruby>。安定だったから書かれなかったのか、そもそも実在せず後から系譜を埋めるために挿入されたのか――学界の有力説は後者に傾く。つまり「安定の記録」ではなく「記録の空白」。系譜は、後から、繋ぐために作られる。</p>
+
+        <h5>西暦は分かっているのか</h5>
+        <p>分かっていない。記紀は神武即位を紀元前660年とするが、これは史実の年代ではない。①初期天皇の寿命・在位が異常に長くなる（100歳超が並ぶ）。②前660年は<ruby>讖緯説<rt>しんいせつ</rt></ruby>（<ruby>辛酉革命<rt>しんゆうかくめい</rt></ruby>＝辛酉の年に大変革が起きるという中国の予言思想）に基づき、推古朝あたりから逆算して置いた数字、というのが定説。神武の実年代は不明で、実在も確定しない。</p>
+        <p>崇神は事情が違う。天照の遷座・疫病・四道将軍・税制など具体的な事績があり、実在が論じられる最初の天皇とされる（神武と崇神の双方が「<ruby>御肇国天皇<rt>はつくにしらすすめらみこと</rt></ruby>＝はじめて国を治めた天皇」と呼ばれるのも暗示的で、実質的な初代は崇神では、という説がある）。崇神は書紀で<ruby>戊寅<rt>つちのえとら</rt></ruby>の年に<ruby>崩<rt>ほう</rt></ruby>じたとされ、崇神陵とされる<ruby>行燈山古墳<rt>あんどんやまこふん</rt></ruby>などの編年から、3世紀末〜4世紀前半の実在の王とみる見方がある。ただし推定で、確定ではない。</p>
+
+        <h5>「たまたま神武のとき災害が出た」のか</h5>
+        <p>混同に注意。疫病・百姓流離・天照を宮から出す災害が記されるのは、神武ではなく崇神の時代。神武の建国神話には東征の戦いはあるが、この災害は出てこない。崇神紀6年の「百姓流離、或有背叛」は、崇神の話。</p>
+
+        <h5>構図</h5>
+        <p>神武（初代）＝建国神話・実年代不明・実在不確定・前660年は思想的計算値／欠史八代（2〜9代）＝事績の空白・実在が疑われる／崇神（10代）＝疫病・天照遷座・四道将軍、実在の可能性が出る最初の王、3世紀末〜4世紀前半と推定。<br>そして記紀における“天照の物語”の実質的な起点は、崇神紀の「天照を宮から出した」。神話の天照（高天原のアマテラス）と、実在の地平の天照（崇神紀で宮を出される天照）の、接合点がここにある。</p>
+
+        <p class="caveat">留保：「崇神＝3世紀末〜4世紀前半」「欠史八代＝非実在」「神武前660年＝思想的計算値」は、いずれも有力説であって確定した史実ではない。古代天皇の実年代は、文献（干支・讖緯）と考古（古墳編年）の擦り合わせによる推定にすぎず、確実な西暦は誰も言えない。最も誠実な答えは――神武は不明（前660年は虚構の数字）、崇神は3世紀末〜4世紀前半と推定されるが未確定。</p>
+      </div>
+    </details>
+
+    <div class="totop"><a href="#top">▲ 目次へ</a></div>
+  </article>
+
+  <article class="episode" id="ep2">
+    <div class="ep-head"><span class="ep-no">第2話</span>
+      <h3>元伊勢 ― 漂流する太陽神</h3>
+      <div class="meta"><span class="era">垂仁朝（巡幸）</span><span>対応Q 4〜5</span><span>約5分</span></div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>日本地図。大和を起点に、無数の小さな宮の灯が点々と各地に灯っていく。</div>
+      <div class="narr">宮を出された<ruby>天照大神<rt>あまてらすおおみかみ</rt></ruby>は、すぐに伊勢へ着いたわけではなかった。<ruby>皇女<rt>こうじょ</rt></ruby>たちに<ruby>奉<rt>ほう</rt></ruby>じられ、各地を転々とする長い旅が始まる。落ち着く先を求めてさまよった、その仮の宮々を、人は「<ruby>元伊勢<rt>もといせ</rt></ruby>」と呼ぶ。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>古い社が次々に現れては消える。年数を示す数字が積み上がっていく。</div>
+      <div class="narr">いったい、いくつの宮を、何年かけてめぐったのか。よく語られるのは「24か所」「60〜90年」という数字。だが、ここに落とし穴がある。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>三冊の古書――『<ruby>日本書紀<rt>にほんしょき</rt></ruby>』『<ruby>皇太神宮儀式帳<rt>こうたいじんぐうぎしきちょう</rt></ruby>』『<ruby>倭姫命世記<rt>やまとひめのみことせいき</rt></ruby>』――が並び、それぞれ違う数字を示す。</div>
+      <div class="narr">巡幸ルートを詳しく記すのは、平安初期成立とされる『<span class="note" data-note="鎌倉中期の編纂とみられる書。768年撰と称するが、伊勢神道の教説のための創作性が高く、江戸期に外宮神官による偽作と批判された。元伊勢26宮・約80年もこの書に依る数えで、日本書紀・儀式帳とは食い違う。"><ruby>倭姫命世記<rt>やまとひめのみことせいき</rt></ruby></span>』。だが書紀には全行程も箇所数も書かれていない。<ruby>儀式帳<rt>ぎしきちょう</rt></ruby>はまた別の宮名を記す。三つの史料で、宮の数も名も食い違うのだ。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>「24」の数字に大きな「？」。最後の宮「<ruby>矢田宮<rt>やたのみや</rt></ruby>」に通し番号が浮かぶ。</div>
+      <div class="narr">では「24」とは何か。これはおそらく、最後のころの宮「<ruby>矢田宮<rt>やたのみや</rt></ruby>」が"元伊勢の第二十四"と番号づけられていた、その通し番号。巡幸地の総数ではない。世記に沿って数えると、<ruby>豊鍬入姫<rt>とよすきいりひめ</rt></ruby>が六宮、<ruby>倭姫<rt>やまとひめ</rt></ruby>が二十一宮、重複を引いて――<ruby>内宮<rt>ないくう</rt></ruby>系の元伊勢は、合わせて二十六宮になる。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>各宮の滞在年数が書き出され、合算されていく。「約80〜90年」。</div>
+      <div class="narr">年数も、世記に記された<ruby>奉斎<rt>ほうさい</rt></ruby>年数を足し上げると、合計でおよそ80〜90年規模。記憶していた「90年」は、年数の合計としては妥当な桁だった。「24」も「90年」も、実在の数字の"かけら"ではあった。ただ、指していた対象がずれていたのだ。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>『倭姫命世記』の本に「鎌倉時代の編纂か」の注釈。江戸の学者・<ruby>吉見幸和<rt>よしみゆきかず</rt></ruby>が批判する姿。</div>
+      <div class="narr">ここで、もうひとつ立ち止まる。この二十六宮も八十年も、すべて世記に依る数え。その世記は、768年の<ruby>撰<rt>せん</rt></ruby>と称しながら、実際は鎌倉中期の<ruby>編纂<rt>へんさん</rt></ruby>とみられている。江戸期にはすでに、<ruby>外宮<rt>げくう</rt></ruby>神官による<ruby>偽作<rt>ぎさく</rt></ruby>だと批判された。つまり巡幸の物語そのものが、<ruby>伊勢神道<rt>いせしんとう</rt></ruby>の教説のために中世に整えられた可能性が高い。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>伊勢国内に入ったあたりで、宮の滞在年数の表示が「-」になり、ルートが急に駆け足になる。</div>
+      <div class="narr">興味深いのは、伊勢国内に入った終盤、滞在年数の記載が急に途切れ、駆け足になること。そこに、別々の伝承を継ぎ合わせた"縫い目"が透けて見える気がしないだろうか。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>地図上の無数の灯が、ひとつ、伊勢で静かにまとまる。</div>
+      <div class="narr">「正確な数」は、典拠ごとに違う。それが、いちばん誠実な結論だ。確かなのは、この国の最高神が、落ち着く場所を求めて長くさまよった、と複数の伝承が語っていること。なぜ、これほど漂わねばならなかったのか。それは、まだ解かれていない。</div>
+    </div>
+    <div class="totop"><a href="#top">▲ 目次へ</a></div>
+  </article>
+
+  <article class="episode" id="ep3">
+    <div class="ep-head"><span class="ep-no">第3話</span>
+      <h3>巡幸の経済 ― 旅の費用は誰が出したのか</h3>
+      <div class="meta"><span class="era">垂仁朝〜律令期</span><span>対応Q 6</span><span>約5分</span></div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>旅する神の一行。長い行列。ふと「この旅のお金は？」という素朴な問いが浮かぶ。</div>
+      <div class="narr">数十年にわたる旅。神を奉じる一行は、食べ、泊まり、移動し続けた。では、その費用は、いったいどこから出ていたのか。素朴だが、誰も問わない問いだ。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>正史の巻物をめくっても、会計の記述はどこにもない。空白のページ。</div>
+      <div class="narr">まず正直に言えば、<ruby>正史<rt>せいし</rt></ruby>にこの答えはない。書紀も世記も、巡幸の経費を会計として記してはいない。だが、世記をよく読むと、行く先々で繰り返される、ひとつの「型」が見えてくる。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>各地で在地の首長が、神の前に土地・米・海の幸を差し出す。同じ動作が繰り返される。</div>
+      <div class="narr">その土地の首長――<ruby>国造<rt>くにのみやつこ</rt></ruby>や<ruby>県主<rt>あがたぬし</rt></ruby>が、神に土地や<ruby>神戸<rt>かんべ</rt></ruby>、<ruby>贄<rt>にえ</rt></ruby>を「<ruby>献上<rt>けんじょう</rt></ruby>」する。<ruby>紀国造<rt>きのくにのみやつこ</rt></ruby>が領地を、<ruby>伊賀<rt>いが</rt></ruby>国造が地を差し出す。神は財布を持って旅したのではない。迎えた側が、神への奉仕として貢いだのだ。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>三つの言葉が浮かぶ。「<ruby>神戸<rt>かんべ</rt></ruby>」「<ruby>贄<rt>にえ</rt></ruby>」「<ruby>御厨<rt>みくりや</rt></ruby>」。</div>
+      <div class="narr">神を支えた経済の単位は、歴史的には三つ。神社に<ruby>租<rt>そ</rt></ruby>を納める指定戸「<span class="note" data-note="特定の神社に租税（田租・庸調）を納めるよう指定された民戸。その貢納が神社の運営費の基盤になった。伊勢神宮にも早くから神戸が設定された。巡幸譚の『土地を献上した』は、後世の神戸設定を起源として崇神・垂仁朝に投影したもの、とも読める。"><ruby>神戸<rt>かんべ</rt></ruby></span>」。神への食物の貢納、とりわけ海産物の「<span class="note" data-note="神に供える食物の貢納、とりわけ海産物。伊勢は志摩の海とつながり、贄を貢ぐ『贄人（にえびと）』を抱えていたことが史料で裏づく。巡幸が海べり・川べりを通り伊勢に落ち着くのも、贄を安定供給できる土地を選んだ経済的合理と読める。"><ruby>贄<rt>にえ</rt></ruby></span>」。そして時代が下って広がる<ruby>荘園<rt>しょうえん</rt></ruby>「<span class="note" data-note="神饌（神の食料）を貢進する所領・荘園。平安末期以降、各地に伊勢神宮の御厨が広がり、御師（おんし）が伊勢信仰を広めた。巡幸譚は、こうした御厨＝収入源を各地に正当化する物語でもあった可能性がある。"><ruby>御厨<rt>みくりや</rt></ruby></span>」。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>巡幸の足跡が、そのまま各地の「伊勢の荘園」に変わっていく地図。</div>
+      <div class="narr">ここで問いがひっくり返る。巡幸の物語は、費用を"消費した"記録ではなく、各地に"伊勢へ貢ぐべき土地"を生み出す物語だったのではないか。「昔ここに天照大神が<ruby>坐<rt>ま</rt></ruby>した」という<ruby>由緒<rt>ゆいしょ</rt></ruby>が、その土地から伊勢へ貢納させる根拠になる。費用の出所を説明する話ではなく、費用の出所を生産する話。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>時代のずれを示すタイムライン。崇神・垂仁朝（古い）と、律令制度（七〜八世紀）が離れている。</div>
+      <div class="narr">ただし留保がいる。<ruby>崇神<rt>すじん</rt></ruby>・<ruby>垂仁朝<rt>すいにんちょう</rt></ruby>に、神戸や<span class="note" data-note="律令制（7〜8世紀に唐に倣って整えた国家制度）に基づく、租・庸・調などの税と、神戸・封戸による神社への貢納のしくみ。崇神・垂仁朝（仮に紀元前後〜3世紀）には未成立で、後世に確立した制度を起源神話の形で過去へ投影したもの、と読める。"><ruby>律令<rt>りつりょう</rt></ruby>的な貢納制度</span>が整っていたわけではない。それらは七〜八世紀以降のしくみ。つまり、後世に確立した神宮の経済基盤を、起源神話の形で過去へ投影したのが、この<ruby>巡幸譚<rt>じゅんこうたん</rt></ruby>だと読める。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>在地の首長が土地を差し出し、見返りに神の権威を背に受けて村人を見渡す。</div>
+      <div class="narr">ではなぜ、在地の首長は神に土地を差し出したのか。神の権威を借りて、自分の支配を正当化できたから――そんな政治経済の取り引きが、その底にあったのかもしれない。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>海辺を進む巡幸の列。最後に「常世の浪の重浪寄する国」=伊勢の海。</div>
+      <div class="narr">巡幸が一貫して海べり・川べりを通り、<ruby>贄<rt>にえ</rt></ruby>を安定して得られる伊勢に落ち着いたのも、偶然ではないのかもしれない。神の旅の経済。会計簿は残っていない。だからこそ、この空白に何が満ちていたのかを、私たちは想像するしかない。</div>
+    </div>
+    <div class="totop"><a href="#top">▲ 目次へ</a></div>
+  </article>
+
+  <div class="chapter"><div class="kicker">CHAPTER 2</div><h2>空白 ― 天皇が伊勢を踏まなかった千年</h2></div>
+
+  <article class="episode" id="ep4">
+    <div class="ep-head"><span class="ep-no">第4話</span>
+      <h3>千年、誰も詣でなかった</h3>
+      <div class="meta"><span class="era">692〜1869</span><span>対応Q 7〜8</span><span>約5分</span></div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>歴代天皇の肖像が、ずらりと長く連なる。その全員が、伊勢の方角に背を向けている。</div>
+      <div class="narr">皇室の<ruby>祖神<rt>そしん</rt></ruby>を祀る、<ruby>伊勢神宮<rt>いせじんぐう</rt></ruby>。ならば歴代の天皇は、さぞ足しげく<ruby>詣<rt>もう</rt></ruby>でた――と思うだろう。ところが、記録はまったく逆のことを語っている。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span><ruby>持統天皇<rt>じとうてんのう</rt></ruby>。692年。臣下が必死に止めるのを振り切って、伊勢へ向かう。</div>
+      <div class="narr">記録上、現役の天皇が初めて伊勢に<ruby>親拝<rt>しんぱい</rt></ruby>したのは、<span class="note" data-note="692年、中納言・三輪高市麻呂（みわのたけちまろ）が官位を賭して諫めるのを押し切った異例の親拝。理由は不明とされる。以後、明治1869年まで現役天皇の伊勢親拝は途絶える。" data-img="https://commons.wikimedia.org/wiki/Special:FilePath/Ise-Shrine_Naiku-Ujibashi-Torii.jpg?width=640" data-cap="伊勢神宮 内宮 宇治橋鳥居" data-src="https://commons.wikimedia.org/wiki/File:Ise-Shrine_Naiku-Ujibashi-Torii.jpg"><ruby>持統天皇<rt>じとうてんのう</rt></ruby></span>、692年。しかもそれは、<ruby>中納言<rt>ちゅうなごん</rt></ruby>・<ruby>三輪高市麻呂<rt>みわのたけちまろ</rt></ruby>が<ruby>官位<rt>かんい</rt></ruby>を賭して<ruby>諌<rt>いさ</rt></ruby>めるのを押し切った、異例の<ruby>強行<rt>きょうこう</rt></ruby>だった。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>その後の長い空白。年表に「692……（無）……1869」と、千年以上の空白が走る。</div>
+      <div class="narr">そして、その後が異常だ。持統のあと、千年以上、現役の天皇は誰ひとり伊勢を訪れていない。次に天皇が伊勢に立つのは、なんと<ruby>明治天皇<rt>めいじてんのう</rt></ruby>、1869年。実に約1170年ぶりのことだった。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>四つの言葉が重なって、伊勢を幾重にも囲む。「<ruby>私幣禁断<rt>しへいきんだん</rt></ruby>」「<ruby>斎王<rt>さいおう</rt></ruby>」「<ruby>死穢<rt>しえ</rt></ruby>」「<ruby>不外出<rt>ふがいしゅつ</rt></ruby>」。</div>
+      <div class="narr">なぜ、これほど長く。理由は層をなしている。天皇でさえ私的な<ruby>奉幣<rt>ほうべい</rt></ruby>を禁じた「<span class="note" data-note="天皇でさえ私的な奉幣（願掛け）を禁じた原則。皇室が独占・囲い込んだ結果、後世アマテラスは社会に浸透しない『空白の頂点』にもなった（第13話）。"><ruby>私幣禁断<rt>しへいきんだん</rt></ruby></span>」。天皇の代わりに伊勢へ送られた未婚の皇女「<ruby>斎王<rt>さいおう</rt></ruby>」。極端に忌まれた「<ruby>死穢<rt>しえ</rt></ruby>」。そして平安以降、天皇が京を出なくなったこと。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>だがその説明に「？」。それらは"行かなかった事実"を言い換えているだけではないか。</div>
+      <div class="narr">だが、立ち止まろう。これらは「行かなかった事実」を制度の言葉で説明しているだけで、「なぜそんな制度になったのか」には答えていない。ここから先は、確定した史実ではなく、いくつかの読み筋になる。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>三つの仮説のカード。「① もとは祖神でなかった」「② 七世紀末に頂点へ据えられた」「③ 拝めば王権の論理が崩れる」。</div>
+      <div class="narr">ひとつ。伊勢の神は、もともと天皇家の<ruby>祖神<rt>そしん</rt></ruby>ではなく、後から頂点に据え直されたのではないか。ふたつ。女神アマテラスを<ruby>皇統<rt>こうとう</rt></ruby>の祖としたのは七世紀末、<ruby>持統朝<rt>じとうちょう</rt></ruby>の神話<ruby>編纂<rt>へんさん</rt></ruby>で、比較的新しい観念ではないか。みっつ。天皇は祖神を"拝めない"。拝めば、自らが頂点だという王権の論理が崩れるから。起源とは、仰ぎ見るものではなく、背負うものだったのではないか。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>明治。儒教の「<ruby>孝<rt>こう</rt></ruby>」の文字。子が祖を拝みに行く、という新しい意味づけ。</div>
+      <div class="narr">では、なぜ明治で「解禁」されたのか。一説には、それは<ruby>神道<rt>しんとう</rt></ruby>回帰ではなく、<ruby>儒教<rt>じゅきょう</rt></ruby>的な「<ruby>孝<rt>こう</rt></ruby>」の論理だったという。子が祖を敬い拝みに行くのは当然――そう意味を入れ替えたとき、千年のタブーは破れた。畏れて遠ざける対象から、血統の祖として参じる対象へ。伊勢の意味そのものが、政治的に書き換えられた。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>千年踏まれなかった、神の足元。誰の足跡もない、まっさらな参道。</div>
+      <div class="narr">千年踏まれなかった足元――それは、祖神を畏れた証だったのか。それとも、起源が自明でなかったことの、沈黙の証拠だったのか。あなたは、どう感じるだろう。教科書的な答えは、まだ、ない。</div>
+    </div>
+    <div class="totop"><a href="#top">▲ 目次へ</a></div>
+  </article>
+
+  <article class="episode" id="ep5">
+    <div class="ep-head"><span class="ep-no">第5話</span>
+      <h3>怨霊神だったのか ― 親神イザナギ・イザナミ</h3>
+      <div class="meta"><span class="era">859年・貞観</span><span>対応Q 9〜11</span><span>約5分</span></div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>神々の系図。頂点に天照。その上に、親であるイザナギ・イザナミ。</div>
+      <div class="narr"><ruby>天照大神<rt>あまてらすおおみかみ</rt></ruby>には、親がいる。<ruby>国生<rt>くにう</rt></ruby>みの神、イザナギとイザナミ。神話で言えば、すべての源にいる<ruby>夫婦神<rt>めおとがみ</rt></ruby>だ。ところが、この<span class="note" data-note="神さまは『柱（はしら）』という助数詞で数える。一柱（ひとはしら）＝神さま一人、二柱＝二人の意。">二柱</span>の「格」をめぐって、奇妙な事実がある。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>『<ruby>日本三代実録<rt>にほんさんだいじつろく</rt></ruby>』の一文。859年、淡路・<ruby>伊弉諾神宮<rt>いざなぎじんぐう</rt></ruby>の神階が「無品 → 一品」へ。</div>
+      <div class="narr"><ruby>正史<rt>せいし</rt></ruby>『<ruby>日本三代実録<rt>にほんさんだいじつろく</rt></ruby>』。859年、<span class="note" data-note="祀るのは淡路島・伊弉諾神宮（イザナギの幽宮＝終焉の地の伝承を持つ社）。859年の神階昇叙の主役はこの淡路のイザナギで、イザナミや滋賀・多賀大社の話に広げると不正確になる。なお859年は“淡路の神に神階（位）が授けられた年”であって、淡路島ができた年ではない。淡路島はイザナギ・イザナミの国生み神話で最初に生まれた島とされ、淡路にはイザナギの幽宮（終焉の地）の伝承がある。" data-img="https://commons.wikimedia.org/wiki/Special:FilePath/Izanagi-jingu%2C_haiden-1.jpg?width=640" data-cap="伊弉諾神宮 拝殿（兵庫県淡路市）" data-src="https://commons.wikimedia.org/wiki/File:Izanagi-jingu%2C_haiden-1.jpg"><ruby>淡路<rt>あわじ</rt></ruby>のイザナギ</span>を祀る神の位が、<ruby>無品<rt>むほん</rt></ruby>から<ruby>一品<rt>いっぽん</rt></ruby>――<span class="note" data-note="国家が神社の神に授けた位（くらい）。皇族の品位（ほんい）に倣って一品〜四品、さらに正一位〜と続く等級があり、霊験や奉仕への褒賞として上げていく“昇進の階段”だった。無品（むほん）＝まだ位を授かっていない状態、一品（いっぽん）＝最高位。ただし伊勢の天照のような別格の神は、位を授ける側＝階段の外におり無階だった。"><ruby>神階<rt>しんかい</rt></ruby></span>の最高位へと昇った、と明記されている。逆に言えば、それ以前は「無品」、位を持たなかった。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>「天照の親が、九世紀まで無位だった？」という問いが大きく浮かぶ。</div>
+      <div class="narr">すると、こう考えたくなる。天照の両親は、九世紀前半まで位を持たない、低い扱いの神だったのか。さらに踏み込んで――もしかして、二柱は「<ruby>怨霊神<rt>おんりょうしん</rt></ruby>」だったから、抑えられていたのではないか、と。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span><ruby>黄泉<rt>よみ</rt></ruby>の国。腐乱し、全身から雷を生じるイザナミ。「一日に千人、くびり殺す」の言葉。</div>
+      <div class="narr">その疑いには、足場がある。イザナミは<ruby>黄泉<rt>よみ</rt></ruby>の国の支配者「<ruby>黄泉津大神<rt>よもつおおかみ</rt></ruby>」となり、「あなたの国の人を一日に千人殺す」と告げた。死と<ruby>祟<rt>たた</rt></ruby>りの顔を、はっきり持っている。だが――この仮説は、三つの点で崩れる。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>×印が三つ。「怨霊なら昇進させない」「無品=冷遇ではない」「祟るのはイザナミ、昇ったのはイザナギ」。</div>
+      <div class="narr">ひとつ。<ruby>怨霊<rt>おんりょう</rt></ruby>なら、神階で<ruby>褒賞<rt>ほうしょう</rt></ruby>昇進させる対象にはならない。<ruby>鎮魂<rt>ちんこん</rt></ruby>のための、別の祀り方になるはず。ふたつ。無品=低い、ではない。多くの神が九世紀の一斉<ruby>昇叙<rt>しょうじょ</rt></ruby>で位を整えられた。実際このイザナギは、その前から<span class="note" data-note="特定の神社に租を納めるよう割り当てられた戸。神戸（かんべ）とほぼ同義。位階がなくても封戸を与えられた神は、それなりの格があった証拠。"><ruby>神封<rt>しんぷ</rt></ruby></span>を持ち、のちに<span class="note" data-note="『延喜式』神名帳（927年）で、特に霊験あらたかとされた最高ランクの神社。無品でも、のちに名神大社に列したイザナギは“路傍の神”などではない。"><ruby>名神大社<rt>みょうじんたいしゃ</rt></ruby></span>に列している。みっつ。死と祟りの顔を持つのは主にイザナミなのに、八五九年に昇ったのは淡路のイザナギ。主語がずれている。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>系図で、親（イザナギ・昇進する側）と子（天照・位の外）の位置が逆立ちする。</div>
+      <div class="narr">だが、消えない違和感が残る。最高神である子・天照は、そもそも神階の"外"にいた。位を授ける側の頂点だから、位を持たない。一方、親のイザナギは、位を授けられて昇っていく一柱。創造の順序（親→子）と、国家<ruby>祭祀<rt>さいし</rt></ruby>の地位（子=超越、親=昇進対象）が、逆立ちしている。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span><ruby>國學院<rt>こくがくいん</rt></ruby>の解説。イザナミの死から<ruby>禊<rt>みそぎ</rt></ruby>が生まれ、その禊から天照が生まれる流れ。</div>
+      <div class="narr">ではイザナミの暗さは、何だったのか。それは「冷遇の理由」ではなく、皇祖神が生まれるための"母胎"だったのかもしれない。イザナミが死に、黄泉の<ruby>穢<rt>けが</rt></ruby>れが生じ、イザナギがそれを<ruby>禊<rt>みそぎ</rt></ruby>で<ruby>祓<rt>はら</rt></ruby>った――その禊から、天照は生まれた。光の頂点の裏に、必ず暗い死を置く。神話は、その対をわざわざ作ったのだ。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>親神の位が後から整えられていく様子。「頂点は後から作られた？」の問い。</div>
+      <div class="narr">「怨霊だったから無品」――魅力的だが、成立しない。けれど、親神の位が九世紀まで遅れたという事実は、別の仮説に状況証拠を加える。天照を頂点とする系譜は、神々の自然な序列ではなく、王権の都合で組み上げられたのではないか、と。あなたは、この逆立ちを、どう読むだろう。</div>
+    </div>
+
+    <details class="memo">
+      <summary>探究メモ：国生みは「淡路を統治した記憶」か？（クリックで開閉）</summary>
+      <div class="body">
+        <p class="q">問い：イザナギ・イザナミが淡路島を統治したから「国生み」と解釈すればいい？</p>
+        <p>一つの解釈としては成り立つが、そのまま等号で結ぶと飛躍がある。三つの層に分ける。</p>
+
+        <h5>① 神話が言うのは「生む」であって「統治」ではない</h5>
+        <p>『古事記』の<ruby>国生<rt>くにう</rt></ruby>みは、イザナギ・イザナミが<ruby>天沼矛<rt>あめのぬぼこ</rt></ruby>で海をかき混ぜ、淡路（<ruby>淡道之穂之狭別島<rt>あわじのほのさわけのしま</rt></ruby>）を筆頭に島々を「生んだ」＝創造の話。淡路に関しては、治めたのではなく、国生みを終えて最後に隠れた地＝<ruby>幽宮<rt>かくれみや</rt></ruby>とされる。語彙は「生む」「隠れる」であって、「統治」ではない。</p>
+
+        <h5>② 「記憶の投影」としてなら読める（エウヘメリズム）</h5>
+        <p>神話を、実在の集団の記憶の擬人化として読む手法は有効。ただしその場合も「統治したから」より、「なぜ淡路が最初に生まれるのか」を問うほうが据わりがよい。淡路は<ruby>御食国<rt>みけつくに</rt></ruby>（塩・海産物を朝廷に供給した特別な土地）、瀬戸内・<ruby>紀淡海峡<rt>きたんかいきょう</rt></ruby>の航路の要、<ruby>海人<rt>あま</rt></ruby>族の地。王権が淡路に経済・航海で深く依存した重みが、『最初に生まれる島』という形で神話に投影された、と読める。</p>
+
+        <h5>③ さらに後の「制度」の層＝859年の神階</h5>
+        <p>その“要の地・淡路の神”に、国家がさらに後の時代に位（<ruby>神階<rt>しんかい</rt></ruby>＝<ruby>一品<rt>いっぽん</rt></ruby>）を授けたのが859年。島でも社でもなく、“神に位が上がった”年。</p>
+
+        <p class="caveat">まとめ：「淡路を統治した→国生み」は可能な仮説だが、断定はできない。より誠実には――淡路が王権にとって（塩・海産物・航路で）要だったことが、国生み神話の筆頭という形に反映し、イザナギ信仰もそこに根づいた。創造（神話）／在地の重要性（投影）／神階（制度）の三層で見ると、混ざらずに整理できる。</p>
+      </div>
+    </details>
+
+    <div class="totop"><a href="#top">▲ 目次へ</a></div>
+  </article>
+
+  <article class="episode" id="ep6">
+    <div class="ep-head"><span class="ep-no">第6話</span>
+      <h3>同じ緯度の謎 ― 太陽の道</h3>
+      <div class="meta"><span class="era">近代の発見</span><span>対応Q 12〜13</span><span>約5分</span></div>
+    </div>
+
+    <div class="mapwrap">
+      <div id="ep6map"></div>
+      <p class="mapcap">伊弉諾神宮（淡路）を中心とした聖地の位置関係。<b style="color:var(--accent)">赤線</b>＝北緯約34°27′の東西ライン（伊弉諾・藤原京・伊勢内宮・対馬の海神神社がほぼ同緯度）、<b style="color:var(--gold)">金の点線</b>＝夏至・冬至の日の出入りの方向。マーカーをクリックすると説明が出ます。※緯度の一致は事実だが、古代に意図して配置した証拠はなく、レイライン説は近代の発見（第6話本文参照）。地図 © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors（ネット接続時に表示）。</p>
+    </div>
+
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>日本列島に、一本の水平な線（北緯34度27分）。線上に淡路・藤原京・伊勢が並ぶ。</div>
+      <div class="narr"><ruby>淡路島<rt>あわじしま</rt></ruby>のイザナギ神宮。奈良の<ruby>藤原京<rt>ふじわらきょう</rt></ruby>。そして<ruby>伊勢神宮<rt>いせじんぐう</rt></ruby>。この三つが、ほぼ同じ<ruby>緯度<rt>いど</rt></ruby>――一本の東西線の上に並ぶ、という。「<ruby>陽<rt>ひ</rt></ruby>の道しるべ」と呼ばれる、不思議な配置だ。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>イザナギ神宮を中心に、真東に伊勢、真西に対馬、夏至・冬至の日の出没方向に諏訪・出雲・熊野・高千穂。</div>
+      <div class="narr">イザナギ神宮から見て、真東に伊勢、真西に<ruby>対馬<rt>つしま</rt></ruby>の<ruby>海神神社<rt>かいじんじんじゃ</rt></ruby>。<ruby>夏至<rt>げし</rt></ruby>の日の出に<ruby>諏訪<rt>すわ</rt></ruby>、日没に<ruby>出雲<rt>いずも</rt></ruby>。<ruby>冬至<rt>とうじ</rt></ruby>の日の出に<ruby>熊野<rt>くまの</rt></ruby>、日没に<ruby>高千穂<rt>たかちほ</rt></ruby>。名だたる聖地が、太陽の軌道に沿って並ぶ。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>石碑「ひのわかみやと陽の道しるべ」。傍らに現代の宮司と測量機器。</div>
+      <div class="narr">だが、立ち止まろう。この一致を"古代人が意図して配置した"という証拠は、ない。この線を見出したのは近代の<ruby>宮司<rt>ぐうじ</rt></ruby>で、現代の<ruby>測量<rt>そくりょう</rt></ruby>で引いたものだと、<ruby>碑文<rt>ひぶん</rt></ruby>自身が認めている。古代の設計意図を示す文献は、存在しない。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>「数百メートル〜1kmのズレ」という指摘。懐疑的なナレーション。</div>
+      <div class="narr">さらに、数値は厳密ではない――そう指摘する声もある。神宮どうしで数百メートルから一キロのズレがある、と。一見、もっともらしい。だが、ここにも罠がある。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>伊勢〜対馬680kmの巨大なスケール。その上に、1kmの誤差がごく小さく示される。</div>
+      <div class="narr">誤差は、<ruby>絶対値<rt>ぜったいち</rt></ruby>では意味をなさない。比で見なければ。伊勢から対馬まで、この線は約680キロ。それに対する一キロ未満のズレは、わずか0.1〜0.15パーセント。角度にすれば、太陽の見かけの大きさの、さらに七分の一。680キロ先の的を、それだけの精度で射抜いていることになる。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>春分の太陽が真東から昇り、真西へ沈む。古代人が南中高度・北極星で緯度を測る図。</div>
+      <div class="narr">そして――同じ緯度の土地を選ぶことは、古代の技術でも、実は不可能ではない。<ruby>春分<rt>しゅんぶん</rt></ruby>・<ruby>秋分<rt>しゅうぶん</rt></ruby>の太陽や、<ruby>北極星<rt>ほっきょくせい</rt></ruby>の高度を測れば、緯度は出る。<ruby>経度<rt>けいど</rt></ruby>よりずっと易しい。だから高精度であること自体は、超自然でも<ruby>捏造<rt>ねつぞう</rt></ruby>でもなく、古代の太陽観測の範囲内かもしれない。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>二つの天秤。「高精度=事実」と「古代の意図=未証明」が、別々に置かれる。</div>
+      <div class="narr">ここで分けねばならない。「精度が高い」ことと「古代に意図して配置した」ことは、別の問題だ。緯度の一致は、無視できない高精度で実在する。けれど、それを古代の設計とする文献はなく、発見は近代。この二つを、どちらも薄めずに、同時に持つのが正しい。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>夕日が、淡路から伊勢へと、線の上をなぞるように沈んでいく。</div>
+      <div class="narr">偶然にしては、出来すぎている。意図と呼ぶには、証拠が足りない。<ruby>三輪山<rt>みわやま</rt></ruby>から伊勢へ続く「太陽の道」の議論も、いまだ決着していない。古代の人々は、太陽と祖先と聖地を、本当に一本の線で結んでいたのか。判断は、あなたに委ねたい。</div>
+    </div>
+
+    <details class="memo">
+      <summary>探究メモ：なぜ真北・真南には何も置かないのか（クリックで開閉）</summary>
+      <div class="body">
+        <p class="q">問い：東西や夏至・冬至の斜めはわかる。でも、<ruby>真北<rt>まきた</rt></ruby>・<ruby>真南<rt>まみなみ</rt></ruby>にはどうして何も置かなかったのか？</p>
+
+        <h5>① このラインは全部「太陽」でできている</h5>
+        <p>並ぶ方向は、すべて太陽が地平線に触れる方角――真東西＝春分秋分の日の出入り、北東・北西＝夏至、南東・南西＝冬至。日本の緯度では、太陽が昇るのは「北東〜東〜南東」、沈むのは「北西〜西〜南西」の弧の中だけ。真北からも真南からも、太陽は昇らず沈まない（真南は<ruby>南中<rt>なんちゅう</rt></ruby>＝正午の一瞬で、地平線上の“点”ではない）。だから“陽の道しるべ”に真北・真南の印が無いのは、配置漏れではなく設計上の必然。</p>
+
+        <h5>② 南北は「別の信仰」の領分</h5>
+        <p>南北軸を立てるなら、それは太陽ではなく星――真北＝<ruby>北極星<rt>ほっきょくせい</rt></ruby>（<ruby>北辰<rt>ほくしん</rt></ruby>）を祀る<ruby>妙見<rt>みょうけん</rt></ruby>信仰・北辰信仰という別系統。真南は太陽信仰では特別な到達点がない。東西軸＝太陽、南北軸＝星、と司るものが違う。淡路のレイラインは太陽の体系なので、星の軸は最初から土俵が別。</p>
+
+        <h5>③ 地理と、見る枠組み</h5>
+        <p>実際、淡路から真南は<ruby>紀伊水道<rt>きいすいどう</rt></ruby>〜太平洋の海で有名な社がなく、真北にも目立つ大社が並ばない。そして――“線”を何で定義するかが、何が並ぶかを決める。太陽というレンズを選べば、出てくるのは東西＋夏至冬至の斜めだけ。南北の空白は、世界がそうだからというより、選んだレンズがそう切り取るからでもある。</p>
+
+        <p class="caveat">パターンは半分は地形に、半分は見る枠組みに宿る――第6話本文の「高精度は事実／古代の意図は未証明」と同じ姿勢。</p>
+      </div>
+    </details>
+
+    <div class="totop"><a href="#top">▲ 目次へ</a></div>
+  </article>
+
+  <div class="chapter"><div class="kicker">CHAPTER 3</div><h2>内宮に隠された石 ― 興玉神と猿田彦</h2></div>
+
+  <article class="episode" id="ep7">
+    <div class="ep-head"><span class="ep-no">第7話</span>
+      <h3>聖域の隅の、社殿なき石</h3>
+      <div class="meta"><span class="era">垂仁朝〜中世</span><span>対応Q 14〜15, 17</span><span>約5分</span></div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span><ruby>内宮<rt>ないくう</rt></ruby>の概念図。中心の<ruby>正殿<rt>しょうでん</rt></ruby>を四重の垣が同心円状に囲む。参拝者は最外周まで。</div>
+      <div class="narr"><ruby>内宮<rt>ないくう</rt></ruby>の<ruby>正宮<rt>しょうぐう</rt></ruby>は、中心の<ruby>正殿<rt>しょうでん</rt></ruby>を四重の垣が囲む。<ruby>瑞垣<rt>みずがき</rt></ruby>、<ruby>内玉垣<rt>うちたまがき</rt></ruby>、<ruby>外玉垣<rt>とたまがき</rt></ruby>、<ruby>板垣<rt>いたがき</rt></ruby>。私たちが立てるのは、その最も外まで。<ruby>神職<rt>しんしょく</rt></ruby>以外、奥へは入れない。厳重に隔てられた、その聖域の中に――奇妙なものが祀られている。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span><ruby>御垣内<rt>みかきうち</rt></ruby>の西北の隅。社殿はなく、石畳の上に、西を向いて鎮座する神。</div>
+      <div class="narr"><ruby>御垣内<rt>みかきうち</rt></ruby>の西北の隅、<ruby>乾<rt>いぬい</rt></ruby>の方角。そこに社殿はない。ただ石畳の上に、西を向いて祀られる神がいる。その名は、<span class="note" data-note="興玉神を猿田彦＝地主神と同定するのは『神名秘書』など中世以降の文献に依る部分が大きく、本来の正体には諸説ある。確かなのは、社殿なき石が御垣内の西北隅に西向きで祀られている事実。" data-img="https://commons.wikimedia.org/wiki/Special:FilePath/Ise-Shrine_Naiku-Ujibashi-Torii.jpg?width=640" data-cap="伊勢神宮 内宮（宇治橋鳥居）" data-src="https://commons.wikimedia.org/wiki/File:Ise-Shrine_Naiku-Ujibashi-Torii.jpg"><ruby>興玉神<rt>おきたまのかみ</rt></ruby></span>。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>『<ruby>神名秘書<rt>しんめいひしょ</rt></ruby>』の文字。興玉神の正体=「大宮所の地主神」、すなわち猿田彦。</div>
+      <div class="narr">その正体は、この土地の<ruby>地主神<rt>じぬしがみ</rt></ruby>。中世の文献は、これを<ruby>猿田彦<rt>さるたひこ</rt></ruby>、あるいはその子孫・<ruby>大田命<rt>おおたのみこと</rt></ruby>の別名とする。「みちひらき」の神だ。つまり――皇祖神・天照を祀る最も神聖な垣の内側に、その土地の"もとの持ち主"が、共に祀られている。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>問いの提示。「なぜ<ruby>天<rt>あま</rt></ruby>つ神の聖域の核心に、<ruby>国<rt>くに</rt></ruby>つ神の地主神がいるのか？」</div>
+      <div class="narr">なぜ、外から来た<ruby>天<rt>あま</rt></ruby>つ神の聖域の核心に、もとからその土地にいた<ruby>国<rt>くに</rt></ruby>つ神が同居しているのか。これは偶然ではない。日本の<ruby>神祀<rt>かみまつ</rt></ruby>りの、最も古い作法に関わっている。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>古代の観念図。土地には先住の地主神がいて、その許しなしに新しい神は祀れない。</div>
+      <div class="narr">古代では、ある土地にはもともと、それを<ruby>領有<rt>りょうゆう</rt></ruby>する地主神がいると考えた。そこへ別の神を迎えるなら、先住の地主神の承認と<ruby>鎮撫<rt>ちんぶ</rt></ruby>がいる。粗末にすれば<ruby>祟<rt>たた</rt></ruby>る。だから天照を<span class="note" data-note="『日本書紀』天孫降臨段の一書では、猿田彦が自らの還る地を『吾は伊勢の狭長田の五十鈴の川上に到る』と名指しする。後に天照が鎮座する五十鈴の地は、もとは猿田彦の地だった、とも読める。なお『倭姫命世記』が伝える“天降りの金鈴・逆太刀”や、五十鈴＝金鈴語源説は中世伊勢神道の層で、創作性が高い。"><ruby>五十鈴川<rt>いすずがわ</rt></ruby></span>のほとりに迎えるとき、土地の地主神を、追い出すのでも下に置くのでもなく、最奥の聖域に共に祀った。迎え入れてもらうための、礼として。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span><ruby>天孫降臨<rt>てんそんこうりん</rt></ruby>の場面。地上の入口で、猿田彦が天つ神の一行を出迎え、道案内する。</div>
+      <div class="narr">しかも、その地主神が猿田彦だというのが効いてくる。猿田彦は、<ruby>天孫降臨<rt>てんそんこうりん</rt></ruby>のとき、地上の入口で天つ神を出迎え、道案内をした国つ神。外来の神を、その土地へ導き入れる役割を持つ神だ。天照を伊勢に迎えるのに、これ以上ふさわしい地主神はいない。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>正殿のすぐそば、西を向いたまま動かない地主神の石。「ここは元々あなたの土地ではなかった」の字幕。</div>
+      <div class="narr">考えてみてほしい。もし天照が、<ruby>太初<rt>たいしょ</rt></ruby>からその土地に当然のように<ruby>坐<rt>ま</rt></ruby>す絶対の神なら、わざわざ"土地のもとの持ち主"を、最奥に祀り続ける必要はない。にもかかわらず、地主神は聖域の核心に、西を向いて座り続けている。これは「この土地は、もともと天照のものではなかった」という記憶を、神宮自身が建築の中に保存し続けている、ということではないか。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>光（正殿）と、その足元の影（西北隅の石）が、一枚の絵に収まる。</div>
+      <div class="narr">排除でも、否定でもなく、<ruby>鎮撫<rt>ちんぶ</rt></ruby>と同居。光の頂点の足元に、影が、礼をもって祀られたまま残っている。ただし、興玉神を猿田彦と結ぶのは中世以降の解釈が重なってもいる。確かなのは、社殿も持たぬ地主神が、最奥に西を向いて在り続けている、その事実だけだ。</div>
+    </div>
+
+    <details class="memo">
+      <summary>探究メモ：土地は誰から誰へ渡ったのか／いざこざは起きたのか（クリックで開閉）</summary>
+      <div class="body">
+        <p class="q">問い：天照一行が伊勢に来て、猿田彦に「土地をくれ」と言って渡してもらった？　そこでいざこざは起きた？</p>
+
+        <h5>① 誰が誰に渡したか（前提の修正）</h5>
+        <p><ruby>猿田彦<rt>さるたひこ</rt></ruby>は天孫降臨（ニニギの代）の神、<ruby>倭姫命<rt>やまとひめのみこと</rt></ruby>は垂仁朝の斎王で、世代が大きく違う。二人が直接やり取りする場面は神話の時間構造の中にない。実際に土地を渡したのは猿田彦の子孫・<ruby>大田命<rt>おおたのみこと</rt></ruby>（<ruby>宇治土公<rt>うじのつちぎみ</rt></ruby>の祖）で、倭姫命を<ruby>五十鈴川<rt>いすずがわ</rt></ruby>の川上へ先導し、土地を「献上」した。『日本書紀』の一書では、猿田彦自身が「吾は伊勢の五十鈴の川上に到る」と、自らの還る地として五十鈴川上を名指ししている。ニュアンスも、天照側が「くれ」と要求したのではなく、在地側が「お供えします」と差し出す型（＝勝者の語りの典型）。</p>
+
+        <h5>② いざこざは起きたのか</h5>
+        <p>記録の上では、起きていない。記紀も倭姫命世記も、これを平和な「献上」「歓待」として描く。争いも交渉決裂も出てこない。大田命は土地を称えて差し出し、見返りに子孫の宇治土公は永代の祭祀職を得た。表向きは円満そのもの。</p>
+
+        <h5>③ ただし“いざこざが無いことになっている”滑らかさが引っかかる</h5>
+        <p>本作が拾ってきた影：猿田彦自身は別伝（椿大神社／書紀一書）で<ruby>阿邪訶<rt>あざか</rt></ruby>で溺れて死ぬ非業の最期を持つ（第10話）／興玉神を聖域最奥で鎮撫し続けるのは、放置すれば祟りうるから＝まだ収まっていない何かの気配（第7・9話）／倭姫の二度振り返りは、受け取る側に生じる構造的な負い目とも読める（第8話）。</p>
+
+        <p class="caveat">まとめ：記録に“いざこざ”は無い。だが、この物語は「いざこざが無かったことにする」滑らかさでできていて、その下に、溺死する地主神・鎮め続けられる石・振り返る斎王という“収まりきらない影”が残る。出雲の国譲りと同じく、「譲られた」という建前の裏に何が押し込められたのかは、開かれた問いのまま。</p>
+      </div>
+    </details>
+
+    <div class="totop"><a href="#top">▲ 目次へ</a></div>
+  </article>
+
+  <article class="episode" id="ep8">
+    <div class="ep-head"><span class="ep-no">第8話</span>
+      <h3>倭姫は、なぜ二度振り返ったのか</h3>
+      <div class="meta"><span class="era">垂仁朝</span><span>対応Q 18〜20</span><span>約5分</span></div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span><ruby>二見浦<rt>ふたみがうら</rt></ruby>。<ruby>夫婦岩<rt>めおといわ</rt></ruby>。波。倭姫命を乗せた御船が着岸する。</div>
+      <div class="narr">伊勢のほど近く、<span class="note" data-note="二見興玉神社・夫婦岩で知られる。地名由来は『倭姫が二度振り返った』説のほか、川が二手に分かれる地形語『二水（ふたみ）』が原型で、後から説話が付いたとも言われる。" data-img="https://commons.wikimedia.org/wiki/Special:FilePath/Meoto_Iwa_Mie.jpg?width=640" data-cap="夫婦岩（二見興玉神社）" data-src="https://commons.wikimedia.org/wiki/File:Meoto_Iwa_Mie.jpg"><ruby>二見浦<rt>ふたみがうら</rt></ruby></span>。鎮座の地を探す旅の途上、皇女・<ruby>倭姫命<rt>やまとひめのみこと</rt></ruby>がこの地に立ち寄った、と伝わる。地名「二見」の由来には、いくつかの説がある。そのひとつが、ずっと引っかかるのだ。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>二つの伝承が並ぶ。①<ruby>大若子命<rt>おおわくごのみこと</rt></ruby>が答えた「速雨の二見の国」。②倭姫が美しさに二度振り返った。</div>
+      <div class="narr">ひとつは、お供の<ruby>大若子命<rt>おおわくごのみこと</rt></ruby>が「<ruby>速雨<rt>はやさめ</rt></ruby>の二見の国」と答えた、という公式の<ruby>由緒<rt>ゆいしょ</rt></ruby>。もうひとつは、倭姫命が、あまりの景色の美しさに、去りがたく「二度振り返った」から「二見」だ、という伝え。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>神話の中の神や巫女の動作――地名を定め、神を祀り、土地を平定する。機能的。</div>
+      <div class="narr">ここで、立ち止まる。神話の中で、神や<ruby>斎王<rt>さいおう</rt></ruby>の仕草は、ふつう何かの機能を果たす。地を定め、神を祀り、敵を退ける。世界を秩序づける働きを持っている。ところが「美しさに二度振り返る」だけは――何の機能も果たしていない。ただ、心を動かされた。後ろ髪を引かれた。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>前へ進む者が、後ろを振り返る。一度では足りず、二度。引き裂かれる構図。</div>
+      <div class="narr">しかも「振り返る」とは、前へ進んでいる者の動作だ。使命は前にある（<ruby>五十鈴<rt>いすず</rt></ruby>川上の鎮座地）。なのに後ろを見る。一度では足りず、二度。行かねばならない場所と、離れがたい場所が、人を引き裂いている。これは<ruby>神威<rt>しんい</rt></ruby>の発露ではなく、まったき人間の<ruby>情動<rt>じょうどう</rt></ruby>ではないか。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>イザナギの黄泉の場面が重なる。「見るな」と言われ振り返り、破滅する。</div>
+      <div class="narr">さらに思い出してほしい。神話で「振り返る」は、しばしば<ruby>禁忌<rt>きんき</rt></ruby>と結びつく。<ruby>黄泉<rt>よみ</rt></ruby>で「見るな」と言われ、振り返ってしまった<span class="note" data-note="イザナギは、死んで黄泉の国へ去った妻イザナミを連れ戻しに行く。イザナミは『私の姿を見るな』と言い残して御殿の奥へ。待ちきれず火を灯して覗くと、そこには腐乱し雷を生じる変わり果てた姿が。驚いて逃げるイザナギを、恥じ怒ったイザナミが追い、二人は黄泉比良坂（よもつひらさか）で決別する。『見るな』の禁を破って覗く・振り返る――ギリシャのオルフェウスにも通じる、神話的な“踰越（ゆえつ）”のモチーフ。">イザナギ</span>。去り際に振り返ることは、前に進むべき者が後ろの世界に心を残す、<ruby>踰越<rt>ゆえつ</rt></ruby>の動作だ。神話はふつう、それを罰する。なのに二見では、それが<ruby>咎<rt>とが</rt></ruby>められず、美しい由緒として刻まれている。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>地名の成り立ちの推測。「二水（川が二つに分かれる地形）」→ 同音「二見」→ 振り返りの説話。</div>
+      <div class="narr">ひとつの読みは、こうだ。原型はおそらく「<ruby>二水<rt>ふたみ</rt></ruby>」――川が二つに分かれる地形の語。それが「二見」と同音だったから、後から「二度振り返った」という<ruby>説話<rt>せつわ</rt></ruby>が貼られた。<ruby>荘重<rt>そうちょう</rt></ruby>な公式の由緒に対して、こちらは柔らかく感傷的で、民の手触りがある。だから浮いている。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>さらに踏み込んだ読み。「これは"騙り"――何かを無難な美談で覆ったのでは？」</div>
+      <div class="narr">だが、もう一段踏み込む読みもある。これは「<ruby>騙<rt>かた</rt></ruby>り」――本当の心残りや負い目を、「美しかったから」という当たり障りのない説明で覆ったのではないか、と。ただし、その心残りの中身が何かは、テキストからは決まらない。誰か個人への想い、と特定するのは、根拠が足りない。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>土地を譲り受ける側（倭姫）と、譲った在地の人々。構造的な負い目の影。</div>
+      <div class="narr">けれど、対象を一段ひろげれば、直感は生き残る。倭姫命は、<ruby>在地<rt>ざいち</rt></ruby>の者から土地を譲り受け、天照を据える役回り。受け取る側には、構造的に負い目が生じうる。奪ったのではなく譲られた――その建前の裏で、在地の神を脇へ押しやった。その後ろめたさが、「立ち去りがたく振り返る」仕草に滲んだのではないか。本当のところは、伝承が沈黙している。あなたには、何が見えるだろう。</div>
+    </div>
+
+    <!-- ▼ motteku 紹介カード -->
+    <aside style="margin:24px 0 6px;">
+      <p style="font-size:.86em;color:var(--ink-soft);line-height:1.9;margin:0 0 10px;">余談ですが――この『QED 伊勢の曙光』とは、<b>motteku</b> というサイトを使って巡り会いました。次の旅先と、その土地で読む一冊を選んでくれるサービスです。</p>
+      <a href="https://motteku.tech/" target="_blank" rel="noopener" style="display:flex;gap:22px;align-items:stretch;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--paper-2);box-shadow:0 1px 6px rgba(0,0,0,.06);width:100%;">
+        <img src="https://motteku.tech/motteku_OGP.webp" alt="motteku" loading="lazy" style="flex:0 0 auto;width:150px;height:auto;object-fit:cover;display:block;background:#eee;">
+        <span style="flex:1;min-width:0;padding:12px 20px 12px 0;display:flex;flex-direction:column;justify-content:center;">
+          <span style="display:block;font-weight:700;font-size:.98em;margin-bottom:3px;">motteku — 行き先と一冊、決めました。</span>
+          <span style="display:block;font-size:.84em;color:var(--ink-soft);line-height:1.6;">あなたの代わりに次の旅先と本を選ぶ。迷わなくていい。</span>
+          <span style="display:block;font-size:.76em;color:var(--gold);margin-top:6px;letter-spacing:.04em;">motteku.tech →</span>
+        </span>
+      </a>
+    </aside>
+
+    <div class="totop"><a href="#top">▲ 目次へ</a></div>
+  </article>
+
+  <article class="episode" id="ep9">
+    <div class="ep-head"><span class="ep-no">第9話</span>
+      <h3>御卜 ― 神に近づくたび、許しを問う</h3>
+      <div class="meta"><span class="era">平安期</span><span>対応Q 21〜22</span><span>約5分</span></div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>神事「<ruby>御卜<rt>みうら</rt></ruby>」の場。神職が、神意に適うかを占う厳粛な儀。</div>
+      <div class="narr">伊勢神宮の<ruby>恒例<rt>こうれい</rt></ruby>祭典に、「<ruby>御卜<rt>みうら</rt></ruby>」という神事がある。<ruby>三節祭<rt>さんせつさい</rt></ruby>――六月と十二月の<ruby>月次祭<rt>つきなみさい</rt></ruby>、十月の<ruby>神嘗祭<rt>かんなめさい</rt></ruby>――に際して行われる、占いの儀だ。だが、何を占うのか。そこが、ふつうとは少し違う。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>占いの対象が「祭りの吉凶」ではなく、その祭りに奉仕する神職本人であることを示す。</div>
+      <div class="narr"><ruby>御卜<rt>みうら</rt></ruby>が占うのは、祭りの<ruby>吉凶<rt>きっきょう</rt></ruby>ではない。その祭りに奉仕しようとしている<ruby>神職<rt>しんしょく</rt></ruby>について、いま、神の<ruby>御心<rt>みこころ</rt></ruby>にかなうかどうかを問う。人を選り分ける採用試験ではなく、奉仕の直前に、その可否を神意にうかがう――いわば、祭りごとの最終確認だ。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>六月・十月・十二月の三つの祭りが並び、それぞれの前に御卜が置かれる。前の許しが次へ持ち越されない様子。</div>
+      <div class="narr">ここで、ひとつの問いが浮かぶ。御卜は、一年に一度、その人物に資格を与える儀式ではない。六月に神意にかなった者も、十月には再び占われ、十二月にもまた問われる。前の祭りで得た許しは、次の祭りへ自動的には持ち越されない。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>同じ神職が、別々の祭りの前で、そのつど神意を問われる。「疑い」ではなく「手続き」という対比。</div>
+      <div class="narr">もちろん、これは神職が疑われていたことを意味しない。六月の<ruby>月次祭<rt>つきなみさい</rt></ruby>、十月の<ruby>神嘗祭<rt>かんなめさい</rt></ruby>、十二月の月次祭は、それぞれ別の祭りだ。重要な祭典のたびに奉仕の可否を確かめることは、以前の判断への不信ではなく、その都度、祭りを正しく成立させるための手続きだったとも考えられる。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>祭りに先立つ大祓で神職を祓い清める場。そのうえで、なお神意を問う御卜へ。</div>
+      <div class="narr">また、御卜が何をもって「御心にかなう」と判断したのか、その内容を<ruby>穢<rt>けが</rt></ruby>れの有無だけに限定することもできない。祭典に先立っては、神職たちを祓い清める<span class="note" data-note="三節祭に先立ち、神職・楽師を祓い清める儀。六月月次祭の前は5月31日、神嘗祭の前は9月30日、十二月月次祭の前は11月30日に行われる。穢れの除去はこの大祓が担うため、御卜＝穢れの検査とは限らない。" data-src="https://www.isejingu.or.jp/ritual/annual/index.html"><ruby>大祓<rt>おおはらえ</rt></ruby></span>が別に行われる。祓いを経たうえで、なお神意を問う。御卜は単なる穢れの検査ではなく、人間側の判断を越えて、奉仕の可否を神に委ねる最後の手続きだった。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>御卜の前に興玉神祭。御垣内西北隅の地主神を祀り、そのあとで奉仕者について神意を問う順序。</div>
+      <div class="narr">そして御卜の前には、<span class="note" data-note="御卜に先立ち、御垣内の西北隅に鎮まる地主神・興玉神を祀る祭（神嘗祭では10月15日）。順序は『興玉神祭→御卜→三節祭』。地主神を祀ることが奉仕の前提として祭儀に組み込まれているが、“地主神の許可を得る”という因果まで史料に明記されるわけではない。" data-src="https://www.isejingu.or.jp/ritual/annual/index.html"><ruby>興玉神祭<rt>おきたまのかみさい</rt></ruby></span>がある。<ruby>御垣内<rt>みかきうち</rt></ruby>の西北隅に鎮まる地主神を祀り、そのあとで奉仕者について神意を問う。これは地主神から天照への奉仕の許可を得る儀式だった、とまでは言えない。だが、天照の<ruby>大御前<rt>おおみまえ</rt></ruby>へ進む前に、土地の神を祀るという順序が、古くから祭儀の中に組み込まれている。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>土地の神を祀り、神意を問い、いくつもの境界を越えて、ようやく祭りが始まる。最後に、都の神祇官の御体御卜へ画面が移る。</div>
+      <div class="narr">神職であるだけでは、無条件に神へ近づけるわけではない。土地の神を祀り、神意を問い、定められた境界を越えて、ようやく祭りは始まる。<br>それは、中心との関係が不安定だったからなのか。それとも、絶対的な中心であるからこそ、接近のたびに慎重な手続きが必要だったのか。御卜だけでは、その答えは出ない。<br>ただ、ここで覚えておきたい。伊勢とは別の場所、都の<ruby>神祇官<rt>じんぎかん</rt></ruby>にも、もうひとつの御卜があった。そこでは、神に仕える人間ではなく、天皇の身に関わる神意が問われた。<br>人が神にかなうかを問う、伊勢の御卜。神が天皇に何をもたらすかを問う、宮廷の<span class="note" data-note="宮中の神祇官で年2回（6月・12月）行われた別の卜定。天皇の身に障りがないか、何の神の祟りかを占った。平安期の史料では伊勢大神（アマテラス）の祟りも判じられたとされるが、それが示せるのは“朝廷が皇祖神も天皇に災いを及ぼし得ると制度上想定していた”ところまで。天照と皇室の関係に後ろ暗さがあった、という証明ではない（第11話で扱うが、解釈は開いたまま）。"><ruby>御体御卜<rt>おおみまのみうら</rt></ruby></span>。問いの向きは、そこで反転する。</div>
+    </div>
+    <div class="totop"><a href="#top">▲ 目次へ</a></div>
+  </article>
+
+  <article class="episode" id="ep10">
+    <div class="ep-head"><span class="ep-no">第10話</span>
+      <h3>猿田彦 ― 三つに分かれて生き残った神</h3>
+      <div class="meta"><span class="era">神話〜平安</span><span>対応Q 16, 23, 27〜28</span><span>約5分</span></div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>猿田彦。鼻長く、背高く、目が照り輝く異形の姿。</div>
+      <div class="narr"><ruby>猿田彦<rt>さるたひこ</rt></ruby>。鼻は長く、背は高く、目は<ruby>八咫鏡<rt>やたのかがみ</rt></ruby>のように、ホオズキのように照り輝く――そう記される<ruby>異形<rt>いぎょう</rt></ruby>の神。<ruby>天孫降臨<rt>てんそんこうりん</rt></ruby>を地上の入口で出迎えた、<ruby>境界<rt>きょうかい</rt></ruby>の神。この一柱が、後の世に、いくつもの姿へと分かれていく。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>三つの顔が浮かぶ。①山の天狗、②辻の道祖神・塞の神、③内宮の地主神。</div>
+      <div class="narr">ひとつは、<ruby>天狗<rt>てんぐ</rt></ruby>。長い鼻と赤ら顔は、後の鼻高天狗の源流のひとつとされる。ひとつは、<ruby>道祖神<rt>どうそじん</rt></ruby>であり<ruby>塞<rt>さえ</rt></ruby>の神。村の境や峠、辻に立ち、外から来る悪霊を<ruby>塞<rt>せ</rt></ruby>き止める。境界を「開く」みちひらきの神は、境界を「塞ぐ」神でもあった。そしてもうひとつが、前に見た、内宮の地主神・<ruby>興玉神<rt>おきたまのかみ</rt></ruby>。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>系譜図。猿田彦 → 大田命 → 宇治土公氏。倭姫を先導し、五十鈴川上の地を献上する。</div>
+      <div class="narr">さらに、その子孫がいる。猿田彦の<ruby>裔<rt>すえ</rt></ruby>・<span class="note" data-note="大田命を猿田彦の子孫とするのは鎌倉期の『倭姫命世記』『伊勢二所皇太神宮御鎮座伝記』から。より古い延暦期の『皇太神宮儀式帳』『大神宮諸雑事記』では、宇治土公は“大田命の子孫”と言うだけで、猿田彦は遠祖に出てこない（後から架上＝接ぎ木された可能性）。別系図では三輪氏族ともする。神代の猿田彦譚と、人代の大田命・宇治土公の土地献上譚を、後世に系譜で接合した縫い目とも読める。" data-src="https://ja.wikipedia.org/wiki/阿射加神社"><ruby>大田命<rt>おおたのみこと</rt></ruby></span>は、鎮座の地を探す<ruby>倭姫命<rt>やまとひめのみこと</rt></ruby>を<ruby>五十鈴<rt>いすず</rt></ruby>川上へ先導し、その地を献上した。子孫は<ruby>宇治土公<rt>うじのつちぎみ</rt></ruby>と称し、代々、神宮の<span class="note" data-note="正確には『玉串大内人（たまぐしおおうちんど）』。禰宜より下の内人（うちんど）職で、御垣内の地主神・興玉神の奉仕に関わる。禰宜を世襲した家はこれとは別で、内宮＝荒木田氏、外宮＝度会氏。物部は伊勢の禰宜家ではない（第14話の物部氏＝饒速日の一族との混同に注意）。"><ruby>祭祀職<rt>さいししょく</rt></ruby></span>を世襲した。地主神の子孫が、土地を天つ神に差し出し、永代の奉仕者になった――前に見た「土地は誰が出したか」の、伊勢での具体例だ。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>朝廷から恐れられる猿田彦。怨霊神として扱われる暗い影。</div>
+      <div class="narr">その一方で、猿田彦には、別の影もまとわりつく。<ruby>朝廷<rt>ちょうてい</rt></ruby>に恐れられた<ruby>怨霊神<rt>おんりょうしん</rt></ruby>という見方。<ruby>椿大神社<rt>つばきおおかみやしろ</rt></ruby>の伝承では、伊勢の<span class="note" data-note="阿邪訶＝現在の松阪市阿坂。式内・阿射加神社は阿坂山（標高約312m）の山麓にあり、海辺ではない。1500年前（古墳時代）に海だった可能性は低い（伊勢平野を海が覆った縄文海進のピークは約6000年前）。ただし古くは“阿坂国”という広域地名で一帯を指した。学説には、先に在地の海人（磯部）が三つの御魂を祀り、そこへ猿田彦の溺死譚が後付けされた、という逆転説もある（一方『特選神名牒』は猿田彦三御魂説に証拠なしと慎重）。" data-src="https://ja.wikipedia.org/wiki/阿射加神社"><ruby>阿邪訶<rt>あざか</rt></ruby></span>の海で溺れて死んだ、という奇妙な最期を持つ。国つ神が、なぜ<ruby>非業<rt>ひごう</rt></ruby>の死を与えられるのか。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>民俗学の系譜（柳田國男・網野善彦）。土地を奪われ辺境化された在地の民の記憶。</div>
+      <div class="narr">ここから、ひとつの強い読みが生まれる。猿田彦という境界神に、「土地を奪われ、辺境に追われ、<ruby>賤視<rt>せんし</rt></ruby>された<ruby>在地<rt>ざいち</rt></ruby>の民」の記憶が投影されているのではないか、と。<ruby>柳田國男<rt>やなぎたくにお</rt></ruby>以来の民俗学、<ruby>漂泊民<rt>ひょうはくみん</rt></ruby>をめぐる議論の系譜に、その解釈は連なる。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>だが「川衆の虐殺」「カワズ（蛙）=川衆」という連想に、大きな「？」。</div>
+      <div class="narr">ただし――立ち止まらねばならない。「猿田彦が、川の民とともに<ruby>虐殺<rt>ぎゃくさつ</rt></ruby>された人々だ」「<ruby>神使<rt>しんし</rt></ruby>の<span class="note" data-note="『猿田彦＝川衆（かわず）＝蛙（カワズ）』という結びつきは音の類似による連想で、史料の裏づけはない。蛙が神使なのは『無事かえる』の語呂（近世以降の縁起）。"><ruby>蛙<rt>かわず</rt></ruby>=カワズ</span>が、その隠された証拠だ」という連想には、史料の裏づけがない。神話の猿田彦は「溺死」であって「虐殺」ではない。蛙が神使になったのは「無事かえる」の語呂、近世以降の<ruby>縁起<rt>えんぎ</rt></ruby>だ。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>音が同じこと（カワズ＝蛙＝川衆）と、起源が同じこととは別、という対比。</div>
+      <div class="narr">音が似ていることは、起源が同じことの証明にはならない。橋と箸が同音でも無関係なように。響きで繋ぐ論法は、<ruby>喚起力<rt>かんきりょく</rt></ruby>が強いぶん、何でも証明できてしまい、<ruby>反証<rt>はんしょう</rt></ruby>ができない。だから、これは「史実」ではなく「象徴」「<ruby>受容史<rt>じゅようし</rt></ruby>」の話として扱うのが誠実だ。猿田彦という神格に、後世さまざまな連想が<ruby>堆積<rt>たいせき</rt></ruby>した――そう読むべきもの。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>聖域の隅に、村の辻に、山の異形に。三つに分かれた猿田彦が、それぞれ静かに在る。</div>
+      <div class="narr">在地の神は、消されはしなかった。聖域の最奥に、村の境に、山の異形に――形を変えながら生き残った。それは、踏みつけられたものの記憶なのか。ただの神格の<ruby>習合<rt>しゅうごう</rt></ruby>なのか。光の頂点の足元に、影が三つに分かれて残っている。その影が何を語るかは、見る者に委ねられている。</div>
+    </div>
+
+    <details class="memo">
+      <summary>探究メモ：猿田彦はいつ溺れ、いつ土地が渡ったのか――時間軸の矛盾と「接ぎ木」（クリックで開閉）</summary>
+      <div class="body">
+        <p class="q">問い：猿田彦が<ruby>阿邪訶<rt>あざか</rt></ruby>で溺れたとき、伊勢はもう天照・倭姫命に進呈されていた？　そもそも進呈したのは子孫の大田命。どういう時間軸？</p>
+
+        <h5>① テキスト順に並べた時間軸</h5>
+        <p>記紀の順序はこう――天孫降臨で猿田彦が道案内 → 故郷の伊勢・五十鈴川上へ帰り開拓 → その後、阿邪訶の海で<ruby>比良夫貝<rt>ひらぶがい</rt></ruby>に手を挟まれ溺死（ここまで神代）。ずっと下って<ruby>垂仁朝<rt>すいにんちょう</rt></ruby>（人代）、猿田彦の裔・<ruby>大田命<rt>おおたのみこと</rt></ruby>が、巡行してきた倭姫命に五十鈴川上の地を献上し、内宮が創建される。つまり<b>溺死の時点では、伊勢はまだ天照にも倭姫命にも渡っていない（神宮以前）</b>。進呈は、はるか後代に子孫が行った。</p>
+
+        <h5>② なぜ「進呈したのは子孫」なのか＝接ぎ木の疑い</h5>
+        <p>猿田彦本人が拓いた土地なら、渡したのも本人のはず。なのに何代も後の大田命が改めて献上する――この“二段構え”自体が後付けの疑い。大田命を猿田彦の子孫とするのは鎌倉期の書からで、古い延暦期の<ruby>儀式帳<rt>ぎしきちょう</rt></ruby>には猿田彦が遠祖として出てこない。つまり「神代の猿田彦譚」と「人代の大田命・<ruby>宇治土公<rt>うじのつちぎみ</rt></ruby>の土地献上譚」は別系統で、後世に系譜で接合された縫い目とも読める。</p>
+
+        <h5>③ 順序を組み替えると見えるもの</h5>
+        <p>溺死（排除）が先、献上（正当化）が後、しかも献上者は後から系譜で接合――と並べると、これは在地神（猿田彦・興玉神を奉じる<ruby>海人<rt>あま</rt></ruby>＝宇治土公）が先に伊勢の聖地を領有していたのを、ヤマト王権が接収し、「在地神が自ら進んで献上した」という平和な物語へ書き換えた痕跡、とも読める。隠されているのは個人の秘密ではなく、“土地の前の持ち主は誰だったか”という政治的事実。</p>
+
+        <p class="caveat">留保：いずれも史料の成立年代差から組む読み筋で、確定史実ではない。「大田命＝猿田彦の子孫」が接ぎ木だという指摘は有力だが、別系統の伝承を断定的に一本化しないのが誠実。出典：<a href="https://ja.wikipedia.org/wiki/阿射加神社" target="_blank" rel="noopener">阿射加神社（Wikipedia）</a>ほか。</p>
+      </div>
+    </details>
+
+    <div class="totop"><a href="#top">▲ 目次へ</a></div>
+  </article>
+
+  <div class="chapter"><div class="kicker">CHAPTER 4</div><h2>正体 ― 天照大神とは何者か</h2></div>
+
+  <article class="episode" id="ep11">
+    <div class="ep-head"><span class="ep-no">第11話</span>
+      <h3>祖神が、子孫を祟る</h3>
+      <div class="meta"><span class="era">平安期</span><span>対応Q 24</span><span>約5分</span></div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>平安京。天皇の病、旱魃、天変地異。神祇官の卜部による卜占と、陰陽寮の占いが並ぶ。</div>
+      <div class="narr">平安時代。天皇が病に倒れ、あるいは<ruby>旱魃<rt>かんばつ</rt></ruby>や<ruby>天変地異<rt>てんぺんちい</rt></ruby>が続くと、朝廷ではその原因を探る占いが行われた。<ruby>神祇官<rt>じんぎかん</rt></ruby>の<ruby>卜部<rt>うらべ</rt></ruby>による<ruby>卜占<rt>ぼくせん</rt></ruby>、<ruby>陰陽寮<rt>おんようりょう</rt></ruby>による占い。その中に、繰り返し現れる呼び名がある。<br>「<span class="note" data-note="『巽（たつみ）』は平安京（大内裏）から見た南東の方角で、その先に伊勢がある。原史料は必ずしも『天照大神』と名指しせず、この方角による呼称を、斎藤英喜らが伊勢のアマテラスと読む（＝研究者の同定であって、原文の文言そのものではない）。"><ruby>巽<rt>たつみ</rt></ruby>の方の<ruby>大神<rt>おおかみ</rt></ruby></span>」――都から見て南東に鎮まる大神。<br>斎藤英喜は、この神を、伊勢のアマテラスと読む。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>仁寿二年・貞観十年・天慶八年の年号。天皇の病と国家の災異に、「巽の方の大神」の祟りが判じられる。</div>
+      <div class="narr"><span class="note" data-note="これらの祟りの記事は、斎藤英喜が『太神宮諸雑事記』『江家次第』などから論じるもの。ただし各年の原文と、それが神祇官の御体御卜によるか陰陽寮の占いによるかは、公開ウェブの一次史料では巻・条まで独立確認できていない（留保）。"><ruby>仁寿<rt>にんじゅ</rt></ruby>二年。<ruby>貞観<rt>じょうがん</rt></ruby>十年。<ruby>天慶<rt>てんぎょう</rt></ruby>八年。</span><br>史料には、天皇の病や国家的な<ruby>災異<rt>さいい</rt></ruby>に際して、「巽の方の大神」の祟りが判じられたとする記事が残る。<br>ここで確認しておきたい。原史料が常に「天照大神」と名指ししているわけではない。「巽の方の大神」という方角による呼称を、都の南東にある伊勢の大神、すなわちアマテラスと解釈するのである。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>皇祖神でありながら、ただ守るだけの神ではない。祭祀の状態によっては障りをもたらす神。</div>
+      <div class="narr">それでも、ここには見過ごせない事実がある。<br><ruby>皇祖神<rt>こうそしん</rt></ruby>とされたアマテラスは、朝廷の<ruby>卜占<rt>ぼくせん</rt></ruby>において、天皇やその治世をただ守るだけの神ではなかった。<ruby>祭祀<rt>さいし</rt></ruby>の状態によっては、天皇の身体や国家に障りをもたらし得る神としても扱われていた。<br>祖神であることと、祟ることは、当時の人々にとって必ずしも矛盾ではなかったのかもしれない。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>「御体御卜」。六月と十二月、天皇の身体への神意を問う。神祇官の卜部から選ばれた宮主。</div>
+      <div class="narr">宮廷には、「<span class="note" data-note="宮中の神祇官で年2回（6月・12月）行われた卜定。天皇の身に障りがないか、何の神の祟りかを占った。伊勢大神（アマテラス）の祟りも判じられたとされるが、御体御卜は伊勢専用ではなく、1080年の御体御卜奏文には複数の地方神が列挙される。"><ruby>御体御卜<rt>おおみまのみうら</rt></ruby></span>」という儀礼もあった。六月と十二月、天皇の身体に障りを及ぼす神意がないかを問う。神祇官の卜部から選ばれた<ruby>宮主<rt>みやじ</rt></ruby>が、これに奉仕した。<br>ただし、先ほどの祟りの記事が、すべてこの御体御卜によって判じられたわけではない。陰陽寮の占いによるものもある。<br>重要なのは、朝廷が天皇の身体と神々との関係を、定期的にも、災異のたびにも、問い続けていたということだ。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>第1話の崇神紀。天照と倭大国魂を宮中に祀るが、神威を畏れて天照を皇女に託し、宮の外へ。</div>
+      <div class="narr">ここで、第1話の<ruby>崇神紀<rt>すじんき</rt></ruby>を思い出す。<br>宮中で祀られていた天照は、その<ruby>神威<rt>しんい</rt></ruby>を畏れられ、天皇と同じ宮に祀り続けることが避けられた。そして<ruby>皇女<rt>こうじょ</rt></ruby>に託され、宮の外へ移された。<br>崇神紀は、天照が<ruby>疫病<rt>えきびょう</rt></ruby>を起こしたとは記していない。だが、皇祖神は最初から、ただ親しく寄り添う守護者として描かれていたわけでもない。近くに祀ることを畏れられるほど、強い神だった。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>平安期。巽の方角、遠い伊勢に鎮まりながら、天皇や国家に障りをもたらす神として卜占に現れる。</div>
+      <div class="narr">そして平安期。その神は、都から見て<ruby>巽<rt>たつみ</rt></ruby>の方角、遠い伊勢に鎮まりながら、天皇や国家に障りをもたらす神として卜占に現れる。<br>ひとつの読みは、こうだ。<br>アマテラスを伊勢に遠ざけ、特別な祭祀と幾重もの境界の中に置いたことは、最高神への<ruby>尊崇<rt>そんすう</rt></ruby>であると同時に、その力への畏れの表現でもあったのではないか。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>「封印」と断定しない。隔ては聖性の表現とも、神威を慎重に鎮めるものとも読める。</div>
+      <div class="narr">だが、ここから「伊勢はアマテラスを<ruby>封印<rt>ふういん</rt></ruby>する場所だった」と断定することはできない。<br>隔ては、最高神の<ruby>聖性<rt>せいせい</rt></ruby>を示すものとも読める。強大な神威を慎重に鎮めるものとも読める。尊崇と<ruby>畏怖<rt>いふ</rt></ruby>は、そもそも切り離せない感情だったのかもしれない。<br>それでも確かなのは、朝廷がアマテラスを、子孫を無条件に守り続けるだけの穏やかな祖神としては扱っていなかった、ということだ。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>三つの問いが、夜空に開かれたまま残る。</div>
+      <div class="narr">なぜ、皇祖神が天皇に祟るのか。<br>祭祀を怠った子孫を戒める、祖神本来の働きだったのか。絶対的な力を持つ神である以上、守護と災いが表裏だったのか。それとも、アマテラスが皇祖神として頂点に置かれるまでの歴史に、何らかの緊張が残されていたのか。<br>史料は、答えをひとつに定めない。<br>ただ、アマテラスの祟りが<ruby>卜<rt>うらな</rt></ruby>われ、その名が天皇の身体と国家の不安の中に現れたことは、確かに記録されている。</div>
+    </div>
+    <div class="totop"><a href="#top">▲ 目次へ</a></div>
+  </article>
+
+  <article class="episode" id="ep12">
+    <div class="ep-head"><span class="ep-no">第12話</span>
+      <h3>屋根は、神の性別を語るか</h3>
+      <div class="meta"><span class="era">雄略朝〜</span><span>対応Q 25, 36</span><span>約5分</span></div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>内宮と外宮。両正宮に共通する主要祭典では、原則として外宮を先にする「外宮先祭」。</div>
+      <div class="narr">伊勢神宮には、<ruby>内宮<rt>ないくう</rt></ruby>と<ruby>外宮<rt>げくう</rt></ruby>がある。両正宮で行われる主要な祭典では、原則として外宮を先にする。「<span class="note" data-note="両正宮に共通して奉仕される主要祭典では、原則として外宮を先にする。ただし全てが外宮始まりではなく、月次祭に先立つ興玉神祭・御卜は内宮で行われ、神御衣祭のように内宮だけの祭典もある。" data-src="https://www.isejingu.or.jp/ritual/annual/"><ruby>外宮先祭<rt>げくうせんさい</rt></ruby></span>」と呼ばれる順序だ。<br>なぜ、天照を祀る内宮ではなく、<ruby>豊受大神<rt>とようけのおおかみ</rt></ruby>を祀る外宮が先なのか。その疑問から、ひとつの推理が生まれる。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>屋根の千木と鰹木。内宮＝内削・鰹木10本、外宮＝外削・9本。</div>
+      <div class="narr">屋根に注目しよう。<br>神社の<span class="note" data-note="千木の削り方と鰹木の数から祭神の性別を判別できる、と説明されることがある。ただし神宮公式はこれを性別の表示とは説明せず、内宮と外宮の建築上の相違として示している。" data-src="https://www.isejingu.or.jp/about/architecture/"><ruby>千木<rt>ちぎ</rt></ruby>と<ruby>鰹木<rt>かつおぎ</rt></ruby></span>には、祭神の性別が表れる――そう説明されることがある。千木が<ruby>内削<rt>うちそ</rt></ruby>で、鰹木が偶数なら女神。<ruby>外削<rt>そとそ</rt></ruby>で、奇数なら男神。<br>内宮<ruby>正殿<rt>しょうでん</rt></ruby>は、内削に十本。外宮正殿は、外削に九本。<br>この見方に従えば、内宮は女神の宮、外宮は男神の宮に見える。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>外宮の祭神・豊受大御神は女神。男神様式に見える宮に、女神が祀られている。</div>
+      <div class="narr">ところが、外宮に祀られている<ruby>豊受大御神<rt>とようけのおおみかみ</rt></ruby>は、一般に女神とされる。<br>男神を示すように見える形式の宮に、女神が祀られている。<br>ならば、本当は別の男神が隠されているのか。あるいは、後から祭神が入れ替わったのか。<br>そう考えたくなる。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>月読宮（内宮系）と月夜見宮（外宮系）。同じ月の神なのに、屋根の系統が違う。</div>
+      <div class="narr">だが、ここに、その推理を崩す例がある。<br>内宮<ruby>別宮<rt>べつぐう</rt></ruby>の<ruby>月読宮<rt>つきよみのみや</rt></ruby>と、外宮別宮の<ruby>月夜見宮<rt>つきよみのみや</rt></ruby>。どちらも天照の<ruby>弟神<rt>おとうとがみ</rt></ruby>である、月の神を祀る。<br>それでも、月読宮の社殿は内宮の系統を受け、月夜見宮は外宮の系統を受けている。<br>同じ神でも、所属する宮によって屋根の形式が異なるのだ。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>屋根が示すのは性別ではなく「内宮系か外宮系か」という建築の系統。</div>
+      <div class="narr">つまり伊勢では、千木と鰹木から、祭神の性別を単純に逆算することはできない。<br>屋根が示しているのは、神の秘密の正体ではなく、その社殿が内宮と外宮のどちらの<ruby>祭祀<rt>さいし</rt></ruby>体系に属しているか――建築の系統である可能性が高い。<br>外宮の形式を見て、「本当は男神がいる」と推理する根拠は、ここで失われる。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>外宮先祭＝豊受は御饌都神。ただし外宮は独立した正宮で、単なる厨房ではない。</div>
+      <div class="narr">では、外宮先祭は何を意味するのか。<br>豊受大御神は、天照大御神の<ruby>御饌<rt>みけ</rt></ruby>を司る<span class="note" data-note="外宮先祭は、豊受大御神が天照大御神の御饌（食事）を司る神であることと結びつけて説明される。ただし外宮は内宮と並ぶ独立した正宮で、従属施設ではない。" data-src="https://www.isejingu.or.jp/about/geku/"><ruby>御饌都神<rt>みけつかみ</rt></ruby></span>とされる。そのため、天照への祭りに先立って、まず豊受大神に祭典を奉仕するのだと説明されてきた。<br>ただし、外宮は単なる<ruby>厨房<rt>ちゅうぼう</rt></ruby>ではない。内宮と並ぶ、もうひとつの正宮である。<br>外宮が先であることは、ただの準備の順序なのか。それとも、二つの宮の関係に、より古い祭祀の記憶が残っているのか。そこまでは、屋根だけでは分からない。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>興玉神は内宮御垣内の西北隅の地主神。御卜に先立って祀られる。だが位置と順序だけで「封印」とは言えない。</div>
+      <div class="narr">そして、この訂正は、<ruby>興玉神<rt>おきたまのかみ</rt></ruby>を考えるときにも必要になる。<br>興玉神は、内宮<ruby>御垣内<rt>みかきうち</rt></ruby>の西北隅に鎮まる<span class="note" data-note="神宮公式は興玉神を“地主の神”と説明し、猿田彦と同一とは記していない。両者を結ぶのは中世以降の神道説（第7話の注も参照）。確かなのは、社殿なき石が御垣内西北隅に祀られ、三節祭の御卜に先立って祀られること。" data-src="https://www.isejingu.or.jp/ritual/annual/">地主神</span>。<ruby>三節祭<rt>さんせつさい</rt></ruby>では、神職の<ruby>御卜<rt>みうら</rt></ruby>に先立って祀られる。<br>だが、その位置と順序だけから、「祟る神を内側に封じた」と断定することはできない。<br>興玉神が<ruby>猿田彦<rt>さるたひこ</rt></ruby>であることも、現在の神宮の説明から直接確定するわけではない。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>聖域の内側にいることは、拘束か、守護か、組み込みか。形は意図を語らない。</div>
+      <div class="narr">聖域の内側にいることは、<ruby>拘束<rt>こうそく</rt></ruby>を意味するのか。守護を意味するのか。古い土地の神を、新しい中心の祭祀に組み込んだことを意味するのか。<br>どれも、ひとつの読みではある。<br>しかし、建築や配置は、隠された意図を自動的には語らない。<br>外宮の屋根は、隠された男神の存在を証明しなかった。興玉神の位置もまた、封印を証明するわけではない。<br>それでも、なぜ祭りの始まりに、土地の神が置かれているのか。<br>誤った答えをひとつ捨てたあとに、本当の問いだけが残る。</div>
+    </div>
+    <div class="totop"><a href="#top">▲ 目次へ</a></div>
+  </article>
+
+  <article class="episode" id="ep13">
+    <div class="ep-head"><span class="ep-no">第13話</span>
+      <h3>蛇であり、男神であった天照</h3>
+      <div class="meta"><span class="era">鎌倉・1289</span><span>対応Q 26, 29〜35</span><span>約5分</span></div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>鎌倉時代、伊勢に参詣する僧・通海。関係者から驚くべき問いを受ける。</div>
+      <div class="narr">1289年、<ruby>醍醐寺<rt>だいごじ</rt></ruby>の僧・<ruby>通海<rt>つうかい</rt></ruby>が伊勢に<ruby>参詣<rt>さんけい</rt></ruby>した。そのとき、神宮の関係者と思われる人物から、驚くべき問いを受けたと、その記録『<span class="note" data-note="醍醐寺の僧・通海が1289年に伊勢参詣した記録。『天照＝蛇体、斎宮の斎王はその后、毎夜通う』という当時広まっていた噂を伝える。通海は否定しつつ『この話は人が常に尋ねる』と記す。"><ruby>大神宮参詣記<rt>だいじんぐうさんけいき</rt></ruby></span>』は伝えている。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>蛇体の神が、夜ごと斎宮に通う。朝、斎王の衾の下に蛇のウロコが落ちている。</div>
+      <div class="narr">――天照大神の姿は"蛇"であり、<ruby>斎宮<rt>さいくう</rt></ruby>の<ruby>斎王<rt>さいおう</rt></ruby>はその<ruby>后<rt>きさき</rt></ruby>である。天照は毎晩、斎宮に通って来るので、朝には斎王の<ruby>衾<rt>ふすま</rt></ruby>の下に蛇のウロコが落ちている。この話は本当か、と。通海は否定したが、「この話は、人々が常に尋ねることだ」とも記している。十三世紀、天照=<ruby>蛇体<rt>じゃたい</rt></ruby>の男神という説は、それだけ広まっていた。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>二つの言葉が炸裂する。「天照は蛇だった」「天照は男神だった」。</div>
+      <div class="narr">ここに、二つの爆弾が同時にある。天照は蛇だった。そして、天照は<ruby>男神<rt>おとこがみ</rt></ruby>だった。神が<ruby>巫女<rt>みこ</rt></ruby>のもとに夜ごと通い、<ruby>閨<rt>ねや</rt></ruby>を共にする――これは<ruby>神婚<rt>しんこん</rt></ruby>、男神の構図だ。女神アマテラス自身が、もとは男神だった可能性が、ここから立ち上がる。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>「ヒルメ＝日の妻」の図。太陽神に仕える巫女が、やがて祭神そのものへ昇格していく。</div>
+      <div class="narr">学説の裏づけがある。アマテラスは「ヒルメ」とも呼ばれる。日の<ruby>妻<rt>め</rt></ruby>、すなわち日神に仕える巫女の意。男神の太陽神がいて、ヒルメが仕え、神の子を産む。その巫女が、いつしか祀られる神へと昇格し、女神になった――<ruby>津田左右吉<rt>つだそうきち</rt></ruby>、<ruby>折口信夫<rt>おりくちしのぶ</rt></ruby>、<ruby>筑紫申真<rt>つくししんざね</rt></ruby>ら、近代神話学の本流が唱えてきた説だ。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>平安の奉幣記録。伊勢に奉納される天照の装束が、男性用である。</div>
+      <div class="narr">そして、解釈ではない、実務の記録がある。平安期の<ruby>奉幣<rt>ほうべい</rt></ruby>記録によれば、伊勢の天照に奉納される<ruby>装束<rt>しょうぞく</rt></ruby>は、男性用だった。江戸の神官・<ruby>度会延経<rt>わたらいのぶつね</rt></ruby>は、これを根拠に「天照大神は実は男神であること明らかなり」と記した。傍らには、男神の后とされる女神・ムカヒメの存在まである。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>陰陽説の図。太陽=陽=男、左目=陽。なのに左目から生まれた太陽神が女神。儒学者が困惑する。</div>
+      <div class="narr">八世紀、日本書紀が完成すると、<ruby>陰陽説<rt>おんようせつ</rt></ruby>を奉じる<ruby>儒学者<rt>じゅがくしゃ</rt></ruby>たちの間に、深刻な問題が立ち上がった。陰陽では、太陽は<ruby>陽<rt>よう</rt></ruby>、すなわち男。しかも天照は、イザナギの左目――陽の側――から生まれる。二重に「男」であるべき太陽神が、なぜか女神とされている。理論の根本から食い違う。この矛盾こそ、女神化という操作の、消し残された痕跡ではないか。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>八咫鏡。蛇の古語「カカ」。鏡=カガ目=蛇の目、という吉野裕子の説。だが学界では…の注。</div>
+      <div class="narr">天照の<ruby>神宝<rt>しんぽう</rt></ruby>、<span class="note" data-note="『鏡＝カガ目＝蛇の目』は民俗学者・吉野裕子の説で、学界の通説ではない。鏡の通説的語源は『カガ（影）＋ミ（見）』で、蛇を経由しない。音の類似に依る異説。"><ruby>八咫鏡<rt>やたのかがみ</rt></ruby></span>。蛇の古語は「カカ」。鏡はカガ目=蛇の目に他ならない――そう説いたのが、民俗学者・<ruby>吉野裕子<rt>よしのひろこ</rt></ruby>だ。猿田彦も<ruby>八岐大蛇<rt>やまたのおろち</rt></ruby>も、蛇の目に喩えられている。ただし、これは音の類似に依る<ruby>異説<rt>いせつ</rt></ruby>で、学界の通説ではない。鏡の通説的語源は「カガ（影）＋ミ（見）」、蛇を経由しない。語源の真偽はさておき、人々が天照と蛇と鏡を、想像の中で結びつけてきたことは、確かだ。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>平安後期、更級日記の作者・菅原孝標女。「天照大神とは、どこの、何の神？」と戸惑う。</div>
+      <div class="narr">最後に、奇妙な証言を。平安後期、<ruby>菅原道真<rt>すがわらのみちざね</rt></ruby>の子孫で当代一級の教養人だった<ruby>菅原孝標女<rt>すがわらのたかすえのむすめ</rt></ruby>ですら、「天照大神を念じよ」とのお告げを受けて、それがどこにいる、何の神なのかを、はっきり知らなかった。<ruby>私幣禁断<rt>しへいきんだん</rt></ruby>で皇室が独占し、囲い込みすぎた結果、頂点は社会から見えない「空白」になっていた。空白だったからこそ、中世に蛇が、<ruby>大日如来<rt>だいにちにょらい</rt></ruby>が、祟りが、次々と注ぎ込まれた。天照とは何者か――その答えは、囲い込まれた空白の中に、いまも沈んでいる。</div>
+    </div>
+    <div class="totop"><a href="#top">▲ 目次へ</a></div>
+  </article>
+
+  <article class="episode" id="ep14">
+    <div class="ep-head"><span class="ep-no">第14話</span>
+      <h3>もう一つの天孫降臨 ― 消されたのではなく、組み込まれた神</h3>
+      <div class="meta"><span class="era">神代〜平安初期</span><span>対応Q 37〜47</span><span>約6分</span></div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>大阪・石切劔箭神社。主祭神・饒速日命。物部氏の祖神。</div>
+      <div class="narr"><span class="note" data-note="物部氏の祖神。神武以前に天磐船で天降り、在地の長髄彦から“天神の子”として奉じられたとされる。物部氏は丁未の乱（587年）で蘇我氏に敗れ没落するが、その祖神の物語は記紀にも『先代旧事本紀』にも大きく残る（消されてはいない）。" data-img="https://commons.wikimedia.org/wiki/Special:FilePath/Ishikiritsurugiya-jinja_Higashiosaka_Osaka_pref_Japan05n.jpg?width=640" data-cap="石切劔箭神社 拝殿（大阪府東大阪市・饒速日命を祀る）" data-src="https://commons.wikimedia.org/wiki/File:Ishikiritsurugiya-jinja_Higashiosaka_Osaka_pref_Japan05n.jpg"><ruby>饒速日命<rt>にぎはやひのみこと</rt></ruby></span>。<ruby>物部氏<rt>もののべうじ</rt></ruby>の<ruby>祖神<rt>そしん</rt></ruby>とされる神だ。<br><ruby>神武天皇<rt>じんむてんのう</rt></ruby>が大和へ入るより先に、<ruby>天磐船<rt>あめのいわふね</rt></ruby>に乗って天から降り、在地の<ruby>長髄彦<rt>ながすねひこ</rt></ruby>から<ruby>天<rt>あま</rt></ruby>つ神の子として奉じられていた。<br><ruby>天孫降臨<rt>てんそんこうりん</rt></ruby>は、ニニギだけではない。記紀の中には、神武より先に大和へ降りていた、もう一人の天つ神の子がいる。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>神武の進軍。長髄彦の激しい抵抗。「天神の子が二人もいるはずがない」。</div>
+      <div class="narr">神武が大和へ進むと、長髄彦は激しく抵抗した。<br>長髄彦が仕える饒速日も、神武と同じく天つ神の子だった。長髄彦は言う。天つ神の子が二人もいるはずがない。神武こそ偽物ではないか、と。<br>神武と饒速日。二つの<ruby>天孫<rt>てんそん</rt></ruby>の正統性が、ここで向かい合う。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>饒速日が神武を真の天神の子と認める。なおも抵抗する長髄彦を斬り、自ら帰順。</div>
+      <div class="narr">だが、物語の決着は意外なものだった。<br>饒速日は、神武が真の天つ神の子であることを認める。なおも抵抗する長髄彦を斬り、自ら神武へ<ruby>帰順<rt>きじゅん</rt></ruby>した。<br>先に降りていた天つ神の子が、後から来た天つ神の子の正統性を証明する。<br>これは、単なる敗北ではない。先行する系統の神が、勝者を承認する物語である。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>『先代旧事本紀』天孫本紀。記紀にない物部氏の系譜と伝承。</div>
+      <div class="narr">『<span class="note" data-note="聖徳太子撰を称する序は後世の仮託とされ、書全体は平安初期頃の成立とみられる。だが巻五・天孫本紀などに物部氏・尾張氏の独自伝承や系譜資料を含む可能性が認められ、本居宣長も天孫本紀等を『古書に拠る』と評価した。※江戸の『先代旧事本紀大成経』は別物で、伊雑宮を本宮とする17世紀の偽作事件として幕府に断罪された。"><ruby>先代旧事本紀<rt>せんだいくじほんぎ</rt></ruby></span>』は、この饒速日の物語を、さらに大きく描く。<br>聖徳太子が編纂したという序は後世の<ruby>仮託<rt>かたく</rt></ruby>とされ、書全体は平安初期頃に成立したと考えられている。だが、その中には記紀にない物部氏の系譜と伝承が、詳しく残されている。<br>そこでは饒速日は、天照大神から<ruby>十種<rt>とくさ</rt></ruby>の神宝を授けられ、多くの従者を伴って天降った神として語られる。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>神名「天照国照彦天火明櫛玉饒速日尊」。太陽を思わせる名。だが――。</div>
+      <div class="narr">その神名は、<span class="note" data-note="『天照国照彦天火明櫛玉饒速日尊』は、別系統とされる天火明命（尾張氏祖）とニギハヤヒ（物部祖）を『先代旧事本紀』が同一神としてまとめた長大な神名。記紀・新撰姓氏録では系譜が一致せず、この同一視自体に問題が指摘される。『天照（あまてる）』は動詞的な尊称で、固有神名『アマテラス』と漢字が共通するだけ。丹後一宮・籠神社の海部氏（国宝・現存最古の系図）も天火明命を祖とする。" data-img="https://commons.wikimedia.org/wiki/Special:FilePath/Kono-jinja_%28Miyazu%29_haiden.JPG?width=640" data-cap="元伊勢 籠神社 拝殿（京都府宮津市）" data-src="https://commons.wikimedia.org/wiki/File:Kono-jinja_%28Miyazu%29_haiden.JPG"><ruby>天照国照彦<rt>あまてるくにてるひこ</rt></ruby><ruby>天火明<rt>あめのほあかり</rt></ruby>櫛玉饒速日尊</span>。<br>天を照らし、国を照らす――太陽を思わせる名だ。<br>ただし、この名だけを根拠に、饒速日こそ本来のアマテラスだったとは言えない。『先代旧事本紀』は、別系統の神とされる<ruby>天火明命<rt>あめのほあかりのみこと</rt></ruby>と饒速日を、同じ神として結びつけているからだ。<br>ここに見えるのは、古代の事実そのものというより、物部氏の祖神を、天孫の中でも特別な神として位置づけようとした伝承の形かもしれない。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>饒速日が大空を翔け、大和の国を見下ろして降りる。「虚空見つ大和の国」。</div>
+      <div class="narr">饒速日は、天磐船に乗って大空を翔け、大和の国を見下ろして降りた。<br>『先代旧事本紀』は、これを<span class="note" data-note="『虚空見つ日本の国』の“日本”は地名の『やまと』。対外国号『にほん』（7C後半〜702年に倭を捨てて選んだ名）とは成立の層が違う。だから饒速日が国号ニホンを名づけた、という意味にはならない。">「<ruby>虚空見<rt>そらみ</rt></ruby>つ大和の国」</span>という言葉の由来として語る。<br>ただし、ここで「日本」と書かれる文字は、<ruby>国号<rt>こくごう</rt></ruby>ニホンではなく、ヤマトと読む。饒速日が現在の国号を名づけた、という意味ではない。<br>それでも、物部氏の伝承が、大和という土地の名の由来を、自らの祖神の降臨へ結びつけたことは、注目に値する。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>十種神宝＝鏡2・剣1・玉4・比礼3。鏡・剣・玉は三種神器を思わせるが――。</div>
+      <div class="narr">饒速日が授けられたとされる<ruby>十種神宝<rt>とくさのかんだから</rt></ruby>には、二面の鏡、一振りの剣、四種の玉、そして三種の<ruby>比礼<rt>ひれ</rt></ruby>がある。<br>鏡・剣・玉という要素は、天皇家の<ruby>三種<rt>さんしゅ</rt></ruby>の神器を思わせる。<br>だが、十種神宝を、もう一組の皇位の神器だったと断定することはできない。『先代旧事本紀』自身が、二つを対抗する王権の<ruby>レガリア<rt>＝王権の象徴</rt></ruby>として説明しているわけではないからだ。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>宇摩志麻治命が十種神宝を神武に献上し、その神宝で天皇の魂を鎮める。</div>
+      <div class="narr">そして、ここで重要な訂正がある。<br>十種神宝は、神武に渡されず物部氏だけが隠し持ったのではない。<br>『先代旧事本紀』では、饒速日の子・<span class="note" data-note="『先代旧事本紀』では、饒速日の子・宇摩志麻治命が十種瑞宝を神武天皇へ献上し、その神宝で天皇の鎮魂・長寿を祈ったとされ、これを宮中鎮魂祭の起源とする。『布瑠の言』は石上神宮（奈良県天理市・布留）に伝わる鎮魂呪法。"><ruby>宇摩志麻治命<rt>うましまじのみこと</rt></ruby></span>が、十種の神宝を神武天皇へ<ruby>献上<rt>けんじょう</rt></ruby>したとされる。そしてその神宝を用いて、天皇の魂を鎮め、長寿を祈ったという。<br>「ふるへ、ゆらゆらとふるへ……死せる人も生き返りなむ」――<ruby>石上神宮<rt>いそのかみじんぐう</rt></ruby>に伝わるその<ruby>布瑠<rt>ふる</rt></ruby>の言は、いまも宮中の<ruby>鎮魂祭<rt>ちんこんさい</rt></ruby>の根に生きている。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>敗者の神宝が、新しい天皇のもとへ差し出され、王権の内部へ取り込まれていく。</div>
+      <div class="narr">つまり、敗者の神宝は、王権の外に残されたのではない。<br>新しい天皇のもとへ差し出され、その身体と魂を支える力として、王権の内部へ取り込まれた。<br>饒速日の系統は、消されたのではない。武器と祭祀を担う物部氏――のちの<ruby>石上氏<rt>いそのかみうじ</rt></ruby>、<ruby>布留<rt>ふる</rt></ruby>の石上神宮として、朝廷の中心へ組み込まれていった。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>先行する神を否定せず、その神に新王を認めさせ、神宝を王権の祭祀へ組み込む。</div>
+      <div class="narr">ここには、古代王権が、異なる系統を統合する方法が見える。<br>先行する神を完全に否定するのではない。その神自身に新しい王を認めさせ、その子孫に王を守らせ、その神宝を王権の祭祀へ組み込む。<br>敗者の権威を消すのではなく、勝者の正統性を支える形へ並べ替えるのだ。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>饒速日は隠された本当の天皇だったのか。本来のアマテラスか。史料は確定しない。</div>
+      <div class="narr">饒速日は、隠された本当の天皇だったのか。<br>本来のアマテラスだったのか。もう一つの王朝を率いた太陽王だったのか。<br>そこまでは、史料から確定できない。<br>だが、神武より先に大和へ降った天つ神の子が語られ、その系統の神宝と祭祀が、後の王権を支えるものとして再配置されたことは、物語の中にはっきり残されている。</div>
+    </div>
+    <div class="scene">
+      <div class="pic"><span class="tag">絵</span>消されたのではない。組み込まれ、内側から中心を支える役を与えられた神。</div>
+      <div class="narr">消されたのではない。消すことが、できなかったのかもしれない。<br>だから物語の中に残し、服属させ、神武の正統性を証明させた。<br>饒速日は、勝者の外に追いやられた神ではない。勝者の物語の中に取り込まれ、その中心を内側から支える役を与えられた神だった。<br>古代の正統とは、最初から一つだったのか。それとも、複数の系統を組み込みながら、一つであるかのように作られていったのか。<br>あなたは、どう読むだろう。</div>
+    </div>
+    <div class="totop"><a href="#top">▲ 目次へ</a></div>
+  </article>
+
+  <div class="chapter epilogue-part"><div class="kicker">AFTERWORD</div><h2>おわりに</h2></div>
+
+  <article class="episode" id="epilogue">
+    <div class="ep-head"><span class="ep-no">おわりに</span>
+      <h3>本を閉じ、伊勢へ</h3>
+    </div>
+    <div class="scene">
+      <div class="narr">『QED 伊勢の曙光』を読み終えたあと、私は実際に伊勢を訪れました。本のなかで言葉として知っていた社が、書かれていたとおりにそこへ建っているのを目にしたとき、うまく言えない感慨がありました。</div>
+    </div>
+    <div class="scene">
+      <div class="narr">外宮から内宮へと歩き、五十鈴川のほとりに立つ。その一つひとつの場所で、文字で読んだはずの「謎」が、急に手ざわりを持って立ち上がってくるようでした。本のなかの推論や違和感が、土地の空気のなかで、もう一度ゆっくりとよみがえってくる感覚です。</div>
+    </div>
+    <div class="scene">
+      <div class="narr">私が受け取れたのは、ほんの表層の知識にすぎないのかもしれません。それでも、この一冊と出会い、日本の歴史を肌で感じたとき――ああ、これは自分のルーツでもあるのかもしれない、と思えました。そう感じられたこと自体が、私にとっては感慨深い経験でした。たくさんのことを、この本を通して学ばせてもらったと思います。もしこのページを入口に、あなたも本を手に取り、いつか伊勢へ足を運んでくれたなら――その土地で感じるものは、きっと文字だけでは届かない何かのはずです。</div>
+    </div>
+
+    <!-- ▼ 書籍アフィリエイト枠（終章） -->
+    <aside class="book-card" style="display:flex;gap:16px;align-items:flex-start;border:1px solid rgba(0,0,0,.15);border-radius:12px;padding:16px;margin:24px 0 6px;background:var(--pic-bg,#faf7f0);">
+      <a href="https://amzn.to/4w9guIH" rel="nofollow sponsored noopener" target="_blank" style="flex:0 0 auto;display:block;line-height:0;">
+        <img src="topimg.jpg" alt="QED 伊勢の曙光 書影" loading="lazy" width="110" style="width:110px;height:auto;border-radius:6px;box-shadow:0 3px 12px rgba(0,0,0,.18);display:block;">
+      </a>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:.76em;letter-spacing:.08em;opacity:.6;">この物語の、はじまりの一冊</div>
+        <div style="font-weight:700;font-size:1.08em;margin:2px 0 4px;">QED 伊勢の曙光</div>
+        <div style="font-size:.9em;opacity:.8;">高田崇史 著／講談社文庫</div>
+        <p style="font-size:.9em;line-height:1.7;margin:8px 0 12px;">ここまで辿ってきた「謎」は、すべてこの一冊から始まりました。続きは、ぜひ原作で。</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <a href="https://amzn.to/4w9guIH" rel="nofollow sponsored noopener" target="_blank" style="display:inline-block;padding:9px 18px;border-radius:8px;background:#ff9900;color:#111;font-weight:700;text-decoration:none;">Amazonで見る</a>
+          <a href="https://hb.afl.rakuten.co.jp/ichiba/55389061.1b370cf4.55389062.2d34e8e4/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Frakutenkobo-ebooks%2F6f1c2c47eaa0315395e190a007118361%2F&link_type=hybrid_url&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJoeWJyaWRfdXJsIiwic2l6ZSI6IjI0MHgyNDAiLCJuYWiOjEsIm5hbXAiOiJyaWdodCIsImNvbSI6MSwiY29tcCI6ImRvd24iLCJwcmljZSI6MSwiYm9yIjoxLCJjb2wiOjEsImJidG4iOjEsInByb2QiOjAsImFtcCI6ZmFsc2V9" rel="nofollow sponsored noopener" target="_blank" style="display:inline-block;padding:9px 18px;border-radius:8px;background:#bf0000;color:#fff;font-weight:700;text-decoration:none;">楽天で見る</a>
+        </div>
+      </div>
+    </aside>
+
+    <div class="totop"><a href="#top">▲ 目次へ</a></div>
+  </article>
+
+</div><!-- /wrap -->
+
+<footer>
+  <div class="line accent">古代日本の謎 ― 台本集</div>
+  <div class="line">全14話 ／ ドキュメンタリー構成</div>
+  <div class="line">※ 内容は史料と諸説にもとづく解釈であり、断定的な史実ではありません。</div>
+</footer>
+
+<script>
+  // timeline scroll-spy
+  var eraMap={ep1:['e-suijin'],ep2:['e-suinin'],ep3:['e-suinin'],ep4:['e-jito','e-meiji'],
+    ep5:['e-jogan'],ep6:['e-kindai'],ep7:['e-suinin'],ep8:['e-suinin'],ep9:['e-heian'],
+    ep10:['e-heian'],ep11:['e-heian'],ep12:['e-yuryaku'],ep13:['e-sarashina','e-tsukai'],
+    ep14:['e-shindai','e-jito'],epilogue:['e-now']};
+  var eps=[].slice.call(document.querySelectorAll('.episode'));
+  var nodes=[].slice.call(document.querySelectorAll('.tl-node'));
+  var inner=document.getElementById('tlInner');
+  var rail=document.querySelector('.timeline');
+  var coverEl=document.querySelector('header.cover');
+  var footerEl=document.querySelector('footer');
+  function nodeByEra(e){return document.querySelector('.tl-node[data-era="'+e+'"]');}
+  // 年表レールの帯を、カバー下端〜フッター上端の明るい領域にクランプする
+  function positionRail(){
+    if(!rail) return;
+    var vh=window.innerHeight, gap=24, top=0, bottom=0;
+    if(coverEl){ var cb=coverEl.getBoundingClientRect().bottom; if(cb>0) top=Math.min(vh, cb+gap); }
+    if(footerEl){ var ft=footerEl.getBoundingClientRect().top; if(ft<vh) bottom=Math.min(vh, vh-ft+gap); }
+    var h=vh-top-bottom; if(h<0) h=0;
+    rail.style.top=top+'px';
+    rail.style.height=h+'px';
+  }
+  var ticking=false;
+  function update(){
+    ticking=false;
+    positionRail();
+    if(!eps.length) return;
+    var line=window.innerHeight*0.35, cur=null;
+    for(var i=0;i<eps.length;i++){ if(eps[i].offsetParent===null) continue; if(!cur) cur=eps[i]; if(eps[i].getBoundingClientRect().top<=line) cur=eps[i]; }
+    if(!cur) return;
+    nodes.forEach(function(n){n.classList.remove('on');});
+    var eras=eraMap[cur.id]||[];
+    var last=null;
+    eras.forEach(function(e){var n=nodeByEra(e); if(n){n.classList.add('on'); last=n;}});
+    if(last){ var nr=last.getBoundingClientRect(), ir=inner.getBoundingClientRect();
+      if(nr.top<ir.top+20||nr.bottom>ir.bottom-20){ last.scrollIntoView({block:'center',behavior:'smooth'}); } }
+  }
+  window.addEventListener('scroll',function(){ if(!ticking){ticking=true;requestAnimationFrame(update);} },{passive:true});
+  window.addEventListener('resize',update);
+  nodes.forEach(function(n){ n.addEventListener('click',function(){
+    var id=n.getAttribute('data-jump'); var t=document.getElementById(id); if(t) t.scrollIntoView({behavior:'smooth'});
+  });});
+  update();
+
+  // annotation popovers
+  function cleanTerm(n){ var c=n.cloneNode(true); [].slice.call(c.querySelectorAll('rt')).forEach(function(x){x.remove();}); return c.textContent.trim(); }
+  var pop=document.createElement('div'); pop.className='popover'; document.body.appendChild(pop);
+  var curNote=null;
+  function buildPop(el){
+    var html='', img=el.getAttribute('data-img');
+    if(img){ var cap=el.getAttribute('data-cap')||'';
+      html+='<img loading="lazy" src="'+img+'" alt="" onerror="this.style.display=\'none\'">';
+      if(cap) html+='<div class="cap">'+cap+'</div>'; }
+    html+='<div class="txt">'+(el.getAttribute('data-note')||'')+'</div>';
+    var src=el.getAttribute('data-src');
+    if(src) html+='<div class="src">出典：<a href="'+src+'" target="_blank" rel="noopener">Wikimedia Commons</a></div>';
+    pop.innerHTML=html;
+  }
+  function showPop(el){
+    buildPop(el); pop.classList.add('show');
+    var r=el.getBoundingClientRect();
+    var top=r.bottom+window.scrollY+6, left=r.left+window.scrollX;
+    var pw=pop.offsetWidth, vw=document.documentElement.clientWidth;
+    if(left+pw>vw-10) left=vw-pw-10; if(left<10) left=10;
+    pop.style.top=top+'px'; pop.style.left=left+'px';
+  }
+  function hidePop(){ pop.classList.remove('show'); if(curNote){curNote.classList.remove('open'); curNote=null;} }
+  var canHover = window.matchMedia('(hover:hover)').matches;
+  [].slice.call(document.querySelectorAll('.note')).forEach(function(el){
+    el.setAttribute('tabindex','0');
+    el.addEventListener('mouseenter',function(){ if(canHover){ curNote=el; showPop(el);} });
+    el.addEventListener('mouseleave',function(){ if(canHover) hidePop(); });
+    el.addEventListener('focus',function(){ curNote=el; showPop(el); });
+    el.addEventListener('blur',hidePop);
+    el.addEventListener('click',function(e){ e.stopPropagation();
+      if(curNote===el){ hidePop(); }
+      else { if(curNote) curNote.classList.remove('open'); curNote=el; el.classList.add('open'); showPop(el); }
+    });
+  });
+  document.addEventListener('click',function(){ if(curNote) hidePop(); });
+  pop.addEventListener('click',function(e){ e.stopPropagation(); });
+  window.addEventListener('scroll',function(){ if(pop.classList.contains('show')&&curNote) showPop(curNote); },{passive:true});
+
+  // per-episode 注・出典 list (auto-generated from .note spans)
+  [].slice.call(document.querySelectorAll('.episode')).forEach(function(ep){
+    var notes=[].slice.call(ep.querySelectorAll('.note')); if(!notes.length) return;
+    var seen={}, dl=document.createElement('dl');
+    notes.forEach(function(n){
+      var term=cleanTerm(n), note=n.getAttribute('data-note')||'', key=term+'|'+note;
+      if(seen[key]) return; seen[key]=1;
+      var dt=document.createElement('dt'); dt.textContent=term; dl.appendChild(dt);
+      var dd=document.createElement('dd'); dd.textContent=note;
+      var src=n.getAttribute('data-src');
+      if(src){ var a=document.createElement('a'); a.href=src; a.target='_blank'; a.rel='noopener'; a.textContent='［出典］'; dd.appendChild(document.createTextNode(' ')); dd.appendChild(a); }
+      dl.appendChild(dd);
+    });
+    var box=document.createElement('div'); box.className='notes';
+    var h=document.createElement('h4'); h.textContent='注・出典'; box.appendChild(h); box.appendChild(dl);
+    var totop=ep.querySelector('.totop'); ep.insertBefore(box, totop);
+  });
+
+  // ---- レイライン地図（第6話） ----
+  (function(){
+    var el=document.getElementById('ep6map');
+    if(!el || !window.L) return;
+    var IZ=[34.4596,134.8530]; // 伊弉諾神宮（中心）
+    var pts=[
+      {n:'伊弉諾神宮（淡路）', r:'国生みの祖神イザナギを祀る。レイラインの中心とされる社', c:IZ},
+      {n:'伊勢神宮 内宮', r:'真東（春分・秋分の日の出方向）。天照大神を祀る', c:[34.4549,136.7257]},
+      {n:'海神神社（対馬）', r:'真西（春分・秋分の日の入り方向）', c:[34.3897,129.4039]},
+      {n:'藤原京', r:'ほぼ同緯度（東西ライン上）', c:[34.5022,135.8076]},
+      {n:'諏訪大社', r:'夏至の日の出方向', c:[35.9997,138.1190]},
+      {n:'出雲大社', r:'夏至の日の入り方向', c:[35.4018,132.6855]},
+      {n:'熊野那智大社', r:'冬至の日の出方向', c:[33.6680,135.8901]},
+      {n:'天岩戸神社（高千穂）', r:'冬至の日の入り方向', c:[32.7256,131.3520]}
+    ];
+    var map=L.map('ep6map',{scrollWheelZoom:false});
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      maxZoom:18, attribution:'© OpenStreetMap contributors'
+    }).addTo(map);
+    // 東西の緯度ライン
+    L.polyline([[IZ[0],128.4],[IZ[0],137.7]],{color:'#8a2b22',weight:2.5,opacity:.85}).addTo(map);
+    // 夏至・冬至の日の出入り方向（伊弉諾から放射）
+    ['諏訪大社','出雲大社','熊野那智大社','天岩戸神社（高千穂）'].forEach(function(nm){
+      var p=pts.filter(function(x){return x.n===nm;})[0];
+      L.polyline([IZ,p.c],{color:'#9a7b3f',weight:1.5,opacity:.8,dashArray:'5,6'}).addTo(map);
+    });
+    var group=[];
+    pts.forEach(function(p){
+      var m=L.marker(p.c).addTo(map).bindPopup('<b>'+p.n+'</b><br>'+p.r);
+      group.push(p.c);
+    });
+    map.fitBounds(group,{padding:[28,28]});
+  })();
+</script>
+
+</body>
+</html>
