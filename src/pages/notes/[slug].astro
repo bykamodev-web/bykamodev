@@ -6,6 +6,7 @@ import NoteCard from '@/components/cards/NoteCard.astro'
 import JsonLd from '@/components/seo/JsonLd.astro'
 import { getAllNoteSlugs, getNoteBySlug } from '@/lib/microcms'
 import { buildNotePageSchemas } from '@/lib/schema'
+import { embedYouTube } from '@/lib/embeds'
 
 export async function getStaticPaths() {
   const slugs = await getAllNoteSlugs()
@@ -94,7 +95,7 @@ const kind = note.kind?.[0]
     )}
 
     <!-- Body -->
-    <div class="rich-content" set:html={note.body} />
+    <div class="rich-content" set:html={embedYouTube(note.body)} />
 
     <!-- Related Builds -->
     {note.relateBuilds && note.relateBuilds.length > 0 && (

@@ -332,6 +332,28 @@ img {
   margin: 2rem 0;
 }
 
+.rich-content .yt-embed {
+  position: relative;
+  margin: 2rem auto;
+  width: 100%;
+  max-width: 640px;
+  aspect-ratio: 16 / 9;
+}
+
+.rich-content .yt-embed--vertical {
+  max-width: 340px;
+  aspect-ratio: 9 / 16;
+}
+
+.rich-content .yt-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: var(--radius-lg);
+}
+
 .rich-content blockquote {
   margin: 2rem 0;
   padding: 1rem 1.25rem;
