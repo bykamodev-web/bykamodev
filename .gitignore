@@ -10,3 +10,8 @@ doc/
 .claude/
 *.log
 KAMO_X_strategy.md
+.aidesigner/*
+!.aidesigner/.gitkeep
+.agents/
+skills/
+skills-lock.json

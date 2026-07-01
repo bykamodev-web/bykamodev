@@ -17,17 +17,6 @@ const showcaseBuilds = builds.slice(0, 3).map((build) => ({
   imageLg: getOptimizedImageUrl(build.coverImage.url, { width: 500, quality: 65, aspectRatio: '3:2' }),
 }))
 
-const capabilityRows = [
-  { label: 'AI Integration', text: 'LLMを活用した動的なUI生成や、業務プロセスの自動化実装。', icon: 'brain' as const },
-  { label: 'Automation', text: '運用と配信を、小さな判断単位まで自動化する。', icon: 'gear' as const },
-  { label: 'Product Systems', text: 'Webアプリとデータ導線を、一つの体験として設計する。', icon: 'layers' as const },
-]
-
-const proofRows = [
-  { index: '01', label: 'Builds', text: '本番運用中のプロダクト' },
-  { index: '02', label: 'Notes', text: '設計やコードの断片' },
-  { index: '03', label: 'Structure', text: '堅牢なアーキテクチャ' },
-]
 ---
 
 <section class="hero-shell">
@@ -37,7 +26,7 @@ const proofRows = [
     <div class="hero-grid"></div>
   </div>
 
-  <div class="max-w-[1280px] mx-auto px-6 md:px-12 py-10 md:py-14">
+  <div class="w-full max-w-[1280px] mx-auto px-6 md:px-12 py-10 md:py-14">
     <div class="hero-layout">
       <div class="hero-copy reveal" data-reveal>
         <p class="section-label text-[var(--color-brand)] mb-5 flex items-center gap-2">
@@ -45,7 +34,7 @@ const proofRows = [
           Developer / KAMO
         </p>
         <div class="space-y-6">
-          <h1 class="hero-site-title">bykamo<span class="text-[var(--color-ink-subtle)]">.</span>dev</h1>
+          <h1 class="hero-site-title"><span class="type-target">bykamo<span class="title-dot">.</span>dev</span><span class="type-caret" aria-hidden="true"></span></h1>
           <p class="hero-title">
             AIとコードで、
             <br />
@@ -88,20 +77,20 @@ const proofRows = [
             <div class="grid grid-cols-2 gap-3 flex-grow">
               <div class="bg-white/50 rounded-xl p-4 border border-[rgba(18,20,23,0.05)]">
                 <div class="text-[0.65rem] text-[var(--color-ink-muted)] mb-1 uppercase font-bold">Uptime</div>
-                <div class="text-xl font-bold text-[var(--color-ink)]">99.9%</div>
+                <div class="text-xl font-bold text-[var(--color-ink)] tabular-nums" data-metric="uptime">99.9%</div>
               </div>
               <div class="bg-white/50 rounded-xl p-4 border border-[rgba(18,20,23,0.05)]">
                 <div class="text-[0.65rem] text-[var(--color-ink-muted)] mb-1 uppercase font-bold">Latency</div>
-                <div class="text-xl font-bold text-[var(--color-ink)]">42ms</div>
+                <div class="text-xl font-bold text-[var(--color-ink)] tabular-nums" data-metric="latency">42ms</div>
               </div>
               <div class="col-span-2 bg-gradient-to-r from-[var(--color-brand-light)] to-transparent rounded-xl p-4 border border-[rgba(45,78,216,0.2)] mt-2">
                 <div class="w-full h-12 flex items-end gap-1">
-                  <div class="w-full bg-[var(--color-brand)]/40 h-[30%] rounded-t-sm"></div>
-                  <div class="w-full bg-[var(--color-brand)]/60 h-[50%] rounded-t-sm"></div>
-                  <div class="w-full bg-[var(--color-brand)]/80 h-[80%] rounded-t-sm"></div>
-                  <div class="w-full bg-[var(--color-brand)] h-[100%] rounded-t-sm"></div>
-                  <div class="w-full bg-[var(--color-brand)]/70 h-[60%] rounded-t-sm"></div>
-                  <div class="w-full bg-[var(--color-brand)]/90 h-[90%] rounded-t-sm"></div>
+                  <div class="hero-bar w-full bg-[var(--color-brand)]/40 h-[30%] rounded-t-sm" style="--d:0s"></div>
+                  <div class="hero-bar w-full bg-[var(--color-brand)]/60 h-[50%] rounded-t-sm" style="--d:0.3s"></div>
+                  <div class="hero-bar w-full bg-[var(--color-brand)]/80 h-[80%] rounded-t-sm" style="--d:0.6s"></div>
+                  <div class="hero-bar w-full bg-[var(--color-brand)] h-[100%] rounded-t-sm" style="--d:0.9s"></div>
+                  <div class="hero-bar w-full bg-[var(--color-brand)]/70 h-[60%] rounded-t-sm" style="--d:1.2s"></div>
+                  <div class="hero-bar w-full bg-[var(--color-brand)]/90 h-[90%] rounded-t-sm" style="--d:1.5s"></div>
                 </div>
               </div>
             </div>
@@ -116,50 +105,24 @@ const proofRows = [
               <span class="ml-2 text-xs font-mono text-[var(--color-ink-subtle)]">optimize_graph.ts</span>
             </div>
             <div class="p-5 font-mono text-[0.8rem] leading-relaxed text-[#c9d1d9] overflow-hidden">
-              <pre><code><span class="text-[#ff7b72]">async function</span> <span class="text-[#d2a8ff]">resolveDependency</span>(
-  <span class="text-[#79c0ff]">node</span>: ActionNode
-): <span class="text-[#79c0ff]">Promise</span>&lt;Result&gt; {'{'}
-  <span class="text-[#ff7b72]">const</span> ctx = <span class="text-[#ff7b72]">await</span> initContext();
-
-  <span class="text-[#8b949e]">/* AI driven sub-routine */</span>
-  <span class="text-[#ff7b72]">if</span> (node.<span class="text-[#79c0ff]">isDynamic</span>) {'{'}
-    <span class="text-[#ff7b72]">return</span> <span class="text-[#ff7b72]">await</span> llm.predictPath(ctx);
-  {'}'}
-
-  <span class="text-[#ff7b72]">return</span> execute(node, ctx);
-{'}'}</code></pre>
+              <pre><code><span class="code-line" style="--i:0"><span class="text-[#ff7b72]">async function</span> <span class="text-[#d2a8ff]">resolveDependency</span>(</span>
+<span class="code-line" style="--i:1">  <span class="text-[#79c0ff]">node</span>: ActionNode</span>
+<span class="code-line" style="--i:2">): <span class="text-[#79c0ff]">Promise</span>&lt;Result&gt; {'{'}</span>
+<span class="code-line" style="--i:3">  <span class="text-[#ff7b72]">const</span> ctx = <span class="text-[#ff7b72]">await</span> initContext();</span>
+<span class="code-line" style="--i:4"> </span>
+<span class="code-line" style="--i:5">  <span class="text-[#8b949e]">/* AI driven sub-routine */</span></span>
+<span class="code-line" style="--i:6">  <span class="text-[#ff7b72]">if</span> (node.<span class="text-[#79c0ff]">isDynamic</span>) {'{'}</span>
+<span class="code-line" style="--i:7">    <span class="text-[#ff7b72]">return</span> <span class="text-[#ff7b72]">await</span> llm.predictPath(ctx);<span class="code-caret"></span></span>
+<span class="code-line" style="--i:8">  {'}'}</span>
+<span class="code-line" style="--i:9"> </span>
+<span class="code-line" style="--i:10">  <span class="text-[#ff7b72]">return</span> execute(node, ctx);</span>
+<span class="code-line" style="--i:11">{'}'}</span></code></pre>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Proof Points + Capabilities -->
-    <div class="hero-bottom reveal" data-reveal style="--delay:220ms;">
-      <div class="hero-proof">
-        {proofRows.map((item) => (
-          <div>
-            <div class="text-xs font-bold text-[var(--color-ink-subtle)] uppercase font-mono mb-1">{item.index}</div>
-            <div class="font-bold text-[var(--color-ink)] text-lg">{item.label}</div>
-            <div class="text-sm text-[var(--color-ink-muted)]">{item.text}</div>
-          </div>
-        ))}
-      </div>
-
-      <div class="hero-capabilities">
-        {capabilityRows.map((item) => (
-          <div class="hero-capability">
-            <div class="icon-box">
-              <Icon name={item.icon} size={16} class="text-[var(--color-ink)]" />
-            </div>
-            <div>
-              <h2 class="hero-capability-label">{item.label}</h2>
-              <p class="hero-capability-text">{item.text}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
   </div>
 </section>
 
@@ -167,7 +130,9 @@ const proofRows = [
   .hero-shell {
     position: relative;
     overflow: clip;
-    min-height: calc(100svh - 4rem);
+    min-height: calc(100dvh - 4rem);
+    display: flex;
+    align-items: center;
   }
 
   .hero-atmosphere {
@@ -230,6 +195,20 @@ const proofRows = [
     line-height: 1.05;
     letter-spacing: -0.03em;
     color: var(--color-ink);
+  }
+
+  .title-dot {
+    color: var(--color-ink-subtle);
+  }
+
+  .type-caret {
+    display: inline-block;
+    width: 0.06em;
+    height: 0.78em;
+    margin-left: 0.05em;
+    background: var(--color-brand);
+    transform: translateY(0.02em);
+    animation: caretBlink 1.05s steps(1) infinite;
   }
 
   .hero-actions {
@@ -297,66 +276,65 @@ const proofRows = [
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  /* Bottom section */
-  .hero-bottom {
-    margin-top: 8rem;
-    padding-top: 3rem;
-    border-top: 1px solid rgba(18, 20, 23, 0.08);
-    display: grid;
-    gap: 3rem;
+  /* Live terminal: code typing + caret */
+  .code-line {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(3px);
+    animation: codeLineIn 0.3s ease forwards;
+    animation-delay: calc(var(--i) * 0.11s + 0.35s);
   }
 
-  .hero-proof {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 3rem;
+  @keyframes codeLineIn {
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
 
-  .hero-capabilities {
-    display: grid;
-    gap: 1rem;
+  .code-caret {
+    display: inline-block;
+    width: 7px;
+    height: 0.95em;
+    margin-left: 3px;
+    background: #c9d1d9;
+    vertical-align: -1px;
+    opacity: 0;
+    animation: caretBlink 1.05s steps(1) 1.9s infinite;
   }
 
-  .hero-capability {
-    padding: 1.25rem;
-    border: 1px solid rgba(18, 20, 23, 0.08);
-    border-radius: var(--radius-lg);
-    background: rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(8px);
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 0.95rem;
-    align-items: start;
+  @keyframes caretBlink {
+    0%,
+    49% {
+      opacity: 1;
+    }
+    50%,
+    100% {
+      opacity: 0;
+    }
   }
 
-  .hero-capability-label {
-    margin-bottom: 0.3rem;
-    font-size: 0.82rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--color-ink);
+  /* Live dashboard bars */
+  .hero-bar {
+    transform-origin: bottom;
+    animation: barPulse 2.6s ease-in-out infinite;
+    animation-delay: var(--d);
   }
 
-  .hero-capability-text {
-    font-size: 0.85rem;
-    line-height: 1.65;
-    color: var(--color-ink-muted);
+  @keyframes barPulse {
+    0%,
+    100% {
+      transform: scaleY(1);
+    }
+    50% {
+      transform: scaleY(0.55);
+    }
   }
 
   @media (min-width: 960px) {
     .hero-layout {
       grid-template-columns: minmax(0, 1fr) minmax(22rem, 1fr);
       gap: 4rem;
-    }
-
-    .hero-bottom {
-      grid-template-columns: auto 1fr;
-      gap: 4rem;
-    }
-
-    .hero-capabilities {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 
@@ -380,8 +358,69 @@ const proofRows = [
 
   @media (prefers-reduced-motion: reduce) {
     .hero-orb-a,
-    .hero-orb-b {
+    .hero-orb-b,
+    .hero-bar,
+    .code-caret {
       animation: none;
+    }
+
+    .type-caret {
+      display: none;
+    }
+
+    .code-line {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+
+    .code-caret {
+      opacity: 1;
     }
   }
 </style>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (!reduce) {
+    // Title typewriter: type "bykamo.dev" char by char, caret follows
+    const target = document.querySelector('.type-target')
+    if (target) {
+      const full = target.textContent || ''
+      target.textContent = ''
+      let i = 0
+      const typeNext = () => {
+        if (i >= full.length) return
+        const ch = full[i]
+        if (ch === '.') {
+          const dot = document.createElement('span')
+          dot.className = 'title-dot'
+          dot.textContent = '.'
+          target.appendChild(dot)
+        } else {
+          target.appendChild(document.createTextNode(ch))
+        }
+        i += 1
+        window.setTimeout(typeNext, 95)
+      }
+      window.setTimeout(typeNext, 300)
+    }
+
+    const latency = document.querySelector('[data-metric="latency"]')
+    const uptime = document.querySelector('[data-metric="uptime"]')
+
+    if (latency) {
+      window.setInterval(() => {
+        const ms = 39 + Math.floor(Math.random() * 8) // 39–46ms
+        latency.textContent = `${ms}ms`
+      }, 1700)
+    }
+
+    if (uptime) {
+      const values = ['99.8%', '99.9%', '99.9%', '100.0%', '99.9%']
+      window.setInterval(() => {
+        uptime.textContent = values[Math.floor(Math.random() * values.length)]
+      }, 2800)
+    }
+  }
+</script>
