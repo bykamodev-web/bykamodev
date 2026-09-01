@@ -40,13 +40,13 @@ const webSiteSchema = buildWebSiteSchema()
     <JsonLd schemas={[webSiteSchema]} />
     <slot name="head" />
   </head>
-  <body class="min-h-screen flex flex-col font-sans text-[var(--color-ink)]">
+  <body class="min-h-screen flex flex-col font-sans text-[var(--color-ink-violet)]">
     <Header
       xUrl={settings.xurl}
       githubUrl={settings.githubUrl}
     />
 
-    <main class:list={['flex-1 pt-16', className]}>
+    <main class:list={['flex-1 pt-[72px]', className]}>
       <div class="page-enter">
         <slot />
       </div>

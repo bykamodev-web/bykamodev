@@ -3,122 +3,40 @@ import type { Build } from '@/types'
 import { getOptimizedImageUrl } from '@/lib/microcms'
 import Icon from '@/components/icons/Icons.astro'
 
-interface Props {
-  build: Build
-}
-
+interface Props { build: Build }
 const { build } = Astro.props
-
-const imgSm = getOptimizedImageUrl(build.coverImage.url, { width: 320, quality: 60, aspectRatio: '16:9' })
-const imgLg = getOptimizedImageUrl(build.coverImage.url, { width: 560, quality: 68, aspectRatio: '16:9' })
-
 const status = build.statusLabel?.[0] || 'planning'
-const badgeClass = `badge badge-${status}`
+const imageSm = getOptimizedImageUrl(build.coverImage.url, { width: 480, quality: 72, aspectRatio: '16:9' })
+const imageLg = getOptimizedImageUrl(build.coverImage.url, { width: 800, quality: 78, aspectRatio: '16:9' })
 ---
 
-<a href={`/builds/${build.slug}`} class="group block h-full">
-  <article class="glass-panel flex flex-col overflow-hidden h-full">
-    <div class="build-media">
-      <img
-        srcset={`${imgSm} 320w, ${imgLg} 560w`}
-        sizes="(max-width: 768px) 92vw, 360px"
-        src={imgSm}
-        alt={build.title}
-        loading="lazy"
-        class="build-media-image"
-      />
-    </div>
-
-    <div class="p-6 flex flex-col flex-grow">
-      <div class="build-meta">
-        <span class={badgeClass}>{status}</span>
-        {build.topics?.slice(0, 2).map((topic) => (
-          <span class="caption">{topic.title}</span>
-        ))}
+<a href={`/builds/${build.slug}`} class="group build-card-link">
+  <article class="build-card">
+    <figure class="build-card__image">
+      <img src={imageSm} srcset={`${imageSm} 480w, ${imageLg} 800w`} sizes="(max-width: 767px) calc(100vw - 48px), 400px" alt={build.title} loading="lazy" />
+    </figure>
+    <div class="build-card__content">
+      <div class="build-card__meta"><span class={`badge badge-${status}`}>{status}</span>{build.topics?.slice(0, 1).map((topic) => <span class="caption">{topic.title}</span>)}</div>
+      <h3>{build.title}</h3>
+      <p>{build.summary}</p>
+      <div class="build-card__footer">
+        {build.stack && build.stack.length > 0 && <span>{build.stack.slice(0, 3).map((item) => item.name).join(' / ')}</span>}
+        <Icon name="arrow-right" size={18} class="hover-arrow" />
       </div>
-
-      <h3 class="build-title">{build.title}</h3>
-      <p class="build-summary">{build.summary}</p>
-
-      {build.stack && build.stack.length > 0 && (
-        <div class="build-stack">
-          {build.stack.slice(0, 4).map((item) => (
-            <span class="text-[0.75rem] font-mono text-[var(--color-ink-subtle)]">{item.name}</span>
-          ))}
-        </div>
-      )}
     </div>
   </article>
 </a>
 
 <style>
-  .build-media {
-    position: relative;
-    overflow: hidden;
-    border-bottom: 1px solid rgba(18, 20, 23, 0.08);
-    background: rgba(18, 20, 23, 0.05);
-  }
-
-  .build-media-image {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
-    transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .build-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.55rem;
-    align-items: center;
-    margin-bottom: 1rem;
-  }
-
-  .build-title {
-    font-size: 1.15rem;
-    font-weight: 700;
-    line-height: 1.28;
-    letter-spacing: -0.03em;
-    color: var(--color-ink);
-    transition: color 180ms ease;
-    margin-bottom: 0.5rem;
-  }
-
-  .build-summary {
-    font-size: 0.9rem;
-    line-height: 1.7;
-    color: var(--color-ink-muted);
-    flex-grow: 1;
-  }
-
-  .build-stack {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 1.25rem;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(18, 20, 23, 0.08);
-  }
-
-  .build-stack span + span::before {
-    content: "/";
-    margin-right: 0.5rem;
-    color: var(--color-ink-subtle);
-    opacity: 0.5;
-  }
-
-  .group:hover .build-media-image {
-    transform: scale(1.05);
-  }
-
-  .group:hover .build-title {
-    color: var(--color-brand);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .build-media-image,
-    .build-title {
-      transition: none;
-    }
-  }
+  .build-card-link { display: block; height: 100%; }
+  .build-card { display: flex; flex-direction: column; height: 100%; border: 1px solid var(--color-ink-violet); background: var(--color-pure-white); transition: transform 180ms ease; }
+  .build-card-link:hover .build-card { transform: translate(-3px, -3px); }
+  .build-card__image { border-bottom: 1px solid var(--color-ink-violet); background: var(--color-cream-paper); }
+  .build-card__image img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+  .build-card__content { display: flex; flex: 1; flex-direction: column; padding: 24px; }
+  .build-card__meta { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+  h3 { font-size: 24px; font-weight: 700; line-height: 1.4; }
+  p { margin-top: 16px; font-size: 16px; line-height: 1.6; }
+  .build-card__footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: auto; padding-top: 24px; border-top: 1px solid var(--color-ink-violet); font-family: var(--font-supply); font-size: 14px; line-height: 1.4; }
+  @media (prefers-reduced-motion: reduce) { .build-card { transition: none; } .build-card-link:hover .build-card { transform: none; } }
 </style>

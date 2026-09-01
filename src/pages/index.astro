@@ -8,14 +8,7 @@ import JsonLd from '@/components/seo/JsonLd.astro'
 import { getBuilds, getNotes } from '@/lib/microcms'
 import { buildProfilePageSchema } from '@/lib/schema'
 
-const [{ contents: featuredBuilds }, dailybrew] = await Promise.all([
-  getBuilds({ featured: true, limit: 3 }),
-  (await import('@/lib/microcms')).getBuildBySlug('dailybrew'),
-])
-const heroBuilds = featuredBuilds.slice(0, 2)
-if (dailybrew && !heroBuilds.some((b) => b.slug === 'dailybrew')) {
-  heroBuilds.push(dailybrew)
-}
+const { contents: featuredBuilds } = await getBuilds({ featured: true, limit: 3 })
 const { contents: featuredNotes } = await getNotes({ featured: true, limit: 3 })
 
 const profileSchema = buildProfilePageSchema()
@@ -26,7 +19,7 @@ const profileSchema = buildProfilePageSchema()
     <JsonLd schemas={[profileSchema]} />
   </Fragment>
 
-  <Hero builds={heroBuilds} />
+  <Hero />
   <FeaturedBuilds builds={featuredBuilds} />
   <FeaturedNotes notes={featuredNotes} />
   <ContactCta />

@@ -6,71 +6,61 @@ import Icon from '@/components/icons/Icons.astro'
 import { buildBreadcrumbSchema } from '@/lib/schema'
 
 const contactPageSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'ContactPage',
-  name: 'Contact',
-  description: 'ご相談・お問い合わせ。AI実装・自動化・プロダクト開発について。',
-  url: 'https://bykamo.dev/contact',
+  '@context': 'https://schema.org', '@type': 'ContactPage', name: 'Contact',
+  description: 'ご相談・お問い合わせ。AI実装・自動化・プロダクト開発について。', url: 'https://bykamo.dev/contact',
 }
-
-const breadcrumbSchema = buildBreadcrumbSchema([
-  { label: 'Home', href: '/' },
-  { label: 'Contact', href: '/contact' },
-])
-
+const breadcrumbSchema = buildBreadcrumbSchema([{ label: 'Home', href: '/' }, { label: 'Contact', href: '/contact' }])
 const contactThemes = [
-  { icon: 'brain' as const, title: 'AI実装の相談', text: 'LLM・OCR・自動生成を、プロダクトや業務導線へ組み込みたい。' },
-  { icon: 'refresh' as const, title: '自動化の相談', text: '業務・取引・配信などの反復処理を、小さく確実に自動化したい。' },
-  { icon: 'rocket' as const, title: 'プロダクト開発', text: 'Webアプリ・PWA・モバイルを含めて、設計から実装まで任せたい。' },
+  { icon: 'brain' as const, title: 'AI実装', text: 'LLM・OCR・自動生成を、プロダクトや業務導線に組み込みます。' },
+  { icon: 'refresh' as const, title: '自動化', text: '手作業の往復を、壊れにくく運用できる仕組みに変えます。' },
+  { icon: 'rocket' as const, title: 'プロダクト開発', text: 'WebアプリからPWAまで、設計と実装を一続きで進めます。' },
 ]
 ---
 
 <BaseLayout title="Contact" description="ご相談・お問い合わせ。AI実装・自動化・プロダクト開発について。">
-  <Fragment slot="head">
-    <JsonLd schemas={[contactPageSchema, breadcrumbSchema]} />
-  </Fragment>
+  <Fragment slot="head"><JsonLd schemas={[contactPageSchema, breadcrumbSchema]} /></Fragment>
 
-  <div class="max-w-[1280px] mx-auto px-6 md:px-12 py-12 md:py-16">
-    <div class="max-w-4xl">
-      <Breadcrumbs items={[
-        { label: 'Home', href: '/' },
-        { label: 'Contact' },
-      ]} />
-
-      <p class="section-label text-[var(--color-brand)] mb-4">Contact</p>
-      <h1 class="page-title mb-6">要件が整理しきれていなくても、そこから一緒に詰められます。</h1>
-      <p class="body-text-lg max-w-2xl">
-        AI実装、自動化、プロダクト開発の相談を受けています。技術選定の前段でも、実装フェーズ直前でも問題ありません。
-      </p>
+  <div class="section-shell contact-page">
+    <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Contact' }]} />
+    <div class="contact-page__hero">
+      <p class="section-label">CONTACT</p>
+      <h1 class="page-title">要件がまだ曖昧でも、<br />そこから一緒に詰められます。</h1>
+      <p class="body-text">AI実装、自動化、プロダクト開発の相談を受けています。技術選定の前段でも、実装フェーズ直前でも大丈夫です。</p>
     </div>
 
-    <div class="grid gap-12 mt-14 lg:grid-cols-[minmax(0,1.05fr)_minmax(20rem,0.95fr)]">
-      <section class="space-y-4 reveal" data-reveal>
+    <div class="contact-page__body">
+      <section class="contact-themes">
         {contactThemes.map((item, index) => (
-          <div class="glass-panel p-5 grid gap-4 md:grid-cols-[auto_minmax(0,1fr)] md:gap-5">
-            <div class="icon-box">
-              <Icon name={item.icon} size={16} class="text-[var(--color-ink)]" />
-            </div>
-            <div>
-              <h2 class="text-lg font-semibold tracking-tight text-[var(--color-ink)] mb-2">{item.title}</h2>
-              <p class="body-text max-w-xl">{item.text}</p>
-            </div>
+          <div class="contact-theme reveal" data-reveal style={`--delay:${index * 80}ms;`}>
+            <div class="icon-box"><Icon name={item.icon} size={20} /></div>
+            <div><h2>{item.title}</h2><p>{item.text}</p></div>
           </div>
         ))}
       </section>
 
-      <section class="glass-panel reveal p-6 md:p-8" data-reveal style="--delay:120ms;">
-        <p class="section-label text-[var(--color-brand)] mb-4">Reach Out</p>
-        <h2 class="text-lg md:text-xl font-semibold tracking-tight text-[var(--color-ink)] mb-4">まずは相談の入口だけ作る。</h2>
-        <p class="body-text mb-8">
-          やりたいことが一文でも、既に要件がまとまっていても大丈夫です。連絡しやすい方法からどうぞ。
-        </p>
-
-        <a href="/contact/form" class="group btn-primary">
-          フォームで相談する
-          <Icon name="arrow-right" size={14} class="hover-arrow" />
-        </a>
+      <section class="contact-action reveal" data-reveal style="--delay:140ms;">
+        <p class="section-label">REACH OUT</p>
+        <h2>まずは、相談の入口をつくる。</h2>
+        <p>やりたいことが一文でも、すでに要件がまとまっていても問題ありません。</p>
+        <a href="/contact/form" class="group btn-primary">フォームで相談する <Icon name="arrow-right" size={18} class="hover-arrow" /></a>
       </section>
     </div>
   </div>
 </BaseLayout>
+
+<style>
+  .contact-page { padding-block: 80px 120px; }
+  .contact-page__hero { max-width: 800px; }
+  .section-label { margin-bottom: 16px; }
+  .contact-page__hero .body-text { max-width: 650px; margin-top: 24px; }
+  .contact-page__body { display: grid; gap: 64px; margin-top: 80px; }
+  .contact-themes { border-top: 1px solid var(--color-ink-violet); }
+  .contact-theme { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 24px; padding: 24px 0; border-bottom: 1px solid var(--color-ink-violet); }
+  h2 { font-size: 24px; font-weight: 700; line-height: 1.4; }
+  .contact-theme p, .contact-action > p:not(.section-label) { margin-top: 8px; font-size: 16px; line-height: 1.6; }
+  .contact-action { padding: 40px; border: 1px solid var(--color-ink-violet); background: var(--color-pure-white); }
+  .contact-action h2 { font-size: 40px; line-height: 1.27; }
+  .contact-action .btn-primary { width: max-content; margin-top: 32px; }
+  @media (min-width: 900px) { .contact-page__body { grid-template-columns: minmax(0, 1fr) minmax(360px, .8fr); align-items: start; } }
+  @media (max-width: 767px) { .contact-page { padding-block: 64px 80px; } .contact-action { padding: 32px 24px; } .contact-action .btn-primary { width: 100%; } }
+</style>

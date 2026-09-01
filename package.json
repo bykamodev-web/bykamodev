@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "test": "node --test",
     "preview": "npx wrangler pages dev dist",
     "serve": "npx serve dist -l 4321",
     "astro": "astro"

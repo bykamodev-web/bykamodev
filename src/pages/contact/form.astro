@@ -11,16 +11,16 @@ const siteKey = import.meta.env.TURNSTILE_SITE_KEY
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   </Fragment>
 
-  <div class="max-w-3xl mx-auto px-6 md:px-12 py-12 md:py-16">
+  <div class="section-shell form-page">
     <Breadcrumbs items={[
       { label: 'Home', href: '/' },
       { label: 'Contact', href: '/contact' },
       { label: 'Form' },
     ]} />
 
-    <p class="section-label text-[var(--color-brand)] mb-4">Contact Form</p>
-    <h1 class="page-title mb-6">お問い合わせ</h1>
-    <p class="body-text-lg mb-10">内容を入力して送信してください。折り返しご連絡いたします。</p>
+    <p class="section-label">CONTACT FORM</p>
+    <h1 class="page-title">お問い合わせ</h1>
+    <p class="body-text-lg form-page__lead">内容を入力して送信してください。折り返しご連絡いたします。</p>
 
     <div id="form-container" class="glass-panel p-6 md:p-8 reveal" data-reveal>
       <form id="contact-form" novalidate>
@@ -111,39 +111,40 @@ const siteKey = import.meta.env.TURNSTILE_SITE_KEY
 </BaseLayout>
 
 <style>
+  .form-page { max-width: 768px; padding-block: 80px 120px; }
+  .section-label { margin-bottom: 16px; }
+  .form-page__lead { margin: 24px 0 40px; }
   .form-label {
     display: block;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--color-ink);
-    margin-bottom: 0.5rem;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-ink-violet);
+    margin-bottom: 8px;
   }
 
   .form-input {
     width: 100%;
-    padding: 0.75rem 1rem;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(8px);
-    font-size: 0.9375rem;
-    color: var(--color-ink);
+    padding: 16px;
+    border: 1px solid var(--color-ink-violet);
+    background: var(--color-pure-white);
+    font-size: 16px;
+    color: var(--color-ink-violet);
     transition: border-color 180ms ease;
   }
 
   .form-input:focus {
     outline: none;
-    border-color: var(--color-brand);
-    box-shadow: 0 0 0 3px var(--color-brand-light);
+    outline: 2px solid var(--color-butter-yellow);
+    outline-offset: 2px;
   }
 
   .form-input::placeholder {
-    color: var(--color-ink-subtle);
+    color: rgba(13, 1, 41, .6);
   }
 
   select.form-input {
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' fill='none' stroke='%2389919d' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' fill='none' stroke='%230d0129' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 1rem center;
     padding-right: 2.5rem;
@@ -163,7 +164,7 @@ const siteKey = import.meta.env.TURNSTILE_SITE_KEY
 
   .form-alert {
     padding: 0.75rem 1rem;
-    border-radius: var(--radius-md);
+    border-radius: 0;
     font-size: 0.875rem;
     background: rgba(220, 38, 38, 0.08);
     color: #dc2626;

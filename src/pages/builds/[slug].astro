@@ -8,154 +8,71 @@ import { buildBuildPageSchemas } from '@/lib/schema'
 
 export async function getStaticPaths() {
   const slugs = await getAllBuildSlugs()
-  return slugs.map((item) => ({
-    params: { slug: item.slug },
-  }))
+  return slugs.map((item) => ({ params: { slug: item.slug }}))
 }
 
 const { slug } = Astro.params
 const build = await getBuildBySlug(slug)
-
-if (!build) {
-  return Astro.redirect('/404')
-}
+if (!build) return Astro.redirect('/404')
 
 const schemas = buildBuildPageSchemas(build)
-
-const publishedDate = build.publishedAt
-  ? new Date(build.publishedAt).toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' })
-  : ''
-
+const publishedDate = build.publishedAt ? new Date(build.publishedAt).toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }) : ''
 const ogImage = build.seoMeta?.ogImage?.url || build.coverImage?.url
-const heroImg = getOptimizedImageUrl(build.coverImage.url, { width: 768, quality: 78, aspectRatio: '16:9' })
-
-const statusColors: Record<string, string> = {
-  planning: 'bg-amber-100 text-amber-800',
-  building: 'bg-blue-100 text-blue-800',
-  live: 'bg-green-100 text-green-800',
-  archived: 'bg-zinc-100 text-zinc-600',
-}
 const status = build.statusLabel?.[0] || 'planning'
+const coverImage = getOptimizedImageUrl(build.coverImage.url, { width: 1440, quality: 82, aspectRatio: '16:9' })
 ---
 
-<BaseLayout
-  title={build.seoMeta?.metaTitle || build.title}
-  description={build.seoMeta?.metaDescription || build.summary}
-  ogImage={ogImage}
-  noindex={build.seoMeta?.noIndex}
->
-  <Fragment slot="head">
-    <JsonLd schemas={schemas} />
-  </Fragment>
+<BaseLayout title={build.seoMeta?.metaTitle || build.title} description={build.seoMeta?.metaDescription || build.summary} ogImage={ogImage} noindex={build.seoMeta?.noIndex}>
+  <Fragment slot="head"><JsonLd schemas={schemas} /></Fragment>
+  <article class="section-shell article-page">
+    <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Builds', href: '/builds' }, { label: build.title }]} />
+    <header class="article-header">
+      <div class="article-header__meta"><span class={`badge badge-${status}`}>{status}</span>{publishedDate && <time datetime={build.publishedAt}>{publishedDate}</time>}</div>
+      <h1 class="page-title">{build.title}</h1>
+      <p class="body-text">{build.summary}</p>
+      {build.topics?.length && <div class="article-header__topics">{build.topics.map((topic) => <a href={`/topics/${topic.slug}`}>{topic.title}</a>)}</div>}
+    </header>
 
-  <article class="max-w-3xl mx-auto px-6 py-12">
-    <Breadcrumbs items={[
-      { label: 'Home', href: '/' },
-      { label: 'Builds', href: '/builds' },
-      { label: build.title },
-    ]} />
+    <figure class="article-cover">
+      <img src={coverImage} alt={build.title} width="1440" height="810" loading="eager" />
+    </figure>
 
-    <!-- Header -->
-    <div class="mb-8">
-      <div class="flex items-center gap-2 mb-4">
-        <span class:list={['text-xs font-medium px-2 py-0.5 rounded-full', statusColors[status] || statusColors.planning]}>
-          {status}
-        </span>
-        {build.topics?.map((topic) => (
-          <a href={`/topics/${topic.slug}`} class="text-xs text-blue-600 hover:underline">{topic.title}</a>
-        ))}
-        {publishedDate && (
-          <time class="text-xs text-zinc-400" datetime={build.publishedAt}>{publishedDate}</time>
-        )}
-      </div>
-      <h1 class="text-xl md:text-2xl font-bold leading-snug mb-4">{build.title}</h1>
-      <p class="text-lg text-zinc-600">{build.summary}</p>
+    <div class="build-story">
+      <section><p class="section-label">CHALLENGE</p><div><h2>課題</h2><p>{build.problem}</p></div></section>
+      <section><p class="section-label">SOLUTION</p><div><h2>解決</h2><p>{build.solution}</p></div></section>
+      {build.outcome && <section><p class="section-label">OUTCOME</p><div><h2>結果・学び</h2><p>{build.outcome}</p></div></section>}
     </div>
 
-    <!-- Cover Image -->
-    <img
-      src={heroImg}
-      alt={build.title}
-      class="w-full rounded-lg mb-10"
-      loading="eager"
-    />
-
-    <!-- Problem / Solution / Outcome -->
-    <div class="space-y-8 mb-10">
-      <section>
-        <h2 class="text-xl font-semibold mb-3 flex items-center gap-2">
-          <span class="w-1 h-6 bg-red-400 rounded-full inline-block"></span>
-          課題
-        </h2>
-        <p class="text-zinc-700 leading-relaxed whitespace-pre-line">{build.problem}</p>
-      </section>
-
-      <section>
-        <h2 class="text-xl font-semibold mb-3 flex items-center gap-2">
-          <span class="w-1 h-6 bg-blue-400 rounded-full inline-block"></span>
-          解決
-        </h2>
-        <p class="text-zinc-700 leading-relaxed whitespace-pre-line">{build.solution}</p>
-      </section>
-
-      {build.outcome && (
-        <section>
-          <h2 class="text-xl font-semibold mb-3 flex items-center gap-2">
-            <span class="w-1 h-6 bg-green-400 rounded-full inline-block"></span>
-            結果・学び
-          </h2>
-          <p class="text-zinc-700 leading-relaxed whitespace-pre-line">{build.outcome}</p>
-        </section>
-      )}
-    </div>
-
-    <!-- Body (rich editor) -->
-    {build.body && (
-      <div class="rich-content mb-10" set:html={build.body} />
-    )}
-
-    <!-- Stack -->
-    {build.stack && build.stack.length > 0 && (
-      <section class="mb-10">
-        <h2 class="text-xl font-semibold mb-4">技術スタック</h2>
-        <div class="flex flex-wrap gap-2">
-          {build.stack.map((item) => (
-            <div class="flex items-center gap-1 bg-zinc-100 rounded-lg px-3 py-1.5">
-              <span class="text-sm font-medium">{item.name}</span>
-              {item.role && <span class="text-xs text-zinc-500">({item.role})</span>}
-            </div>
-          ))}
-        </div>
-      </section>
-    )}
-
-    <!-- Links -->
-    {build.links && build.links.length > 0 && (
-      <section class="mb-10">
-        <h2 class="text-xl font-semibold mb-4">リンク</h2>
-        <ul class="space-y-2">
-          {build.links.map((link) => (
-            <li>
-              <a href={link.url} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
-                {link.label || link.url}
-              </a>
-              {link.note && <span class="text-sm text-zinc-500 ml-2">{link.note}</span>}
-            </li>
-          ))}
-        </ul>
-      </section>
-    )}
-
-    <!-- Related Notes -->
-    {build.relatedNotes && build.relatedNotes.length > 0 && (
-      <section class="mt-12 pt-8 border-t border-zinc-200">
-        <h2 class="text-xl font-semibold mb-6">関連Notes</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {build.relatedNotes.map((note) => (
-            <NoteCard note={note} />
-          ))}
-        </div>
-      </section>
-    )}
+    {build.body && <div class="rich-content" set:html={build.body} />}
+    {build.stack?.length && <section class="article-stack"><p class="section-label">STACK</p><div>{build.stack.map((item) => <span class="tech-tag">{item.name}{item.role && ` / ${item.role}`}</span>)}</div></section>}
+    {build.links?.length && <section class="article-links"><p class="section-label">LINKS</p><ul>{build.links.map((link) => <li><a href={link.url} target="_blank" rel="noopener noreferrer">{link.label || link.url} ↗</a>{link.note && <span>{link.note}</span>}</li>)}</ul></section>}
+    {build.relatedNotes?.length && <section class="article-related"><p class="section-label">RELATED NOTES</p><div>{build.relatedNotes.map((note) => <NoteCard note={note} />)}</div></section>}
   </article>
 </BaseLayout>
+
+<style>
+  .article-page { max-width: 900px; padding-block: 80px 120px; }
+  .article-header { max-width: 820px; }
+  .article-header__meta, .article-header__topics { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; font-family: var(--font-supply); font-size: 14px; }
+  .article-header__meta { margin-bottom: 24px; }
+  .article-header .body-text { margin-top: 24px; }
+  .article-header__topics { margin-top: 24px; }
+  .article-header__topics a { border-bottom: 1px solid var(--color-ink-violet); }
+  .article-cover { margin: 64px 0; border: 1px solid var(--color-ink-violet); background: var(--color-pure-white); }
+  .article-cover img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+  .build-story { display: grid; gap: 24px; }
+  .build-story section { display: grid; gap: 24px; padding: 32px; border: 1px solid var(--color-ink-violet); background: var(--color-pure-white); }
+  .build-story .section-label { margin-bottom: 16px; }
+  .build-story h2 { font-size: 24px; font-weight: 700; line-height: 1.4; }
+  .build-story section div > p { margin-top: 12px; white-space: pre-line; font-size: 20px; line-height: 1.6; }
+  .rich-content { margin-top: 80px; }
+  .article-stack, .article-links, .article-related { margin-top: 80px; }
+  .article-stack .section-label, .article-links .section-label, .article-related .section-label { margin-bottom: 24px; }
+  .article-stack > div { display: flex; flex-wrap: wrap; gap: 8px; }
+  .article-links ul { border-top: 1px solid var(--color-ink-violet); }
+  .article-links li { display: flex; flex-wrap: wrap; gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--color-ink-violet); font-size: 16px; }
+  .article-links a { border-bottom: 1px solid var(--color-ink-violet); font-weight: 700; }
+  .article-related > div { display: grid; gap: 24px; }
+  @media (min-width: 768px) { .build-story section { grid-template-columns: 152px minmax(0, 1fr); } .article-related > div { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 767px) { .article-page { padding-block: 64px 80px; } .build-story section { padding: 24px; } }
+</style>

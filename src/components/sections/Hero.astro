@@ -1,426 +1,111 @@
 ---
 import Icon from '@/components/icons/Icons.astro'
-import { getOptimizedImageUrl } from '@/lib/microcms'
-import type { Build } from '@/types'
-
-interface Props {
-  builds?: Build[]
-}
-
-const { builds = [] } = Astro.props
-
-const showcaseBuilds = builds.slice(0, 3).map((build) => ({
-  title: build.title,
-  summary: build.summary,
-  href: `/builds/${build.slug}`,
-  imageSm: getOptimizedImageUrl(build.coverImage.url, { width: 350, quality: 60, aspectRatio: '3:2' }),
-  imageLg: getOptimizedImageUrl(build.coverImage.url, { width: 500, quality: 65, aspectRatio: '3:2' }),
-}))
-
 ---
 
 <section class="hero-shell">
-  <div class="hero-atmosphere" aria-hidden="true">
-    <div class="hero-orb hero-orb-a" data-parallax></div>
-    <div class="hero-orb hero-orb-b" data-parallax></div>
-    <div class="hero-grid"></div>
-  </div>
-
-  <div class="w-full max-w-[1280px] mx-auto px-6 md:px-12 py-10 md:py-14">
-    <div class="hero-layout">
-      <div class="hero-copy reveal" data-reveal>
-        <p class="section-label text-[var(--color-brand)] mb-5 flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-[var(--color-brand)] animate-pulse"></span>
-          Developer / KAMO
-        </p>
-        <div class="space-y-6">
-          <h1 class="hero-site-title"><span class="type-target">bykamo<span class="title-dot">.</span>dev</span><span class="type-caret" aria-hidden="true"></span></h1>
-          <p class="hero-title">
-            AIとコードで、
-            <br />
-            情報・運用・体験を組み直す。
-          </p>
-          <p class="body-text-lg max-w-xl">
-            複雑なシステム要件を解きほぐし、スケールするフロントエンドと自動化基盤を設計します。ただ動くものではなく、運用者とユーザーの双方にとって「最適化された構造」を実装します。
-          </p>
-        </div>
-
-        <div class="hero-actions">
-          <a href="/builds" class="group btn-primary">
-            View Builds
-            <Icon name="arrow-right" size={14} class="hover-arrow" />
-          </a>
-          <a href="/about" class="group btn-ghost">
-            About KAMO
-          </a>
-        </div>
-      </div>
-
-      <div class="hero-visual-wrap reveal" data-reveal style="--delay:160ms;">
-        <div class="hero-cards-stack">
-          <!-- Card 3 (Back) - Placeholder -->
-          <div class="hero-card-back glass-panel" aria-hidden="true">
-            <div class="h-4 w-1/3 bg-[var(--color-ink-subtle)]/20 rounded mb-4"></div>
-            <div class="space-y-2">
-              <div class="h-2 w-full bg-[var(--color-ink-subtle)]/10 rounded"></div>
-              <div class="h-2 w-5/6 bg-[var(--color-ink-subtle)]/10 rounded"></div>
-              <div class="h-2 w-4/6 bg-[var(--color-ink-subtle)]/10 rounded"></div>
-            </div>
-          </div>
-
-          <!-- Card 2 (Middle) - Dashboard -->
-          <div class="hero-card-mid glass-panel">
-            <div class="flex justify-between items-center mb-6">
-              <span class="text-xs font-mono text-[var(--color-ink-muted)]">sys.monitor_</span>
-              <Icon name="chart" size={16} class="text-[var(--color-brand)]" />
-            </div>
-            <div class="grid grid-cols-2 gap-3 flex-grow">
-              <div class="bg-white/50 rounded-xl p-4 border border-[rgba(18,20,23,0.05)]">
-                <div class="text-[0.65rem] text-[var(--color-ink-muted)] mb-1 uppercase font-bold">Uptime</div>
-                <div class="text-xl font-bold text-[var(--color-ink)] tabular-nums" data-metric="uptime">99.9%</div>
-              </div>
-              <div class="bg-white/50 rounded-xl p-4 border border-[rgba(18,20,23,0.05)]">
-                <div class="text-[0.65rem] text-[var(--color-ink-muted)] mb-1 uppercase font-bold">Latency</div>
-                <div class="text-xl font-bold text-[var(--color-ink)] tabular-nums" data-metric="latency">42ms</div>
-              </div>
-              <div class="col-span-2 bg-gradient-to-r from-[var(--color-brand-light)] to-transparent rounded-xl p-4 border border-[rgba(45,78,216,0.2)] mt-2">
-                <div class="w-full h-12 flex items-end gap-1">
-                  <div class="hero-bar w-full bg-[var(--color-brand)]/40 h-[30%] rounded-t-sm" style="--d:0s"></div>
-                  <div class="hero-bar w-full bg-[var(--color-brand)]/60 h-[50%] rounded-t-sm" style="--d:0.3s"></div>
-                  <div class="hero-bar w-full bg-[var(--color-brand)]/80 h-[80%] rounded-t-sm" style="--d:0.6s"></div>
-                  <div class="hero-bar w-full bg-[var(--color-brand)] h-[100%] rounded-t-sm" style="--d:0.9s"></div>
-                  <div class="hero-bar w-full bg-[var(--color-brand)]/70 h-[60%] rounded-t-sm" style="--d:1.2s"></div>
-                  <div class="hero-bar w-full bg-[var(--color-brand)]/90 h-[90%] rounded-t-sm" style="--d:1.5s"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 1 (Front) - Code Editor -->
-          <div class="hero-card-front">
-            <div class="flex items-center gap-2 px-4 py-3 border-b border-white/10 bg-white/5">
-              <div class="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
-              <div class="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
-              <div class="w-3 h-3 rounded-full bg-[#27c93f]"></div>
-              <span class="ml-2 text-xs font-mono text-[var(--color-ink-subtle)]">optimize_graph.ts</span>
-            </div>
-            <div class="p-5 font-mono text-[0.8rem] leading-relaxed text-[#c9d1d9] overflow-hidden">
-              <pre><code><span class="code-line" style="--i:0"><span class="text-[#ff7b72]">async function</span> <span class="text-[#d2a8ff]">resolveDependency</span>(</span>
-<span class="code-line" style="--i:1">  <span class="text-[#79c0ff]">node</span>: ActionNode</span>
-<span class="code-line" style="--i:2">): <span class="text-[#79c0ff]">Promise</span>&lt;Result&gt; {'{'}</span>
-<span class="code-line" style="--i:3">  <span class="text-[#ff7b72]">const</span> ctx = <span class="text-[#ff7b72]">await</span> initContext();</span>
-<span class="code-line" style="--i:4"> </span>
-<span class="code-line" style="--i:5">  <span class="text-[#8b949e]">/* AI driven sub-routine */</span></span>
-<span class="code-line" style="--i:6">  <span class="text-[#ff7b72]">if</span> (node.<span class="text-[#79c0ff]">isDynamic</span>) {'{'}</span>
-<span class="code-line" style="--i:7">    <span class="text-[#ff7b72]">return</span> <span class="text-[#ff7b72]">await</span> llm.predictPath(ctx);<span class="code-caret"></span></span>
-<span class="code-line" style="--i:8">  {'}'}</span>
-<span class="code-line" style="--i:9"> </span>
-<span class="code-line" style="--i:10">  <span class="text-[#ff7b72]">return</span> execute(node, ctx);</span>
-<span class="code-line" style="--i:11">{'}'}</span></code></pre>
-            </div>
-          </div>
-        </div>
+  <div class="section-shell hero-layout">
+    <div class="hero-copy reveal" data-reveal>
+      <p class="hero-kicker"><span></span>Independent developer / KAMO</p>
+      <h1 class="hero-title">AIとコードで、<br />複雑な仕事を<br />組み直す。</h1>
+      <p class="body-text hero-description">
+        曖昧な要件をほどき、使い続けられるプロダクトと自動化の仕組みに変えていきます。
+      </p>
+      <div class="hero-actions">
+        <a href="/contact" class="group btn-primary">
+          制作について相談する
+          <Icon name="arrow-right" size={18} class="hover-arrow" />
+        </a>
+        <a href="/builds" class="group btn-ghost">
+          Buildsを見る
+          <Icon name="arrow-right" size={18} class="hover-arrow" />
+        </a>
       </div>
     </div>
 
+    <div class="hero-visual reveal" data-reveal style="--delay:140ms;">
+      <div class="hero-illustration" aria-label="要件からプロダクトへ変換するワークフローの図解" role="img">
+        <svg viewBox="0 0 610 550" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="61" y="58" width="406" height="345" fill="#fff" stroke="#0d0129" stroke-width="1.5" />
+          <path d="M61 107H467" stroke="#0d0129" stroke-width="1.5" />
+          <circle cx="86" cy="82" r="6" fill="#fae59b" stroke="#0d0129" stroke-width="1.5" />
+          <path d="M105 82H224" stroke="#0d0129" stroke-width="1.5" />
+          <rect x="92" y="142" width="148" height="182" fill="#fffcf7" stroke="#0d0129" stroke-width="1.5" />
+          <path d="M112 173H204M112 195H216M112 217H185" stroke="#0d0129" stroke-width="1.5" />
+          <rect x="112" y="250" width="97" height="38" fill="#fae59b" stroke="#0d0129" stroke-width="1.5" />
+          <path d="M132 269H190" stroke="#0d0129" stroke-width="1.5" />
+          <rect x="273" y="142" width="155" height="116" fill="#19615c" stroke="#0d0129" stroke-width="1.5" />
+          <path d="M298 228V184M326 228V169M354 228V194M382 228V157" stroke="#fae59b" stroke-width="12" />
+          <path d="M273 292H428" stroke="#0d0129" stroke-width="1.5" />
+          <circle cx="298" cy="325" r="14" fill="#fae59b" stroke="#0d0129" stroke-width="1.5" />
+          <circle cx="350" cy="325" r="14" fill="#fff" stroke="#0d0129" stroke-width="1.5" />
+          <circle cx="402" cy="325" r="14" fill="#fae59b" stroke="#0d0129" stroke-width="1.5" />
+          <path d="M312 325H336M364 325H388" stroke="#0d0129" stroke-width="1.5" />
+          <path d="M196 372H335" stroke="#0d0129" stroke-width="1.5" stroke-dasharray="5 5" />
+          <path d="M335 372L324 366V378L335 372Z" fill="#0d0129" />
+          <g class="diagram-document">
+            <rect x="371" y="249" width="168" height="207" fill="#fff" stroke="#0d0129" stroke-width="1.5" />
+            <path d="M398 284H509M398 310H492M398 336H516M398 362H465" stroke="#0d0129" stroke-width="1.5" />
+            <rect x="398" y="390" width="93" height="35" fill="#fae59b" stroke="#0d0129" stroke-width="1.5" />
+          </g>
+          <circle cx="33" cy="180" r="7" fill="#fae59b" />
+          <circle cx="525" cy="92" r="5" fill="#19615c" />
+          <circle cx="532" cy="469" r="7" fill="#fae59b" />
+          <path d="M526 153L544 171M544 153L526 171" stroke="#0d0129" stroke-width="1.5" />
+          <path d="M75 454L92 471M92 454L75 471" stroke="#19615c" stroke-width="1.5" />
+        </svg>
+      </div>
+      <p class="hero-visual__caption">FROM BRIEF → WORKING SYSTEM</p>
+    </div>
   </div>
 </section>
 
 <style>
   .hero-shell {
-    position: relative;
     overflow: clip;
-    min-height: calc(100dvh - 4rem);
-    display: flex;
-    align-items: center;
-  }
-
-  .hero-atmosphere {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-  }
-
-  .hero-grid {
-    position: absolute;
-    inset: 4% 0 0;
-    background:
-      linear-gradient(90deg, rgba(18, 20, 23, 0.04) 1px, transparent 1px),
-      linear-gradient(rgba(18, 20, 23, 0.04) 1px, transparent 1px);
-    background-size: 48px 48px;
-    mask-image: radial-gradient(circle at 68% 28%, black 0, black 28%, transparent 70%);
-    -webkit-mask-image: radial-gradient(circle at 68% 28%, black 0, black 28%, transparent 70%);
-    opacity: 0.55;
-  }
-
-  .hero-orb {
-    position: absolute;
-    border-radius: 9999px;
-    filter: blur(12px);
-  }
-
-  .hero-orb-a {
-    top: -10%;
-    right: -5%;
-    width: clamp(14rem, 35vw, 35rem);
-    height: clamp(14rem, 35vw, 35rem);
-    background: radial-gradient(circle, rgba(45, 78, 216, 0.12) 0%, rgba(243, 238, 228, 0) 70%);
-    animation: floatOrb 20s ease-in-out infinite alternate;
-  }
-
-  .hero-orb-b {
-    top: -20%;
-    left: -10%;
-    width: clamp(12rem, 30vw, 30rem);
-    height: clamp(12rem, 30vw, 30rem);
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, rgba(243, 238, 228, 0) 70%);
-    animation: floatOrb 15s ease-in-out infinite alternate-reverse;
-  }
-
-  @keyframes floatOrb {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(-30px, 50px) scale(1.05); }
-  }
-
-  .hero-layout {
-    position: relative;
+    padding: 88px 0 104px;
+    min-height: calc(100svh - 72px);
     display: grid;
-    gap: 2.75rem;
     align-items: center;
   }
-
-  .hero-site-title {
-    font-size: clamp(3rem, 6vw, 5.5rem);
+  .hero-layout {
+    display: grid;
+    align-items: center;
+    gap: 56px;
+  }
+  .hero-copy { max-width: 650px; }
+  .hero-kicker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+    font-size: 16px;
     font-weight: 700;
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    color: var(--color-ink);
   }
-
-  .title-dot {
-    color: var(--color-ink-subtle);
+  .hero-kicker span { width: 8px; height: 8px; background: var(--color-butter-yellow); border: 1px solid var(--color-ink-violet); }
+  .hero-description { max-width: 590px; margin-top: 32px; }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 40px; }
+  .hero-visual { position: relative; }
+  .hero-illustration { width: min(100%, 610px); margin-inline: auto; }
+  .hero-illustration svg { width: 100%; height: auto; }
+  .hero-visual__caption {
+    margin-top: 10px;
+    font-family: var(--font-supply);
+    font-size: 14px;
+    color: var(--color-ink-violet);
   }
-
-  .type-caret {
-    display: inline-block;
-    width: 0.06em;
-    height: 0.78em;
-    margin-left: 0.05em;
-    background: var(--color-brand);
-    transform: translateY(0.02em);
-    animation: caretBlink 1.05s steps(1) infinite;
-  }
-
-  .hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.9rem;
-    margin-top: 2.5rem;
-  }
-
-  /* Stacked cards */
-  .hero-cards-stack {
-    position: relative;
-    height: 500px;
-  }
-
-  .hero-card-back {
-    position: absolute;
-    top: 12px;
-    right: 0;
-    width: 420px;
-    height: 320px;
-    padding: 1.5rem;
-    transform: rotate(-6deg) translateX(40px) translateY(-20px) scale(0.9);
-    opacity: 0.4;
-    z-index: 1;
-    pointer-events: none;
-  }
-
-  .hero-card-back:hover {
-    transform: rotate(-6deg) translateX(40px) translateY(-20px) scale(0.9);
-  }
-
-  .hero-card-mid {
-    position: absolute;
-    top: 16px;
-    left: 48px;
-    width: 380px;
-    height: 360px;
-    padding: 1.5rem;
-    transform: rotate(3deg) translateX(-20px) translateY(20px) scale(0.95);
-    opacity: 0.8;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .hero-card-mid:hover {
-    transform: rotate(3deg) translateX(-20px) translateY(20px) scale(0.95);
-  }
-
-  .hero-card-front {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 400px;
-    height: 280px;
-    transform: translateX(-10%) translateY(10%);
-    z-index: 3;
-    overflow: hidden;
-    border-radius: var(--radius-xl);
-    box-shadow: 0 30px 80px -20px rgba(45, 78, 216, 0.15);
-    display: flex;
-    flex-direction: column;
-    background: #121417;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  /* Live terminal: code typing + caret */
-  .code-line {
-    display: inline-block;
-    opacity: 0;
-    transform: translateY(3px);
-    animation: codeLineIn 0.3s ease forwards;
-    animation-delay: calc(var(--i) * 0.11s + 0.35s);
-  }
-
-  @keyframes codeLineIn {
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-
-  .code-caret {
-    display: inline-block;
-    width: 7px;
-    height: 0.95em;
-    margin-left: 3px;
-    background: #c9d1d9;
-    vertical-align: -1px;
-    opacity: 0;
-    animation: caretBlink 1.05s steps(1) 1.9s infinite;
-  }
-
-  @keyframes caretBlink {
-    0%,
-    49% {
-      opacity: 1;
-    }
-    50%,
-    100% {
-      opacity: 0;
-    }
-  }
-
-  /* Live dashboard bars */
-  .hero-bar {
-    transform-origin: bottom;
-    animation: barPulse 2.6s ease-in-out infinite;
-    animation-delay: var(--d);
-  }
-
-  @keyframes barPulse {
-    0%,
-    100% {
-      transform: scaleY(1);
-    }
-    50% {
-      transform: scaleY(0.55);
-    }
-  }
-
+  .diagram-document { transform-origin: 455px 350px; animation: diagramFloat 4.5s ease-in-out infinite; }
+  @keyframes diagramFloat { 50% { transform: translate(0, -10px); } }
   @media (min-width: 960px) {
-    .hero-layout {
-      grid-template-columns: minmax(0, 1fr) minmax(22rem, 1fr);
-      gap: 4rem;
-    }
+    .hero-layout { grid-template-columns: minmax(0, 1.05fr) minmax(460px, .95fr); gap: 64px; }
+    .hero-visual { transform: translateX(24px); }
   }
-
-  @media (max-width: 959px) {
-    .hero-shell {
-      min-height: auto;
-    }
-
-    .hero-cards-stack {
-      display: none;
-    }
-  }
-
   @media (max-width: 767px) {
-    .hero-grid {
-      mask-image: radial-gradient(circle at 50% 25%, black 0, black 20%, transparent 68%);
-      -webkit-mask-image: radial-gradient(circle at 50% 25%, black 0, black 20%, transparent 68%);
-      opacity: 0.4;
-    }
+    .hero-shell { min-height: auto; padding: 64px 0 72px; }
+    .hero-layout { gap: 56px; }
+    .hero-actions { flex-direction: column; }
+    .hero-visual { width: calc(100% + 16px); }
   }
-
   @media (prefers-reduced-motion: reduce) {
-    .hero-orb-a,
-    .hero-orb-b,
-    .hero-bar,
-    .code-caret {
-      animation: none;
-    }
-
-    .type-caret {
-      display: none;
-    }
-
-    .code-line {
-      opacity: 1;
-      transform: none;
-      animation: none;
-    }
-
-    .code-caret {
-      opacity: 1;
-    }
+    .diagram-document { animation: none; }
   }
 </style>
-
-<script>
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  if (!reduce) {
-    // Title typewriter: type "bykamo.dev" char by char, caret follows
-    const target = document.querySelector('.type-target')
-    if (target) {
-      const full = target.textContent || ''
-      target.textContent = ''
-      let i = 0
-      const typeNext = () => {
-        if (i >= full.length) return
-        const ch = full[i]
-        if (ch === '.') {
-          const dot = document.createElement('span')
-          dot.className = 'title-dot'
-          dot.textContent = '.'
-          target.appendChild(dot)
-        } else {
-          target.appendChild(document.createTextNode(ch))
-        }
-        i += 1
-        window.setTimeout(typeNext, 95)
-      }
-      window.setTimeout(typeNext, 300)
-    }
-
-    const latency = document.querySelector('[data-metric="latency"]')
-    const uptime = document.querySelector('[data-metric="uptime"]')
-
-    if (latency) {
-      window.setInterval(() => {
-        const ms = 39 + Math.floor(Math.random() * 8) // 39–46ms
-        latency.textContent = `${ms}ms`
-      }, 1700)
-    }
-
-    if (uptime) {
-      const values = ['99.8%', '99.9%', '99.9%', '100.0%', '99.9%']
-      window.setInterval(() => {
-        uptime.textContent = values[Math.floor(Math.random() * values.length)]
-      }, 2800)
-    }
-  }
-</script>

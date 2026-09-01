@@ -8,9 +8,7 @@ import { buildProfilePageSchema } from '@/lib/schema'
 
 const { contents: featuredBuilds } = await getBuilds({ featured: true, limit: 3 })
 const { contents: featuredNotes } = await getNotes({ featured: true, limit: 3 })
-
 const profileSchema = buildProfilePageSchema()
-
 const skills = [
   { icon: 'brain' as const, label: 'AI実装', text: 'LLM、OCR、自動生成、RAG、画像認識の実装と運用設計。' },
   { icon: 'gear' as const, label: '自動化', text: '取引bot、配信、自動ワークフローの設計と継続運用。' },
@@ -20,113 +18,65 @@ const skills = [
 ---
 
 <BaseLayout title="About" description="KAMOについて。AIとコードで、情報・運用・体験を組み直す開発者。">
-  <Fragment slot="head">
-    <JsonLd schemas={[profileSchema]} />
-  </Fragment>
-
-  <div class="max-w-[1280px] mx-auto px-6 md:px-12 py-12 md:py-16">
-    <div class="max-w-4xl">
-      <Breadcrumbs items={[
-        { label: 'Home', href: '/' },
-        { label: 'About' },
-      ]} />
-
-      <p class="section-label text-[var(--color-brand)] mb-4">About</p>
-      <h1 class="page-title mb-6">実装と運用のあいだを、切らさずつなぐ。</h1>
-      <p class="body-text-lg max-w-2xl">
-        KAMOは、AIとコードを使って、情報の扱い方とプロダクトの動き方を組み直す開発者です。見た目だけでなく、判断の流れと運用まで含めて設計します。
-      </p>
+  <Fragment slot="head"><JsonLd schemas={[profileSchema]} /></Fragment>
+  <div class="section-shell about-page">
+    <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'About' }]} />
+    <div class="about-page__hero">
+      <p class="section-label">ABOUT</p>
+      <h1 class="page-title">実装と運用のあいだを、<br />切らさずつなぐ。</h1>
+      <p class="body-text">KAMOは、AIとコードを使って、情報の扱い方とプロダクトの動き方を組み直す開発者です。見た目だけでなく、判断の流れと運用まで含めて設計します。</p>
     </div>
 
-    <div class="grid gap-14 mt-14 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)]">
-      <section class="reveal" data-reveal>
-        <div class="border-t border-[var(--color-border)] pt-6">
-          <p class="section-label text-[var(--color-ink-subtle)] mb-4">Profile</p>
-          <div class="body-text max-w-2xl space-y-4">
-            <p>取引bot・自動化システム・Webアプリ・PWAなど、課題に合わせてプロダクトを設計し、最後の運用フェーズまで実装します。</p>
-            <p>専門領域は、LLM・OCR・リアルタイムデータ処理といったAI技術を、単発のデモではなく現実の導線に載せることです。</p>
-            <p>このサイトでは、成果物を <a href="/builds">Builds</a> に、設計判断や比較メモを <a href="/notes">Notes</a> に整理しています。</p>
-          </div>
+    <div class="about-profile">
+      <section class="about-profile__copy reveal" data-reveal>
+        <p class="section-label">PROFILE</p>
+        <div class="body-text">
+          <p>取引bot・自動化システム・Webアプリ・PWAなど、課題に合わせてプロダクトを設計し、最後の運用フェーズまで実装します。</p>
+          <p>専門領域は、LLM・OCR・リアルタイムデータ処理といったAI技術を、単発のデモではなく現実の導線に載せることです。</p>
+          <p>成果物は <a href="/builds">Builds</a> に、設計判断や比較メモは <a href="/notes">Notes</a> に整理しています。</p>
         </div>
       </section>
-
-      <section class="glass-panel reveal p-6 md:p-7" data-reveal style="--delay:120ms;">
-        <p class="section-label text-[var(--color-brand)] mb-4">Focus</p>
-        <div class="space-y-5">
-          {skills.map((skill) => (
-            <div class="grid grid-cols-[auto_minmax(0,1fr)] gap-4 border-t border-[rgba(18,20,23,0.08)] pt-5 first:border-t-0 first:pt-0">
-              <div class="icon-box">
-                <Icon name={skill.icon} size={16} class="text-[var(--color-ink)]" />
-              </div>
-              <div>
-                <h2 class="text-base font-semibold tracking-tight text-[var(--color-ink)] mb-1">{skill.label}</h2>
-                <p class="text-sm leading-7 text-[var(--color-ink-muted)]">{skill.text}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+      <section class="about-focus reveal" data-reveal style="--delay:120ms;">
+        <p class="section-label">FOCUS</p>
+        {skills.map((skill) => (
+          <div class="about-focus__item"><div class="icon-box"><Icon name={skill.icon} size={20} /></div><div><h2>{skill.label}</h2><p>{skill.text}</p></div></div>
+        ))}
       </section>
     </div>
 
-    {featuredBuilds.length > 0 && (
-      <section class="mt-16 reveal" data-reveal>
-        <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-6">
-          <div>
-            <p class="section-label text-[var(--color-brand)] mb-3">Featured Builds</p>
-            <h2 class="text-lg md:text-xl font-semibold tracking-tight text-[var(--color-ink)]">公開している代表的な実装</h2>
-          </div>
-          <a href="/builds" class="group hairline-link">
-            Explore builds
-            <Icon name="arrow-right" size={14} class="hover-arrow" />
-          </a>
-        </div>
-
-        <div class="space-y-0 border-t border-[var(--color-border)]">
-          {featuredBuilds.map((build, index) => (
-            <a
-              href={`/builds/${build.slug}`}
-              class="group grid gap-4 border-b border-[rgba(18,20,23,0.08)] py-5 md:grid-cols-[4rem_minmax(0,1fr)_auto] md:items-center"
-            >
-              <span class="caption">0{index + 1}</span>
-              <div>
-                <h3 class="text-lg font-semibold tracking-tight text-[var(--color-ink)] group-hover:text-[var(--color-brand)] transition-colors">{build.title}</h3>
-                <p class="text-sm leading-7 text-[var(--color-ink-muted)] mt-2 max-w-2xl">{build.summary}</p>
-              </div>
-              <Icon name="arrow-right" size={16} class="hover-arrow text-[var(--color-ink-subtle)]" />
-            </a>
-          ))}
-        </div>
-      </section>
-    )}
-
-    {featuredNotes.length > 0 && (
-      <section class="mt-16 reveal" data-reveal>
-        <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-6">
-          <div>
-            <p class="section-label text-[var(--color-ink-subtle)] mb-3">Featured Notes</p>
-            <h2 class="text-lg md:text-xl font-semibold tracking-tight text-[var(--color-ink)]">設計の裏側にあるメモ</h2>
-          </div>
-          <a href="/notes" class="group hairline-link">
-            Explore notes
-            <Icon name="arrow-right" size={14} class="hover-arrow" />
-          </a>
-        </div>
-
-        <div class="space-y-0 border-t border-[var(--color-border)]">
-          {featuredNotes.map((note) => (
-            <a
-              href={`/notes/${note.slug}`}
-              class="group grid gap-4 border-b border-[rgba(18,20,23,0.08)] py-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-center"
-            >
-              <div>
-                <h3 class="text-lg font-semibold tracking-tight text-[var(--color-ink)] group-hover:text-[var(--color-brand)] transition-colors">{note.title}</h3>
-                <p class="text-sm leading-7 text-[var(--color-ink-muted)] mt-2 max-w-2xl">{note.excerpt}</p>
-              </div>
-              <Icon name="arrow-right" size={16} class="hover-arrow text-[var(--color-ink-subtle)]" />
-            </a>
-          ))}
+    {(featuredBuilds.length > 0 || featuredNotes.length > 0) && (
+      <section class="about-index reveal" data-reveal>
+        <p class="section-label">EXPLORE</p>
+        <div class="about-index__columns">
+          {featuredBuilds.length > 0 && <div><h2>代表的なBuilds</h2>{featuredBuilds.map((build, index) => <a class="about-index__row" href={`/builds/${build.slug}`}><span>0{index + 1}</span><strong>{build.title}</strong><Icon name="arrow-right" size={18} /></a>)}<a href="/builds" class="hairline-link">Buildsへ <Icon name="arrow-right" size={18} /></a></div>}
+          {featuredNotes.length > 0 && <div><h2>設計の裏側にあるNotes</h2>{featuredNotes.map((note) => <a class="about-index__row" href={`/notes/${note.slug}`}><strong>{note.title}</strong><Icon name="arrow-right" size={18} /></a>)}<a href="/notes" class="hairline-link">Notesへ <Icon name="arrow-right" size={18} /></a></div>}
         </div>
       </section>
     )}
   </div>
 </BaseLayout>
+
+<style>
+  .about-page { padding-block: 80px 120px; }
+  .about-page__hero { max-width: 850px; }
+  .section-label { margin-bottom: 16px; }
+  .about-page__hero .body-text { max-width: 720px; margin-top: 24px; }
+  .about-profile { display: grid; gap: 64px; margin-top: 80px; }
+  .about-profile__copy { border-top: 1px solid var(--color-ink-violet); padding-top: 24px; }
+  .about-profile__copy .body-text { max-width: 670px; }
+  .about-profile__copy p + p { margin-top: 20px; }
+  .about-profile__copy a { border-bottom: 1px solid var(--color-ink-violet); }
+  .about-focus { padding: 32px; border: 1px solid var(--color-ink-violet); background: var(--color-pure-white); }
+  .about-focus__item { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px; padding-top: 20px; margin-top: 20px; border-top: 1px solid var(--color-ink-violet); }
+  .about-focus__item h2, .about-index h2 { font-size: 24px; font-weight: 700; line-height: 1.4; }
+  .about-focus__item p { margin-top: 4px; font-size: 16px; line-height: 1.6; }
+  .about-index { margin-top: 104px; }
+  .about-index__columns { display: grid; gap: 64px; margin-top: 24px; }
+  .about-index__columns > div { border-top: 1px solid var(--color-ink-violet); }
+  .about-index__columns h2 { margin: 24px 0 8px; }
+  .about-index__row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--color-ink-violet); font-size: 16px; }
+  .about-index__row span { font-family: var(--font-supply); font-size: 14px; }
+  .about-index .hairline-link { margin-top: 24px; }
+  @media (min-width: 900px) { .about-profile { grid-template-columns: minmax(0, 1.15fr) minmax(330px, .85fr); } .about-index__columns { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 767px) { .about-page { padding-block: 64px 80px; } .about-focus { padding: 24px; } }
+</style>

@@ -2,23 +2,43 @@
 import Icon from '@/components/icons/Icons.astro'
 ---
 
-<section class="py-[var(--space-section)]">
-  <div class="max-w-[1280px] mx-auto px-6 md:px-12">
-    <div class="glass-panel w-full p-8 md:p-16 lg:p-20 text-center relative overflow-hidden reveal" data-reveal>
-      <div class="absolute top-0 right-0 w-64 h-64 bg-[var(--color-brand)]/[0.04] rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" aria-hidden="true"></div>
-
-      <div class="relative z-10 flex flex-col items-center max-w-2xl mx-auto">
-        <p class="section-label text-[var(--color-brand)] mb-6">Contact</p>
-        <h2 class="page-title mb-6 text-center">相談は、まだ輪郭が<br />曖昧な段階でも大丈夫です。</h2>
-        <p class="body-text max-w-xl text-center mb-10">
-          フロントエンドの技術選定、アーキテクチャ設計、または現在抱えているプロダクトの運用課題について、ざっくばらんにお話ししましょう。
-        </p>
-        <a href="/contact" class="group btn-primary">
-          Start a conversation
-          <Icon name="arrow-right" size={14} class="hover-arrow" />
-        </a>
-        <p class="caption mt-4">AI integration / Automation / Product build</p>
+<section class="contact-cta">
+  <div class="section-shell">
+    <div class="contact-cta__frame reveal" data-reveal>
+      <div>
+        <p class="section-label">CONTACT</p>
+        <h2>まだ曖昧な相談から、<br />一緒に形にします。</h2>
       </div>
+      <div class="contact-cta__action">
+        <p>技術選定の前でも、実装直前でも。今ある情報から、次の一手を整理します。</p>
+        <a href="/contact" class="group btn-primary">相談をはじめる <Icon name="arrow-right" size={18} class="hover-arrow" /></a>
+      </div>
+      <span class="contact-cta__dot" aria-hidden="true"></span>
     </div>
   </div>
 </section>
+
+<style>
+  .contact-cta { padding-top: 120px; }
+  .contact-cta__frame {
+    position: relative;
+    display: grid;
+    gap: 40px;
+    padding: 64px;
+    border: 1px solid var(--color-ink-violet);
+    background: var(--color-pure-white);
+    overflow: hidden;
+  }
+  .section-label { margin-bottom: 24px; }
+  h2 { font-size: clamp(40px, 4.4vw, 56px); font-weight: 700; line-height: 1.25; }
+  .contact-cta__action { display: grid; gap: 24px; align-content: end; max-width: 500px; }
+  .contact-cta__action p { font-size: 20px; line-height: 1.6; }
+  .contact-cta__action .btn-primary { width: max-content; }
+  .contact-cta__dot { position: absolute; right: 40px; top: 40px; width: 12px; height: 12px; border: 1px solid var(--color-ink-violet); background: var(--color-butter-yellow); }
+  @media (min-width: 768px) { .contact-cta__frame { grid-template-columns: 1.15fr .85fr; } }
+  @media (max-width: 767px) {
+    .contact-cta { padding-top: 80px; }
+    .contact-cta__frame { padding: 40px 24px; }
+    .contact-cta__action .btn-primary { width: 100%; }
+  }
+</style>

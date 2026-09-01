@@ -20,18 +20,18 @@ const collectionSchema = buildCollectionPageSchema({
     <JsonLd schemas={[collectionSchema]} />
   </Fragment>
 
-  <div class="max-w-[1280px] mx-auto px-6 md:px-12 py-12 md:py-16">
+  <div class="section-shell collection-page">
     <Breadcrumbs items={[
       { label: 'Home', href: '/' },
       { label: 'Notes' },
     ]} />
 
-    <p class="section-label text-[var(--color-ink-muted)] mb-4">Notes</p>
-    <h1 class="page-title mb-5">設計の途中経過を、捨てずに残す。</h1>
-    <p class="body-text-lg max-w-2xl mb-12">開発ログ、設計メモ、技術記事。あとから見返しても使える粒度で、判断の履歴を保存しています。</p>
+    <p class="section-label">NOTES</p>
+    <h1 class="page-title">設計の途中経過を、捨てずに残す。</h1>
+    <p class="body-text-lg collection-page__lead">開発ログ、設計メモ、技術記事。あとから見返しても使える粒度で、判断の履歴を保存しています。</p>
 
     {notes.length > 0 ? (
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-12">
+      <div class="collection-grid">
         {notes.map((note, index) => (
           <div class="reveal" data-reveal style={`--delay:${index * 70}ms;`}>
             <NoteCard note={note} />
@@ -43,3 +43,13 @@ const collectionSchema = buildCollectionPageSchema({
     )}
   </div>
 </BaseLayout>
+
+<style>
+  .collection-page { padding-block: 80px 120px; }
+  .section-label { margin-bottom: 16px; }
+  .page-title { max-width: 760px; }
+  .collection-page__lead { max-width: 680px; margin-top: 24px; margin-bottom: 64px; }
+  .collection-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+  @media (min-width: 768px) { .collection-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1100px) { .collection-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+</style>

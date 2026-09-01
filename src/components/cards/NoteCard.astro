@@ -1,104 +1,40 @@
 ---
 import type { Note } from '@/types'
+import { getOptimizedImageUrl } from '@/lib/microcms'
 import Icon from '@/components/icons/Icons.astro'
 
-interface Props {
-  note: Note
-}
-
+interface Props { note: Note }
 const { note } = Astro.props
 
 const publishedDate = note.publishedAt
   ? new Date(note.publishedAt).toLocaleDateString('ja-JP', { year: 'numeric', month: 'short', day: 'numeric' })
-  : ''
-
-const kindConfig: Record<string, { label: string; css: string }> = {
-  log: { label: 'Log', css: 'badge-planning' },
-  howto: { label: 'How-to', css: 'badge-building' },
-  'case-study': { label: 'Case Study', css: 'badge-live' },
-  thinking: { label: 'Thinking', css: 'badge-archived' },
-}
-
+  : 'Draft'
+const kindLabels: Record<string, string> = { log: 'Log', howto: 'How-to', 'case-study': 'Case Study', thinking: 'Thinking' }
 const kind = note.kind?.[0]
-const config = kind ? kindConfig[kind] : null
+const coverImage = note.coverImage
+  ? getOptimizedImageUrl(note.coverImage.url, { width: 800, quality: 78, aspectRatio: '16:9' })
+  : null
 ---
 
-<a href={`/notes/${note.slug}`} class="group block h-full">
-  <article class="note-tile h-full">
-    <div class="note-meta">
-      {config && (
-        <span class:list={['badge', config.css]}>{config.label}</span>
-      )}
-      {note.topics?.slice(0, 2).map((topic) => (
-        <span class="caption">{topic.title}</span>
-      ))}
-    </div>
-
-    <div class="flex items-start justify-between gap-4">
-      <h3 class="note-title">{note.title}</h3>
-      <Icon name="arrow-right" size={16} class="hover-arrow mt-1 text-[var(--color-ink-subtle)]" />
-    </div>
-
-    <p class="note-excerpt">{note.excerpt}</p>
-
-    {publishedDate && (
-      <div class="note-date">
-        <Icon name="calendar" size={12} class="text-[var(--color-ink-subtle)]" />
-        <time class="caption" datetime={note.publishedAt}>
-          {publishedDate}
-        </time>
-      </div>
-    )}
+<a href={`/notes/${note.slug}`} class="group note-card-link">
+  <article class="note-card">
+    {coverImage && <figure class="note-card__image"><img src={coverImage} alt={note.title} loading="lazy" /></figure>}
+    <div class="note-card__topline"><span>{kind ? kindLabels[kind] || kind : 'Note'}</span><span>{publishedDate}</span></div>
+    <h3>{note.title}</h3>
+    <p>{note.excerpt}</p>
+    <div class="note-card__footer"><span>{note.topics?.slice(0, 2).map((topic) => topic.title).join(' / ') || 'bykamo.dev'}</span><Icon name="arrow-right" size={18} class="hover-arrow" /></div>
   </article>
 </a>
 
 <style>
-  .note-tile {
-    display: flex;
-    flex-direction: column;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(18, 20, 23, 0.1);
-  }
-
-  .note-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.55rem;
-    align-items: center;
-    margin-bottom: 1rem;
-  }
-
-  .note-title {
-    font-size: 1.02rem;
-    font-weight: 700;
-    line-height: 1.34;
-    letter-spacing: -0.03em;
-    color: var(--color-ink);
-    transition: color 180ms ease;
-  }
-
-  .note-excerpt {
-    margin-top: 0.9rem;
-    font-size: 0.93rem;
-    line-height: 1.72;
-    color: var(--color-ink-muted);
-  }
-
-  .note-date {
-    display: flex;
-    align-items: center;
-    gap: 0.45rem;
-    margin-top: auto;
-    padding-top: 1rem;
-  }
-
-  .group:hover .note-title {
-    color: var(--color-brand);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .note-title {
-      transition: none;
-    }
-  }
+  .note-card-link { display: block; height: 100%; }
+  .note-card { display: flex; flex-direction: column; height: 100%; min-height: 290px; padding: 32px; border: 1px solid var(--color-ink-violet); background: var(--color-pure-white); transition: transform 180ms ease; }
+  .note-card-link:hover .note-card { transform: translate(-3px, -3px); }
+  .note-card__image { margin: -32px -32px 32px; border-bottom: 1px solid var(--color-ink-violet); background: var(--color-cream-paper); }
+  .note-card__image img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+  .note-card__topline { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 40px; font-family: var(--font-supply); font-size: 14px; }
+  h3 { font-size: 24px; font-weight: 700; line-height: 1.4; }
+  p { margin-top: 16px; font-size: 16px; line-height: 1.6; }
+  .note-card__footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: auto; padding-top: 24px; border-top: 1px solid var(--color-ink-violet); font-size: 14px; }
+  @media (prefers-reduced-motion: reduce) { .note-card { transition: none; } .note-card-link:hover .note-card { transform: none; } }
 </style>
