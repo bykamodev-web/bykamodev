@@ -6,64 +6,126 @@ interface Props {
 
 const { xUrl, githubUrl } = Astro.props
 const year = new Date().getFullYear()
+const sitemap = [
+  { label: 'Home', href: '/' },
+  { label: 'Builds', href: '/builds' },
+  { label: 'Notes', href: '/notes' },
+  { label: 'About', href: '/about' },
+  { label: 'Contact', href: '/contact' },
+]
+const socials = [
+  xUrl && { label: 'X', href: xUrl },
+  githubUrl && { label: 'GitHub', href: githubUrl },
+].filter(Boolean) as { label: string; href: string }[]
 ---
 
 <footer class="site-footer">
-  <div class="section-shell site-footer__inner">
-    <div>
-      <a href="/" class="footer-brand">bykamo.dev</a>
-      <p>AIとコードで、情報・運用・体験を組み直す。</p>
-    </div>
+  <div class="section-shell">
+    <div class="site-footer__top">
+      <div class="site-footer__intro">
+        <p class="annotation">(END) — BYKAMO.DEV</p>
+        <p class="site-footer__tagline">AIとコードで、<br />情報・運用・体験を組み直す。</p>
+      </div>
 
-    <div class="footer-links">
-      <nav aria-label="フッターナビゲーション">
-        <a href="/builds">Builds</a>
-        <a href="/notes">Notes</a>
-        <a href="/about">About</a>
-        <a href="/contact">Contact</a>
+      <nav class="site-footer__col" aria-label="フッターナビゲーション">
+        <p class="annotation">SITEMAP</p>
+        <ul>{sitemap.map((item) => <li><a href={item.href} class="link-draw">{item.label}</a></li>)}</ul>
       </nav>
-      {(xUrl || githubUrl) && (
-        <div class="footer-socials">
-          {xUrl && <a href={xUrl} target="_blank" rel="noopener noreferrer">X</a>}
-          {githubUrl && <a href={githubUrl} target="_blank" rel="noopener noreferrer">GitHub</a>}
+
+      {socials.length > 0 && (
+        <div class="site-footer__col">
+          <p class="annotation">SOCIAL</p>
+          <ul>{socials.map((item) => <li><a href={item.href} class="link-draw" target="_blank" rel="noopener noreferrer">{item.label} ↗</a></li>)}</ul>
         </div>
       )}
+
+      <div class="site-footer__col">
+        <p class="annotation">LOCAL TIME</p>
+        <p class="site-footer__time">TOKYO <time data-clock aria-hidden="true">JST</time></p>
+        <a href="#top" class="link-draw site-footer__top-link">↑ BACK TO TOP</a>
+      </div>
+    </div>
+
+    <div class="site-footer__mark" aria-hidden="true">
+      <p class="site-footer__wordmark" data-reveal="lines">
+        <span class="line"><span class="line__inner">bykamo.dev</span></span>
+      </p>
+    </div>
+
+    <div class="site-footer__meta annotation">
+      <span>© {year} bykamo.dev</span>
+      <span>BUILT WITH ASTRO — TOKYO, JP</span>
     </div>
   </div>
-  <div class="section-shell site-footer__meta">© {year} bykamo.dev</div>
 </footer>
 
 <style>
   .site-footer {
-    margin-top: 120px;
+    margin-top: var(--section-gap);
     border-top: 1px solid var(--color-ink-violet);
     background: var(--color-cream-paper);
   }
-  .site-footer__inner {
-    display: flex;
-    justify-content: space-between;
+
+  .site-footer__top {
+    display: grid;
     gap: 40px;
-    padding-block: 64px;
+    padding-block: clamp(56px, 7vw, 96px) clamp(40px, 5vw, 64px);
   }
-  .footer-brand {
-    display: inline-block;
-    margin-bottom: 16px;
-    font-size: 24px;
-    font-weight: 700;
-  }
-  p { max-width: 440px; font-size: 16px; line-height: 1.6; }
-  .footer-links { display: grid; justify-items: start; gap: 24px; }
-  nav, .footer-socials { display: flex; flex-wrap: wrap; gap: 16px 24px; }
-  nav a, .footer-socials a { border-bottom: 1px solid transparent; font-size: 16px; }
-  nav a:hover, .footer-socials a:hover { border-color: var(--color-ink-violet); }
-  .site-footer__meta {
+
+  .site-footer__intro { display: grid; gap: 20px; align-content: start; }
+  .site-footer__tagline { font-size: clamp(22px, 2.2vw, 30px); font-weight: 700; line-height: 1.45; font-feature-settings: "palt"; }
+  .site-footer__col { display: grid; gap: 16px; align-content: start; }
+  .site-footer__col ul { display: grid; gap: 4px; }
+  .site-footer__col a { position: relative; min-height: 32px; font-size: 16px; }
+  /* 44px hit area (32px box + 6px each side) without moving the drawn underline. */
+  .site-footer__col a::after { content: ""; position: absolute; inset: -6px -10px; }
+  .site-footer__time { font-family: var(--font-supply); font-size: 14px; font-variant-numeric: tabular-nums; }
+  .site-footer__top-link { font-family: var(--font-supply); font-size: 12px !important; letter-spacing: 0.08em; width: max-content; }
+
+  .site-footer__mark {
+    container-type: inline-size;
+    overflow: hidden;
     border-top: 1px solid var(--color-ink-violet);
-    padding-block: 16px;
-    font-family: var(--font-supply);
-    font-size: 14px;
   }
-  @media (max-width: 767px) {
-    .site-footer { margin-top: 80px; }
-    .site-footer__inner { flex-direction: column; padding-block: 40px; }
+
+  /*
+   * Registered to the shell: Hanken Grotesk 700 at -0.055em sets "bykamo.dev" with ink from
+   * 0.061em to 4.971em, so 100cqw / 4.91 makes the ink span the container exactly and the
+   * negative margin removes the "b" side bearing. Line box + bottom padding keep the "y"
+   * descender whole (ascender .697em, descender .204em) with an even ~.06em gap to both rules.
+   */
+  .site-footer__wordmark {
+    margin-left: -0.061em;
+    font-size: calc(100cqw / 4.91);
+    font-weight: 700;
+    letter-spacing: -0.055em;
+    line-height: 0.82;
+    white-space: nowrap;
+  }
+
+  .site-footer__wordmark .line { padding: 0 0 0.2em; margin: 0; }
+
+  .site-footer__meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 24px;
+    border-top: 1px solid var(--color-ink-violet);
+    padding-block: 16px 24px;
+  }
+
+  @media (min-width: 900px) {
+    .site-footer__top { grid-template-columns: 5fr 2fr 2fr 3fr; }
+  }
+
+  @media (max-width: 599px) {
+    .site-footer__top { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px 20px; }
+    .site-footer__col ul { gap: 12px; }
+    .site-footer__intro { grid-column: 1 / -1; }
+  }
+
+  @media (min-width: 600px) and (max-width: 899px) {
+    .site-footer__top { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .site-footer__intro { grid-column: 1 / -1; }
   }
 </style>

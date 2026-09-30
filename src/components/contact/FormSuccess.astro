@@ -1,0 +1,71 @@
+---
+/**
+ * Success state for /contact/form. The page script toggles `.hidden` on `#success-container`;
+ * the line-art check draws on each time the panel is shown (static and complete under reduced motion).
+ */
+---
+
+<div id="success-container" class="glass-panel form-success hidden">
+  <div class="form-panel__bar" aria-hidden="true"><span>STATUS — SENT</span><span>04 / 04</span></div>
+  <div class="form-success__body">
+    <svg class="form-success__mark" viewBox="0 0 96 96" width="96" height="96" fill="none" aria-hidden="true">
+      <rect class="form-success__frame" x="8" y="8" width="80" height="80" pathLength="1" />
+      <path class="form-success__check" d="M28 50l14 13 26-30" pathLength="1" />
+      <path class="form-success__reg" d="M48 0v8M48 88v8M0 48h8M88 48h8" />
+    </svg>
+    <div class="form-success__copy">
+      <p class="form-success__title">送信しました</p>
+      <p class="body-text">折り返しご連絡いたします。</p>
+      <a href="/contact" class="btn-ghost inline-flex form-success__back">
+        Contactに戻る
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .form-success { box-shadow: var(--shadow-hard-lg); }
+  .hidden { display: none; }
+
+  .form-panel__bar {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px clamp(20px, 3vw, 40px);
+    background: var(--color-ink-violet);
+    color: var(--color-cream-paper);
+    font-family: var(--font-supply);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+  }
+
+  /* ---------- Success ---------- */
+
+  .form-success__body {
+    display: grid;
+    gap: 28px;
+    justify-items: start;
+    padding: clamp(32px, 5vw, 72px) clamp(20px, 3vw, 48px);
+  }
+
+  .form-success__copy { display: grid; gap: 12px; justify-items: start; }
+  .form-success__title { font-size: var(--text-display); font-weight: 700; font-feature-settings: "palt"; line-height: 1.16; }
+  .form-success__back { margin-top: 20px; }
+
+  .form-success__mark { width: 96px; height: 96px; overflow: visible; }
+  .form-success__frame { fill: var(--color-butter-yellow); stroke: var(--color-ink-violet); stroke-width: 1.5; }
+  .form-success__check { stroke: var(--color-ink-violet); stroke-width: 4; stroke-linecap: square; }
+  .form-success__reg { stroke: var(--color-ink-violet); stroke-width: 1.5; }
+
+  .form-success__frame,
+  .form-success__check { stroke-dasharray: 1; }
+  .form-success:not(.hidden) .form-success__frame { animation: success-draw 700ms var(--ease-in-out) both; }
+  .form-success:not(.hidden) .form-success__check { animation: success-draw 520ms var(--ease-out) 560ms both; }
+
+  @keyframes success-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+
+
+  @media (min-width: 1000px) {
+    .form-success__body { grid-template-columns: auto minmax(0, 1fr); column-gap: 40px; }
+  }
+</style>

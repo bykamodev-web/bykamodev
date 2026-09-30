@@ -3,40 +3,144 @@ import type { Build } from '@/types'
 import { getOptimizedImageUrl } from '@/lib/microcms'
 import Icon from '@/components/icons/Icons.astro'
 
-interface Props { build: Build }
-const { build } = Astro.props
+/**
+ * Collection card: framed cover with clip reveal and zoom-inside-frame hover, hard-shadow lift,
+ * status badge, mono stack footer. `wide` lays it out horizontally (odd last item of a 2-col grid).
+ */
+interface Props {
+  build: Build
+  index?: number
+  wide?: boolean
+  headingLevel?: 'h2' | 'h3'
+}
+
+const { build, index, wide = false, headingLevel: Heading = 'h3' } = Astro.props
 const status = build.statusLabel?.[0] || 'planning'
-const imageSm = getOptimizedImageUrl(build.coverImage.url, { width: 480, quality: 72, aspectRatio: '16:9' })
-const imageLg = getOptimizedImageUrl(build.coverImage.url, { width: 800, quality: 78, aspectRatio: '16:9' })
+const topic = build.topics?.[0]?.title
+const image = (width: number) =>
+  getOptimizedImageUrl(build.coverImage.url, { width, quality: 76, aspectRatio: '16:9' })
+const number = typeof index === 'number' ? String(index + 1).padStart(2, '0') : null
+const stack = (build.stack || []).slice(0, 3).map((item) => item.name)
 ---
 
-<a href={`/builds/${build.slug}`} class="group build-card-link">
-  <article class="build-card">
-    <figure class="build-card__image">
-      <img src={imageSm} srcset={`${imageSm} 480w, ${imageLg} 800w`} sizes="(max-width: 767px) calc(100vw - 48px), 400px" alt={build.title} loading="lazy" />
-    </figure>
-    <div class="build-card__content">
-      <div class="build-card__meta"><span class={`badge badge-${status}`}>{status}</span>{build.topics?.slice(0, 1).map((topic) => <span class="caption">{topic.title}</span>)}</div>
-      <h3>{build.title}</h3>
-      <p>{build.summary}</p>
-      <div class="build-card__footer">
-        {build.stack && build.stack.length > 0 && <span>{build.stack.slice(0, 3).map((item) => item.name).join(' / ')}</span>}
-        <Icon name="arrow-right" size={18} class="hover-arrow" />
-      </div>
-    </div>
-  </article>
+<a href={`/builds/${build.slug}`} class:list={['group build-card', wide && 'build-card--wide']} data-cursor="VIEW">
+  <span class="build-card__frame">
+    <span class="build-card__clip" data-reveal="clip">
+      <img
+        src={image(640)}
+        srcset={`${image(480)} 480w, ${image(640)} 640w, ${image(960)} 960w, ${image(1280)} 1280w`}
+        sizes={wide ? '(max-width: 899px) calc(100vw - 40px), 640px' : '(max-width: 767px) calc(100vw - 40px), (max-width: 1320px) 46vw, 620px'}
+        width="960"
+        height="540"
+        alt=""
+        loading="lazy"
+        decoding="async"
+      />
+    </span>
+  </span>
+  <span class="build-card__body">
+    <span class="build-card__meta">
+      {number && <span class="build-card__index" aria-hidden="true">{number}</span>}
+      <span class={`badge badge-${status}`}>{status}</span>
+      {topic && <span class="annotation">{topic}</span>}
+    </span>
+    <Heading class="build-card__title">{build.title}</Heading>
+    {build.summary && <span class="build-card__summary">{build.summary}</span>}
+    <span class="build-card__footer">
+      <span class="build-card__stack">{stack.length > 0 ? stack.join(' / ') : 'CASE STUDY'}</span>
+      <span class="build-card__arrow" aria-hidden="true"><Icon name="arrow-right" size={20} class="hover-arrow" /></span>
+    </span>
+  </span>
 </a>
 
 <style>
-  .build-card-link { display: block; height: 100%; }
-  .build-card { display: flex; flex-direction: column; height: 100%; border: 1px solid var(--color-ink-violet); background: var(--color-pure-white); transition: transform 180ms ease; }
-  .build-card-link:hover .build-card { transform: translate(-3px, -3px); }
-  .build-card__image { border-bottom: 1px solid var(--color-ink-violet); background: var(--color-cream-paper); }
-  .build-card__image img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
-  .build-card__content { display: flex; flex: 1; flex-direction: column; padding: 24px; }
-  .build-card__meta { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
-  h3 { font-size: 24px; font-weight: 700; line-height: 1.4; }
-  p { margin-top: 16px; font-size: 16px; line-height: 1.6; }
-  .build-card__footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: auto; padding-top: 24px; border-top: 1px solid var(--color-ink-violet); font-family: var(--font-supply); font-size: 14px; line-height: 1.4; }
-  @media (prefers-reduced-motion: reduce) { .build-card { transition: none; } .build-card-link:hover .build-card { transform: none; } }
+  .build-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 1px solid var(--color-ink-violet);
+    background: var(--color-pure-white);
+    transition: transform var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+  }
+
+  .build-card:hover,
+  .build-card:focus-visible {
+    transform: translate(-4px, -4px);
+    box-shadow: var(--shadow-hard-lg);
+  }
+
+  .build-card:active { transform: translate(-1px, -1px); box-shadow: var(--shadow-hard); transition-duration: 60ms; }
+
+  .build-card__frame { display: block; border-bottom: 1px solid var(--color-ink-violet); background: var(--color-cream-paper); }
+  .build-card__clip { display: block; overflow: hidden; aspect-ratio: 16 / 9; }
+  .build-card__clip img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--dur-3) var(--ease-out);
+  }
+  .build-card:hover .build-card__clip img,
+  .build-card:focus-visible .build-card__clip img { transform: scale(1.05); }
+
+  .build-card__body { display: flex; flex: 1; flex-direction: column; gap: 16px; padding: clamp(20px, 2.2vw, 32px); }
+
+  .build-card__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+  .build-card__index {
+    margin-right: 4px;
+    font-family: var(--font-supply);
+    font-size: 22px;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .build-card__title {
+    font-size: clamp(21px, 1.9vw, 28px);
+    font-weight: 700;
+    font-feature-settings: "palt";
+    line-height: 1.38;
+    letter-spacing: -0.005em;
+    text-wrap: balance;
+    word-break: auto-phrase;
+    overflow-wrap: anywhere;
+  }
+
+  .build-card__summary {
+    font-size: 15px;
+    line-height: 1.8;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+
+  .build-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-ink-violet);
+    font-family: var(--font-supply);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+  .build-card__stack { min-width: 0; overflow-wrap: anywhere; }
+  .build-card__arrow { display: inline-flex; overflow: hidden; }
+
+  @media (min-width: 900px) {
+    .build-card--wide { flex-direction: row; }
+    .build-card--wide .build-card__frame { flex: 0 0 58%; border-bottom: 0; border-right: 1px solid var(--color-ink-violet); }
+    .build-card--wide .build-card__clip { height: 100%; min-height: 340px; aspect-ratio: auto; }
+    .build-card--wide .build-card__body { justify-content: center; padding: clamp(28px, 3vw, 48px); }
+    .build-card--wide .build-card__title { font-size: clamp(24px, 2.4vw, 34px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .build-card, .build-card__clip img { transition: none; }
+    .build-card:hover, .build-card:focus-visible { transform: none; }
+    .build-card:hover .build-card__clip img { transform: none; }
+  }
 </style>

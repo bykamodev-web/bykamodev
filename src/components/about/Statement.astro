@@ -1,0 +1,55 @@
+---
+/**
+ * Large statement paragraph. Phrases wrap naturally (inline masks) and unmask in sequence
+ * through the shared `data-reveal="lines"` system. `marker` phrases get the yellow highlighter.
+ */
+interface Phrase { text: string; marker?: boolean }
+
+interface Props {
+  phrases: Phrase[]
+  label: string
+}
+
+const { phrases, label } = Astro.props
+---
+
+<div class="statement grid-12">
+  <p class="annotation statement__label" data-reveal>{label}</p>
+  <p class="statement__text" data-reveal="lines">
+    {phrases.map((phrase, index) => (
+      <span class="line" style={`--i:${index};`}>
+        <span class="line__inner">{phrase.marker ? <span class="marker">{phrase.text}</span> : phrase.text}</span>
+      </span>
+    ))}
+  </p>
+</div>
+
+<style>
+  .statement { row-gap: 24px; }
+  .statement__label { grid-column: 1 / -1; align-self: start; padding-top: 0.9em; }
+
+  .statement__text {
+    grid-column: 1 / -1;
+    font-size: clamp(26px, 2.9vw, 42px);
+    font-weight: 700;
+    font-feature-settings: "palt";
+    line-height: 1.5;
+    letter-spacing: -0.005em;
+  }
+
+  /* Inline masks: each phrase wraps as a unit, so the paragraph reflows at any width. */
+  .statement__text .line {
+    display: inline-block;
+    vertical-align: top;
+    margin: 0;
+    padding: 0 0.02em;
+  }
+
+  .statement__text .line .line__inner { transition-delay: calc(var(--i, 0) * 55ms + var(--delay, 0ms)); }
+  .statement__text .line .marker::before { --marker-delay: calc(var(--i, 0) * 55ms + 720ms); }
+
+  @media (min-width: 900px) {
+    .statement__label { grid-column: 1 / 4; }
+    .statement__text { grid-column: 4 / 13; }
+  }
+</style>

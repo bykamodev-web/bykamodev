@@ -2,10 +2,12 @@
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import Breadcrumbs from '@/components/seo/Breadcrumbs.astro'
 import BuildCard from '@/components/cards/BuildCard.astro'
-import NoteCard from '@/components/cards/NoteCard.astro'
 import JsonLd from '@/components/seo/JsonLd.astro'
+import PageHero from '@/components/ui/PageHero.astro'
+import NoteList from '@/components/article/NoteList.astro'
 import { getAllTopicSlugs, getTopicBySlug, getBuilds, getNotes } from '@/lib/microcms'
 import { buildTopicPageSchemas } from '@/lib/schema'
+import { pad2 } from '@/components/article/format'
 
 export async function getStaticPaths() {
   const slugs = await getAllTopicSlugs()
@@ -17,29 +19,71 @@ const topic = await getTopicBySlug(slug)
 if (!topic) return Astro.redirect('/404')
 const [buildsRes, notesRes] = await Promise.all([getBuilds({ topicId: topic.id }), getNotes({ topicId: topic.id })])
 const schemas = buildTopicPageSchemas(topic)
+const builds = buildsRes.contents
+const notes = notesRes.contents
+const isWide = (i: number) => builds.length > 1 && builds.length % 2 === 1 && i === builds.length - 1
 ---
 
 <BaseLayout title={topic.seoMeta?.metaTitle || topic.title} description={topic.seoMeta?.metaDescription || topic.intro} noindex={topic.seoMeta?.noIndex}>
   <Fragment slot="head"><JsonLd schemas={schemas} /></Fragment>
   <div class="section-shell topic-page">
     <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Topics' }, { label: topic.title }]} />
-    <header><p class="section-label">TOPIC</p><h1 class="page-title">{topic.title}</h1><p class="body-text">{topic.intro}</p></header>
+    <PageHero
+      index="#"
+      label="TOPIC"
+      lines={[topic.title]}
+      lead={topic.intro}
+      meta={[{ k: 'BUILDS', v: pad2(builds.length) }, { k: 'NOTES', v: pad2(notes.length) }]}
+      class="topic-page__hero"
+    />
+
     {topic.description && <div class="rich-content topic-page__description" set:html={topic.description} />}
-    {buildsRes.contents.length > 0 && <section><p class="section-label">BUILDS</p><div class="topic-grid">{buildsRes.contents.map((build) => <BuildCard build={build} />)}</div></section>}
-    {notesRes.contents.length > 0 && <section><p class="section-label">NOTES</p><div class="topic-grid">{notesRes.contents.map((note) => <NoteCard note={note} />)}</div></section>}
-    {buildsRes.contents.length === 0 && notesRes.contents.length === 0 && <p class="body-text topic-page__empty">このトピックにはまだコンテンツがありません。</p>}
+
+    {builds.length > 0 && (
+      <section class="topic-section" aria-labelledby="topic-builds-title">
+        <div class="topic-section__head" data-reveal>
+          <h2 id="topic-builds-title" class="annotation">BUILDS — {pad2(builds.length)}</h2>
+          <span class="rule" aria-hidden="true"></span>
+        </div>
+        <ul class="topic-grid">
+          {builds.map((build, i) => (
+            <li class:list={[isWide(i) && 'is-wide']} data-reveal style={`--i:${i % 2};`}>
+              <BuildCard build={build} index={i} wide={isWide(i)} />
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {notes.length > 0 && (
+      <section class="topic-section" aria-labelledby="topic-notes-title">
+        <div class="topic-section__head" data-reveal>
+          <h2 id="topic-notes-title" class="annotation">NOTES — {pad2(notes.length)}</h2>
+          <span class="rule" aria-hidden="true"></span>
+        </div>
+        <NoteList notes={notes} headingLevel="h3" />
+      </section>
+    )}
+
+    {builds.length === 0 && notes.length === 0 && <p class="body-text topic-page__empty">このトピックにはまだコンテンツがありません。</p>}
   </div>
 </BaseLayout>
 
 <style>
-  .topic-page { padding-block: 80px 120px; }
-  header { max-width: 800px; }
-  .section-label { margin-bottom: 16px; }
-  header .body-text { margin-top: 24px; }
-  .topic-page__description { max-width: 760px; margin-top: 64px; }
-  section { margin-top: 80px; }
-  .topic-grid { display: grid; gap: 24px; }
+  .topic-page { padding-block: clamp(40px, 6vw, 80px) clamp(80px, 9vw, 120px); }
+  .topic-page :global(.topic-page__hero) { grid-template-columns: minmax(0, 1fr); }
+  .topic-page__description { margin-top: clamp(48px, 6vw, 80px); }
+
+  .topic-section { margin-top: clamp(72px, 9vw, 128px); }
+  .topic-section__head { display: flex; align-items: center; gap: 20px; margin-bottom: clamp(24px, 3vw, 40px); }
+  .topic-section__head .rule { flex: 1; }
+  .topic-section__head h2 { flex: none; }
+
+  .topic-grid { display: grid; gap: 32px; }
   .topic-page__empty { margin-top: 64px; }
-  @media (min-width: 768px) { .topic-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (max-width: 767px) { .topic-page { padding-block: 64px 80px; } }
+
+  @media (min-width: 768px) {
+    .topic-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(24px, 3vw, 48px); row-gap: 48px; }
+    .topic-grid > .is-wide { grid-column: 1 / -1; }
+  }
 </style>

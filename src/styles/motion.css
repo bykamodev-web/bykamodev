@@ -1,0 +1,295 @@
+/*
+ * Motion vocabulary: draw a line / unmask a line of type / a part slides into its slot.
+ * Every initial-hidden state is gated behind html.js (set by an inline head script),
+ * so the page is complete without JavaScript and under reduced motion.
+ */
+
+/* ---------- Reveal: up (default) ---------- */
+
+html.js .reveal,
+html.js [data-reveal=""],
+html.js [data-reveal="up"] {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0);
+  transition:
+    opacity var(--dur-3) var(--ease-out),
+    transform var(--dur-3) var(--ease-out);
+  transition-delay: calc(var(--i, 0) * var(--stagger) + var(--delay, 0ms));
+}
+
+html.js .reveal.is-visible,
+html.js [data-reveal=""].is-visible,
+html.js [data-reveal="up"].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- Reveal: lines (RevealLines markup) ---------- */
+
+.line {
+  display: block;
+  overflow: hidden;
+  padding: 0.08em 0.12em;
+  margin: -0.08em -0.12em;
+}
+
+.line__inner { display: block; }
+
+html.js [data-reveal="lines"] .line__inner {
+  transform: translate3d(0, 112%, 0);
+  transition: transform var(--dur-3) var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 90ms + var(--delay, 0ms));
+}
+
+html.js [data-reveal="lines"].is-visible .line__inner { transform: none; }
+
+/* ---------- Reveal: clip (image frames) ---------- */
+
+html.js [data-reveal="clip"] {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path var(--dur-4) var(--ease-out);
+  transition-delay: var(--delay, 0ms);
+}
+
+html.js [data-reveal="clip"] img {
+  transform: scale(1.18);
+  transition: transform var(--dur-4) var(--ease-out);
+}
+
+html.js [data-reveal="clip"].is-visible { clip-path: inset(0 0 0 0); }
+html.js [data-reveal="clip"].is-visible img { transform: none; }
+
+/* ---------- Reveal: rule (hairlines draw from the left) ---------- */
+
+.rule {
+  display: block;
+  height: 1px;
+  background: currentColor;
+}
+
+html.js [data-reveal="rule"] {
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-3) var(--ease-in-out);
+  transition-delay: var(--delay, 0ms);
+}
+
+html.js [data-reveal="rule"].is-visible { transform: none; }
+
+/* ---------- Marker swipe ---------- */
+
+html.js .marker::before {
+  transform: scaleX(0);
+  transition: transform var(--dur-2) var(--ease-in-out);
+  transition-delay: var(--marker-delay, 120ms);
+}
+
+html.js .line .marker::before {
+  --marker-delay: calc(var(--i, 0) * 90ms + var(--delay, 0ms) + 620ms);
+}
+
+html.js .is-visible .marker::before,
+html.js .marker.is-visible::before { transform: none; }
+
+html.js .surface-dark .marker,
+html.js .surface-teal .marker {
+  color: var(--color-cream-paper);
+  transition: color 1ms linear calc(var(--marker-delay, 120ms) + 200ms);
+}
+
+html.js .surface-dark .line .marker,
+html.js .surface-teal .line .marker {
+  --marker-delay: calc(var(--i, 0) * 90ms + var(--delay, 0ms) + 620ms);
+}
+
+html.js .surface-dark .is-visible .marker,
+html.js .surface-dark .marker.is-visible,
+html.js .surface-teal .is-visible .marker,
+html.js .surface-teal .marker.is-visible { color: var(--color-ink-violet); }
+
+/* ---------- Parallax / magnetic ---------- */
+
+[data-parallax] { transform: translate3d(0, var(--parallax-y, 0px), 0); }
+
+[data-magnetic] {
+  translate: var(--mag-x, 0px) var(--mag-y, 0px);
+  transition: translate 640ms var(--ease-out);
+}
+
+[data-magnetic].is-magnetized { transition-duration: 160ms; }
+
+/* ---------- Marquee ---------- */
+
+.marquee { overflow: hidden; }
+
+.marquee__track {
+  display: flex;
+  width: max-content;
+  animation: marquee var(--marquee-duration, 36s) linear infinite;
+}
+
+.marquee__group { display: flex; flex: none; align-items: center; }
+.marquee.is-paused .marquee__track { animation-play-state: paused; }
+
+@keyframes marquee { to { transform: translate3d(-50%, 0, 0); } }
+
+/* ---------- Custom cursor (pointer: fine only; native cursor stays) ---------- */
+
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 250;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.cursor__dot,
+.cursor__ring,
+.cursor__label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition:
+    transform var(--dur-1) var(--ease-out),
+    opacity var(--dur-1) var(--ease-out);
+}
+
+.cursor__dot {
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  background: var(--color-ink-violet);
+}
+
+.cursor__ring {
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border: 1px solid var(--color-ink-violet);
+  opacity: 0;
+  transform: scale(0.4);
+}
+
+.cursor__label {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  margin: -36px 0 0 -36px;
+  border: 1px solid var(--color-ink-violet);
+  background: var(--color-butter-yellow);
+  color: var(--color-ink-violet);
+  font-family: var(--font-supply);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  opacity: 0;
+  transform: scale(0.1);
+}
+
+.cursor.is-link .cursor__ring { opacity: 1; transform: none; }
+.cursor.is-link .cursor__dot { transform: scale(0.5); }
+.cursor.is-label .cursor__label { opacity: 1; transform: none; }
+.cursor.is-label .cursor__dot { opacity: 0; }
+.cursor.is-hidden { opacity: 0; }
+.cursor.on-dark .cursor__dot { background: var(--color-butter-yellow); }
+.cursor.on-dark .cursor__ring { border-color: var(--color-butter-yellow); }
+
+/* ---------- Intro curtain (first visit per session) ---------- */
+
+.intro { display: none; }
+
+html.intro-pending .intro {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  padding: var(--gutter);
+  background: var(--color-ink-violet);
+  color: var(--color-cream-paper);
+  clip-path: inset(0 0 0 0);
+}
+
+html.intro-leaving .intro {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 520ms var(--ease-in-out);
+}
+
+.intro__mark {
+  align-self: center;
+  justify-self: center;
+  font-size: clamp(32px, 5vw, 64px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.intro__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  font-family: var(--font-supply);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+
+.intro__count {
+  color: var(--color-butter-yellow);
+  font-size: clamp(40px, 6vw, 88px);
+  font-variant-numeric: tabular-nums;
+  line-height: 0.9;
+}
+
+html.intro-pending { overflow: hidden; }
+
+/* ---------- Page transitions (Astro ClientRouter) ---------- */
+
+@keyframes bk-page-out {
+  to { opacity: 0; transform: translate3d(0, -16px, 0); }
+}
+
+@keyframes bk-page-in {
+  from { opacity: 0; }
+}
+
+/* ---------- Reduced motion: static and complete ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  html.js .reveal,
+  html.js [data-reveal],
+  html.js [data-reveal] img,
+  html.js [data-reveal="lines"] .line__inner,
+  html.js .marker::before,
+  [data-parallax],
+  [data-magnetic] {
+    opacity: 1 !important;
+    clip-path: none !important;
+    transform: none !important;
+    translate: none !important;
+    transition: none !important;
+  }
+
+  html.js .surface-dark .marker,
+  html.js .surface-teal .marker { color: var(--color-ink-violet); transition: none; }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .marquee__track { animation: none !important; }
+  .cursor,
+  .intro { display: none !important; }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none !important; }
+}

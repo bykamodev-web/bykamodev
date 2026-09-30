@@ -30,18 +30,33 @@ const pageCanonical = canonical || new URL(Astro.url.pathname, siteUrl).toString
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-<!-- Geometric sans fallback for the licensed Roobert font used in production. -->
+<!-- JS flag + first-visit intro gate. Runs before paint; without JS nothing is hidden. -->
+<script is:inline>
+  (() => {
+    const root = document.documentElement
+    root.classList.add('js')
+    document.addEventListener('astro:after-swap', () => root.classList.add('js', 'motion-ready'))
+    try {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      if (!reduce && !sessionStorage.getItem('bk-intro')) {
+        sessionStorage.setItem('bk-intro', '1')
+        root.classList.add('intro-pending')
+        window.setTimeout(() => root.classList.remove('intro-pending', 'intro-leaving'), 2500)
+      }
+    } catch (error) { /* storage blocked: skip the intro */ }
+    window.setTimeout(() => {
+      if (!root.classList.contains('motion-ready')) root.classList.remove('js', 'intro-pending')
+    }, 4000)
+  })()
+</script>
+
+<!-- Hanken Grotesk stands in for the licensed Roobert; Zen Kaku Gothic New carries Japanese. -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link
-  rel="preload"
-  as="style"
-  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap"
-  onload="this.onload=null;this.rel='stylesheet'"
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;700;900&family=JetBrains+Mono:wght@400;500&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap"
 />
-<noscript>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet" />
-</noscript>
 
 <title>{pageTitle}</title>
 <meta name="description" content={pageDescription} />

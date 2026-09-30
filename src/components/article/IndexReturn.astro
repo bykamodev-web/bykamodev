@@ -1,0 +1,71 @@
+---
+import Icon from '@/components/icons/Icons.astro'
+
+/** Closing "back to the index" band: mono label + big title link with the ink wipe. */
+interface Props {
+  href: string
+  label: string
+  title: string
+  count?: string
+}
+
+const { href, label, title, count } = Astro.props
+---
+
+<nav class="index-return section-shell" aria-label={label}>
+  <a href={href} class="group index-return__link" data-cursor="INDEX">
+    <span class="index-return__top annotation"><span>{label}</span>{count && <span>{count}</span>}</span>
+    <span class="index-return__title">
+      <span class="index-return__text">{title}</span>
+      <span class="index-return__arrow" aria-hidden="true"><Icon name="arrow-right" size={40} class="hover-arrow" /></span>
+    </span>
+  </a>
+</nav>
+
+<style>
+  .index-return { margin-top: clamp(80px, 10vw, 160px); }
+  .index-return__link {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    gap: 20px;
+    padding: clamp(28px, 4vw, 48px) 0;
+    border-block: 1px solid var(--color-ink-violet);
+    transition: color var(--dur-2) var(--ease-out);
+  }
+  .index-return__link::before {
+    content: "";
+    position: absolute;
+    inset: -1px calc(var(--gutter) * -0.5);
+    z-index: -1;
+    background: var(--color-ink-violet);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform var(--dur-2) var(--ease-out);
+  }
+  .index-return__link:hover,
+  .index-return__link:focus-visible { color: var(--color-cream-paper); }
+  .index-return__link:hover::before,
+  .index-return__link:focus-visible::before { transform: scaleY(1); }
+  .index-return__link:focus-visible { outline-offset: 4px; }
+
+  .index-return__top { display: flex; justify-content: space-between; gap: 16px; }
+  .index-return__title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    font-size: clamp(30px, 4.6vw, 64px);
+    font-weight: 700;
+    font-feature-settings: "palt";
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .index-return__text { min-width: 0; text-wrap: balance; word-break: auto-phrase; }
+  .index-return__arrow { display: inline-flex; flex: none; overflow: hidden; }
+  .index-return__arrow :global(svg) { width: clamp(28px, 3.4vw, 48px); height: auto; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .index-return__link::before { transition: none; }
+  }
+</style>

@@ -1,0 +1,86 @@
+---
+/**
+ * Mono fact sheet (a title block on a working drawing). Only facts already stated in the site copy.
+ */
+interface Fact { k: string; v: string }
+interface Social { label: string; href: string }
+
+interface Props {
+  facts: Fact[]
+  socials?: Social[]
+}
+
+const { facts, socials = [] } = Astro.props
+---
+
+<aside class="fact-sheet" aria-label="プロフィール概要" data-reveal>
+  <div class="fact-sheet__head">
+    <span>FACT SHEET</span>
+  </div>
+  <dl class="fact-sheet__list">
+    {facts.map((fact) => (
+      <div class="fact-sheet__row">
+        <dt>{fact.k}</dt>
+        <dd>{fact.v}</dd>
+      </div>
+    ))}
+    {socials.length > 0 && (
+      <div class="fact-sheet__row">
+        <dt>ELSEWHERE</dt>
+        <dd class="fact-sheet__links">
+          {socials.map((social) => (
+            <a href={social.href} class="fact-sheet__link" target="_blank" rel="noopener noreferrer"><span class="link-draw">{social.label}</span><span aria-hidden="true">↗</span></a>
+          ))}
+        </dd>
+      </div>
+    )}
+  </dl>
+  <svg class="fact-sheet__mark" viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+    <circle cx="20" cy="20" r="11" />
+    <path d="M20 2v36M2 20h36" />
+  </svg>
+</aside>
+
+<style>
+  .fact-sheet {
+    position: relative;
+    border: 1px solid var(--color-ink-violet);
+    background: var(--color-pure-white);
+    box-shadow: var(--shadow-hard);
+    font-family: var(--font-supply);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    line-height: 1.6;
+  }
+
+  .fact-sheet__head {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--color-ink-violet);
+    color: var(--color-cream-paper);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+  }
+
+  .fact-sheet__row {
+    display: grid;
+    grid-template-columns: 9.5ch minmax(0, 1fr);
+    gap: 12px;
+    padding: 14px 16px;
+    border-top: 1px solid var(--color-ink-violet);
+  }
+
+  .fact-sheet__row:first-child { border-top: 0; }
+  .fact-sheet__row dt { font-size: 11px; letter-spacing: 0.1em; opacity: 0.72; padding-top: 2px; }
+  .fact-sheet__row dd { font-weight: 500; align-self: center; overflow-wrap: anywhere; }
+
+  .fact-sheet__links { display: flex; flex-wrap: wrap; gap: 0 20px; margin-block: -12px; }
+  .fact-sheet__link { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
+  .fact-sheet__link .link-draw { font-family: inherit; font-size: 13px; padding-bottom: 2px; }
+  .fact-sheet__link:hover .link-draw,
+  .fact-sheet__link:focus-visible .link-draw { animation: link-redraw var(--dur-2) var(--ease-out); }
+
+  .fact-sheet__mark { position: absolute; right: -20px; bottom: -20px; width: 40px; height: 40px; pointer-events: none; }
+  @media (max-width: 599px) { .fact-sheet__mark { display: none; } }
+</style>

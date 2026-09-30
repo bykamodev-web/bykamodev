@@ -1,0 +1,22 @@
+---
+import type { Note } from '@/types'
+import NoteRow from '@/components/article/NoteRow.astro'
+
+/** Hairline-ruled list of NoteRows. Reads well with 1 item as with 20. */
+interface Props {
+  notes: Note[]
+  headingLevel?: 'h2' | 'h3'
+  showThumb?: boolean
+  class?: string
+}
+
+const { notes, headingLevel = 'h2', showThumb = true, class: className } = Astro.props
+---
+
+<ol class:list={["note-list", className]}>
+  {notes.map((note, index) => <NoteRow note={note} index={index} headingLevel={headingLevel} showThumb={showThumb} />)}
+</ol>
+
+<style>
+  .note-list { border-top: 1px solid var(--color-ink-violet); }
+</style>

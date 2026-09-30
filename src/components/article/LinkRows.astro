@@ -1,0 +1,74 @@
+---
+import type { LinkItem } from '@/types'
+import Icon from '@/components/icons/Icons.astro'
+import { hostOf } from '@/components/article/format'
+
+/** External links as large arrow rows with the yellow wipe. */
+interface Props { links: LinkItem[] }
+
+const { links } = Astro.props
+---
+
+<ul class="link-rows">
+  {links.map((link) => (
+    <li>
+      <a href={link.url} target="_blank" rel="noopener noreferrer" class="link-row">
+        <span class="link-row__label">{link.label || hostOf(link.url)}</span>
+        <span class="link-row__meta annotation">{hostOf(link.url)}{link.note && <span class="link-row__note">{link.note}</span>}</span>
+        <span class="link-row__arrow" aria-hidden="true"><Icon name="arrow-right" size={26} /></span>
+        <span class="sr-only">（新しいタブで開く）</span>
+      </a>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .link-rows { border-top: 1px solid var(--color-ink-violet); }
+  .link-rows li { border-bottom: 1px solid var(--color-ink-violet); }
+
+  .link-row {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "label arrow" "meta arrow";
+    align-items: center;
+    gap: 6px 20px;
+    padding: 22px 0;
+  }
+
+  .link-row::before {
+    content: "";
+    position: absolute;
+    inset: 0 calc(var(--gutter) * -0.5);
+    z-index: -1;
+    background: var(--color-butter-yellow);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform var(--dur-2) var(--ease-out);
+  }
+  .link-row:hover::before,
+  .link-row:focus-visible::before { transform: scaleY(1); }
+  .link-row:focus-visible { outline-offset: -2px; }
+
+  .link-row__label {
+    grid-area: label;
+    font-size: clamp(22px, 2.4vw, 34px);
+    font-weight: 700;
+    font-feature-settings: "palt";
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+  .link-row__meta { grid-area: meta; flex-wrap: wrap; gap: 4px 14px; text-transform: none; opacity: 0.8; }
+  .link-row__note { font-family: var(--font-jp); letter-spacing: 0.02em; }
+  .link-row__arrow { grid-area: arrow; display: grid; place-items: center; width: 52px; height: 52px; border: 1px solid var(--color-ink-violet); background: var(--color-cream-paper); }
+  .link-row__arrow :global(svg) { transform: rotate(-45deg); transition: transform var(--dur-2) var(--ease-out); }
+  .link-row:hover .link-row__arrow :global(svg),
+  .link-row:focus-visible .link-row__arrow :global(svg) { transform: rotate(-45deg) translateX(4px); }
+
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .link-row::before, .link-row__arrow :global(svg) { transition: none; }
+  }
+</style>

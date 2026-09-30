@@ -1,10 +1,18 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import Breadcrumbs from '@/components/seo/Breadcrumbs.astro'
-import NoteCard from '@/components/cards/NoteCard.astro'
 import JsonLd from '@/components/seo/JsonLd.astro'
+import ArticleHero from '@/components/article/ArticleHero.astro'
+import TopicChips from '@/components/article/TopicChips.astro'
+import FactSheet from '@/components/article/FactSheet.astro'
+import StorySection from '@/components/article/StorySection.astro'
+import LinkRows from '@/components/article/LinkRows.astro'
+import NoteList from '@/components/article/NoteList.astro'
+import IndexReturn from '@/components/article/IndexReturn.astro'
+import ContactCta from '@/components/sections/ContactCta.astro'
 import { getAllBuildSlugs, getBuildBySlug, getOptimizedImageUrl } from '@/lib/microcms'
 import { buildBuildPageSchemas } from '@/lib/schema'
+import { formatDotDate, pad2 } from '@/components/article/format'
 
 export async function getStaticPaths() {
   const slugs = await getAllBuildSlugs()
@@ -16,63 +24,105 @@ const build = await getBuildBySlug(slug)
 if (!build) return Astro.redirect('/404')
 
 const schemas = buildBuildPageSchemas(build)
-const publishedDate = build.publishedAt ? new Date(build.publishedAt).toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }) : ''
 const ogImage = build.seoMeta?.ogImage?.url || build.coverImage?.url
 const status = build.statusLabel?.[0] || 'planning'
-const coverImage = getOptimizedImageUrl(build.coverImage.url, { width: 1440, quality: 82, aspectRatio: '16:9' })
+const cover = (width: number) => getOptimizedImageUrl(build.coverImage.url, { width, quality: 82, aspectRatio: '16:9' })
+const coverSrcset = [960, 1440, 2000].map((width) => `${cover(width)} ${width}w`).join(', ')
+
+const story = [
+  { label: 'CHALLENGE', title: '課題', text: build.problem },
+  { label: 'SOLUTION', title: '解決', text: build.solution },
+  { label: 'OUTCOME', title: '結果・学び', text: build.outcome },
+].filter((item): item is { label: string; title: string; text: string } => Boolean(item.text))
+const links = build.links || []
+const relatedNotes = build.relatedNotes || []
 ---
 
-<BaseLayout title={build.seoMeta?.metaTitle || build.title} description={build.seoMeta?.metaDescription || build.summary} ogImage={ogImage} noindex={build.seoMeta?.noIndex}>
+<BaseLayout class="page-flush" title={build.seoMeta?.metaTitle || build.title} description={build.seoMeta?.metaDescription || build.summary} ogImage={ogImage} noindex={build.seoMeta?.noIndex}>
   <Fragment slot="head"><JsonLd schemas={schemas} /></Fragment>
-  <article class="section-shell article-page">
-    <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Builds', href: '/builds' }, { label: build.title }]} />
-    <header class="article-header">
-      <div class="article-header__meta"><span class={`badge badge-${status}`}>{status}</span>{publishedDate && <time datetime={build.publishedAt}>{publishedDate}</time>}</div>
-      <h1 class="page-title">{build.title}</h1>
-      <p class="body-text">{build.summary}</p>
-      {build.topics?.length && <div class="article-header__topics">{build.topics.map((topic) => <a href={`/topics/${topic.slug}`}>{topic.title}</a>)}</div>}
-    </header>
+  <article class="article-page">
+    <div class="section-shell">
+      <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Builds', href: '/builds' }, { label: build.title }]} />
+      <ArticleHero
+        index="01"
+        label="BUILDS / CASE STUDY"
+        title={build.title}
+        lead={build.summary}
+        meta={[{ k: 'STATUS', v: status.toUpperCase() }, { k: 'DATE', v: formatDotDate(build.publishedAt) }]}
+      >
+        <TopicChips topics={build.topics} />
+      </ArticleHero>
 
-    <figure class="article-cover">
-      <img src={coverImage} alt={build.title} width="1440" height="810" loading="eager" />
-    </figure>
+      <figure class="article-cover">
+        <div class="article-cover__clip" data-reveal="clip">
+          <div class="article-cover__media">
+            <img src={cover(1440)} srcset={coverSrcset} sizes="(max-width: 1400px) 94vw, 1320px" alt={build.title} width="1440" height="810" loading="eager" fetchpriority="high" decoding="async" />
+          </div>
+        </div>
+        <figcaption class="article-cover__caption annotation"><span>FIG. 01 — COVER</span><span>{build.slug}</span></figcaption>
+      </figure>
 
-    <div class="build-story">
-      <section><p class="section-label">CHALLENGE</p><div><h2>課題</h2><p>{build.problem}</p></div></section>
-      <section><p class="section-label">SOLUTION</p><div><h2>解決</h2><p>{build.solution}</p></div></section>
-      {build.outcome && <section><p class="section-label">OUTCOME</p><div><h2>結果・学び</h2><p>{build.outcome}</p></div></section>}
+      <div class="article-body">
+        <div class="article-body__rail"><FactSheet build={build} /></div>
+        <div class="article-body__main">
+          <div class="build-story">
+            {story.map((item, index) => <StorySection index={pad2(index + 1)} label={item.label} title={item.title} text={item.text} />)}
+          </div>
+
+          {build.body && <div class="rich-content article-rich" set:html={build.body} />}
+
+          {links.length > 0 && (
+            <section class="article-block" aria-labelledby="build-links-title">
+              <h2 id="build-links-title" class="annotation article-block__label">{pad2(story.length + 1)} — LINKS / 公開先</h2>
+              <LinkRows links={links} />
+            </section>
+          )}
+        </div>
+      </div>
+
+      {relatedNotes.length > 0 && (
+        <section class="article-related" aria-labelledby="build-related-title">
+          <div class="article-related__head" data-reveal>
+            <h2 id="build-related-title" class="annotation">RELATED NOTES — 制作の記録</h2>
+            <span class="annotation">{pad2(relatedNotes.length)}</span>
+          </div>
+          <NoteList notes={relatedNotes} headingLevel="h3" />
+        </section>
+      )}
     </div>
 
-    {build.body && <div class="rich-content" set:html={build.body} />}
-    {build.stack?.length && <section class="article-stack"><p class="section-label">STACK</p><div>{build.stack.map((item) => <span class="tech-tag">{item.name}{item.role && ` / ${item.role}`}</span>)}</div></section>}
-    {build.links?.length && <section class="article-links"><p class="section-label">LINKS</p><ul>{build.links.map((link) => <li><a href={link.url} target="_blank" rel="noopener noreferrer">{link.label || link.url} ↗</a>{link.note && <span>{link.note}</span>}</li>)}</ul></section>}
-    {build.relatedNotes?.length && <section class="article-related"><p class="section-label">RELATED NOTES</p><div>{build.relatedNotes.map((note) => <NoteCard note={note} />)}</div></section>}
+    <IndexReturn href="/builds" label="BACK TO INDEX — BUILDS" title="ほかのBuildsを見る" />
+    <div class="article-page__cta"><ContactCta /></div>
   </article>
 </BaseLayout>
 
 <style>
-  .article-page { max-width: 900px; padding-block: 80px 120px; }
-  .article-header { max-width: 820px; }
-  .article-header__meta, .article-header__topics { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; font-family: var(--font-supply); font-size: 14px; }
-  .article-header__meta { margin-bottom: 24px; }
-  .article-header .body-text { margin-top: 24px; }
-  .article-header__topics { margin-top: 24px; }
-  .article-header__topics a { border-bottom: 1px solid var(--color-ink-violet); }
-  .article-cover { margin: 64px 0; border: 1px solid var(--color-ink-violet); background: var(--color-pure-white); }
-  .article-cover img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
-  .build-story { display: grid; gap: 24px; }
-  .build-story section { display: grid; gap: 24px; padding: 32px; border: 1px solid var(--color-ink-violet); background: var(--color-pure-white); }
-  .build-story .section-label { margin-bottom: 16px; }
-  .build-story h2 { font-size: 24px; font-weight: 700; line-height: 1.4; }
-  .build-story section div > p { margin-top: 12px; white-space: pre-line; font-size: 20px; line-height: 1.6; }
-  .rich-content { margin-top: 80px; }
-  .article-stack, .article-links, .article-related { margin-top: 80px; }
-  .article-stack .section-label, .article-links .section-label, .article-related .section-label { margin-bottom: 24px; }
-  .article-stack > div { display: flex; flex-wrap: wrap; gap: 8px; }
-  .article-links ul { border-top: 1px solid var(--color-ink-violet); }
-  .article-links li { display: flex; flex-wrap: wrap; gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--color-ink-violet); font-size: 16px; }
-  .article-links a { border-bottom: 1px solid var(--color-ink-violet); font-weight: 700; }
-  .article-related > div { display: grid; gap: 24px; }
-  @media (min-width: 768px) { .build-story section { grid-template-columns: 152px minmax(0, 1fr); } .article-related > div { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 767px) { .article-page { padding-block: 64px 80px; } .build-story section { padding: 24px; } }
+  .article-page { padding-top: clamp(40px, 6vw, 80px); }
+
+  .article-cover { margin-top: clamp(48px, 6vw, 88px); }
+
+  .article-body {
+    display: grid;
+    gap: clamp(40px, 5vw, 64px);
+    margin-top: clamp(56px, 7vw, 112px);
+  }
+  .article-body__main { min-width: 0; }
+  .build-story { display: flex; flex-direction: column; }
+  .build-story > :global(.story:last-child) { border-bottom: 1px solid var(--color-ink-violet); }
+
+  .article-rich { margin-top: clamp(56px, 7vw, 96px); }
+
+  .article-block { margin-top: clamp(56px, 7vw, 96px); }
+  .article-block__label { margin-bottom: 20px; }
+
+  .article-related { margin-top: clamp(80px, 10vw, 144px); }
+  .article-related__head { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+
+  .article-page__cta { margin-top: clamp(80px, 10vw, 160px); }
+
+  @media (min-width: 1100px) {
+    .article-body { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(16px, 2vw, 32px); }
+    .article-body__rail { grid-column: 1 / 4; }
+    .article-body__main { grid-column: 5 / 13; }
+  }
 </style>

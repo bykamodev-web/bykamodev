@@ -1,0 +1,249 @@
+/* ---------- Badges ---------- */
+
+.badge,
+.tech-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  padding: 6px 12px;
+  border: 1px solid var(--color-ink-violet);
+  background: var(--color-cream-paper);
+  color: var(--color-ink-violet);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.badge-live,
+.badge-building,
+.badge-planning,
+.badge-archived {
+  background: var(--color-butter-yellow);
+  color: var(--color-ink-violet);
+  border-color: var(--color-ink-violet);
+}
+
+.badge-live::before,
+.pulse-dot {
+  content: "";
+  flex: none;
+  width: 7px;
+  height: 7px;
+  background: var(--color-deep-teal);
+  animation: dot-pulse 2.4s var(--ease-in-out) infinite;
+}
+
+.pulse-dot { display: inline-block; }
+
+@keyframes dot-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(25 97 92 / 0.45); }
+  60% { box-shadow: 0 0 0 5px rgb(25 97 92 / 0); }
+}
+
+/* ---------- Buttons ---------- */
+
+.btn-primary,
+.btn-ghost,
+.btn-nav {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 14px 24px;
+  overflow: hidden;
+  border: 1px solid var(--color-ink-violet);
+  font-size: var(--text-body-sm);
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    transform var(--dur-1) var(--ease-out),
+    box-shadow var(--dur-1) var(--ease-out),
+    color var(--dur-2) var(--ease-out);
+}
+
+.btn-primary {
+  background: var(--color-butter-yellow);
+  color: var(--color-ink-violet);
+  box-shadow: var(--shadow-subtle);
+}
+
+.btn-primary:hover,
+.btn-primary:focus-visible {
+  transform: translate(-3px, -3px);
+  box-shadow: var(--shadow-hard);
+}
+
+.btn-primary:active {
+  transform: translate(0, 0);
+  box-shadow: none;
+  transition-duration: 60ms;
+}
+
+.surface-dark .btn-primary:hover,
+.surface-dark .btn-primary:focus-visible { box-shadow: 4px 4px 0 0 var(--color-cream-paper); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-ink-violet);
+}
+
+.btn-nav {
+  min-height: 42px;
+  padding: 12px 16px;
+  background: var(--color-ink-violet);
+  color: var(--color-cream-paper);
+}
+
+.btn-ghost::before,
+.btn-nav::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  background: var(--color-ink-violet);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform var(--dur-2) var(--ease-out);
+}
+
+.btn-nav::before { background: var(--color-butter-yellow); }
+
+.btn-ghost:hover,
+.btn-ghost:focus-visible { color: var(--color-cream-paper); }
+.btn-nav:hover,
+.btn-nav:focus-visible { color: var(--color-ink-violet); }
+
+.btn-ghost:hover::before,
+.btn-ghost:focus-visible::before,
+.btn-nav:hover::before,
+.btn-nav:focus-visible::before { transform: scaleY(1); }
+
+.btn-ghost:active,
+.btn-nav:active { transform: translateY(1px); }
+
+/* Arrow exits right and re-enters from the left. */
+.hover-arrow,
+.note-row-arrow { flex: none; }
+
+.group:hover .hover-arrow,
+.group:focus-visible .hover-arrow,
+.group:hover .note-row-arrow {
+  animation: arrow-swap var(--dur-2) var(--ease-in-out);
+}
+
+@keyframes arrow-swap {
+  0% { transform: translateX(0); opacity: 1; }
+  45% { transform: translateX(120%); opacity: 0; }
+  46% { transform: translateX(-120%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+/* ---------- Links ---------- */
+
+.hairline-link,
+.link-draw {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 4px;
+  background: linear-gradient(currentColor, currentColor) left bottom / 100% 1px no-repeat;
+  color: inherit;
+  font-size: var(--text-body-sm);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.hairline-link:hover,
+.hairline-link:focus-visible,
+.link-draw:hover,
+.link-draw:focus-visible { animation: link-redraw var(--dur-2) var(--ease-out); }
+
+@keyframes link-redraw {
+  0% { background-size: 100% 1px; background-position: right bottom; }
+  40% { background-size: 0% 1px; background-position: right bottom; }
+  41% { background-size: 0% 1px; background-position: left bottom; }
+  100% { background-size: 100% 1px; background-position: left bottom; }
+}
+
+/* ---------- Surfaces ---------- */
+
+.panel-surface,
+.glass-panel {
+  border: 1px solid var(--color-ink-violet);
+  background: var(--color-pure-white);
+}
+
+.icon-box {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--color-ink-violet);
+  background: var(--color-butter-yellow);
+  color: var(--color-ink-violet);
+}
+
+/* ---------- Highlighter marker ---------- */
+
+.marker {
+  position: relative;
+  z-index: 0;
+  display: inline-block;
+  color: var(--color-ink-violet);
+}
+
+/*
+ * Treatment: a full-height highlighter block. It is centred on the glyph box (not the line box)
+ * so it always contains the whole glyph plus a small bleed, whatever the line-height:
+ * ~.08em above / below the ink (CJK ink sits slightly above the box centre), .06em each side.
+ */
+.marker::before {
+  content: "";
+  position: absolute;
+  top: calc(50% - 0.6em);
+  right: -0.06em;
+  left: -0.06em;
+  height: 1.12em;
+  z-index: -1;
+  background: var(--color-butter-yellow);
+  transform-origin: left center;
+}
+
+/* ---------- Legacy rows ---------- */
+
+.note-row {
+  display: block;
+  border-bottom: 1px solid currentColor;
+  padding: 24px 0;
+  transition: padding var(--dur-1) ease, background-color var(--dur-1) ease;
+}
+
+.note-row:hover { padding-inline: 16px; background: var(--color-butter-yellow); }
+
+@media (max-width: 767px) {
+  .btn-primary, .btn-ghost { width: 100%; }
+}
+
+/* ---------- Fact list (mono spec rows, e.g. under a section header) ---------- */
+
+.fact-list {
+  display: grid;
+  gap: 6px;
+  font-family: var(--font-supply);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.fact-list > div { display: grid; grid-template-columns: 10ch minmax(0, 1fr); gap: 16px; }
+.fact-list dt { opacity: 0.72; }

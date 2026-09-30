@@ -1,0 +1,181 @@
+---
+import type { Build } from '@/types'
+import { getOptimizedImageUrl } from '@/lib/microcms'
+import Icon from '@/components/icons/Icons.astro'
+
+/** Full-width editorial case row. The whole row is one link; image side alternates via `reverse`. */
+interface Props {
+  build: Build
+  index: number
+  reverse?: boolean
+  headingLevel?: 'h2' | 'h3'
+}
+
+const { build, index, reverse = false, headingLevel: Heading = 'h3' } = Astro.props
+const status = build.statusLabel?.[0] || 'planning'
+const topic = build.topics?.[0]?.title
+const widths = [640, 960, 1440]
+const image = (width: number) =>
+  getOptimizedImageUrl(build.coverImage.url, { width, quality: 76, aspectRatio: '16:9' })
+const srcset = widths.map((width) => `${image(width)} ${width}w`).join(', ')
+const number = String(index + 1).padStart(2, '0')
+// A spaced separator dash ("name - subtitle") stays with the preceding word so it never opens a line.
+const title = build.title.replace(/\s+([-–—])\s+/g, '\u00a0$1 ')
+---
+
+<a href={`/builds/${build.slug}`} class:list={['group build-feature', reverse && 'build-feature--reverse']} data-cursor="VIEW">
+  <div class="build-feature__frame">
+    <div class="build-feature__clip" data-reveal="clip">
+      <div class="build-feature__media">
+        <div class="build-feature__zoom">
+          <img
+            src={image(960)}
+            srcset={srcset}
+            sizes="(max-width: 899px) calc(100vw - 40px), 58vw"
+            width="1440"
+            height="810"
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="build-feature__body" data-reveal>
+    <p class="build-feature__index" aria-hidden="true">{number}</p>
+    <div class="build-feature__meta">
+      <span class={`badge badge-${status}`}>{status}</span>
+      {topic && <span class="annotation">{topic}</span>}
+    </div>
+    <Heading class="build-feature__title">{title}</Heading>
+    <p class="build-feature__summary">{build.summary}</p>
+    {build.stack && build.stack.length > 0 && (
+      <ul class="build-feature__stack">
+        {build.stack.slice(0, 4).map((item) => <li>{item.name}</li>)}
+      </ul>
+    )}
+    <span class="build-feature__cta">ケーススタディを読む <Icon name="arrow-right" size={18} class="hover-arrow" /></span>
+  </div>
+</a>
+
+<style>
+  .build-feature {
+    display: grid;
+    gap: 28px;
+    padding-block: clamp(40px, 5vw, 72px);
+    border-top: 1px solid var(--color-ink-violet);
+  }
+
+  /* The frame (border + hover lift) is never clipped; clipping happens on the inner layer. */
+  .build-feature__frame {
+    align-self: start;
+    border: 1px solid var(--color-ink-violet);
+    background: var(--color-pure-white);
+    transition: transform var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+  }
+
+  .build-feature__clip { position: relative; overflow: hidden; aspect-ratio: 16 / 9; }
+  /* No overscan: CMS covers carry copy right up to their edges, so the frame shows them uncropped. */
+  .build-feature__media { position: absolute; inset: 0; }
+  .build-feature__zoom { width: 100%; height: 100%; transition: transform var(--dur-3) var(--ease-out); }
+  .build-feature__zoom img { width: 100%; height: 100%; object-fit: cover; }
+
+  .build-feature:hover .build-feature__frame,
+  .build-feature:focus-visible .build-feature__frame {
+    transform: translate(-4px, -4px);
+    box-shadow: var(--shadow-hard-lg);
+  }
+
+  .build-feature:hover .build-feature__zoom,
+  .build-feature:focus-visible .build-feature__zoom { transform: scale(1.04); }
+
+  .build-feature:focus-visible { outline-offset: 8px; }
+
+  .build-feature__body { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+
+  .build-feature__index {
+    /* line-height .76 puts the digits' cap line on the box top = the frame's top edge. */
+    margin-bottom: 4px;
+    font-family: var(--font-supply);
+    font-size: clamp(48px, 5vw, 76px);
+    font-weight: 400;
+    letter-spacing: -0.06em;
+    line-height: 0.76;
+  }
+
+  .build-feature__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
+
+  .build-feature__title {
+    max-width: 16em;
+    font-size: clamp(24px, 2.35vw, 34px);
+    font-weight: 700;
+    font-feature-settings: "palt";
+    line-height: 1.32;
+    letter-spacing: -0.005em;
+    text-wrap: balance;
+    word-break: auto-phrase;
+  }
+
+  .build-feature__summary {
+    max-width: 34em;
+    font-size: 16px;
+    line-height: 1.8;
+    letter-spacing: 0.02em;
+    word-break: auto-phrase;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+
+  .build-feature__stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 0;
+    font-family: var(--font-supply);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .build-feature__stack li { white-space: nowrap; }
+  .build-feature__stack li:not(:last-child)::after { content: "/"; margin-inline: 10px; opacity: 0.5; }
+
+  .build-feature__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 4px;
+    overflow: hidden;
+    background: linear-gradient(currentColor, currentColor) left bottom / 100% 1px no-repeat;
+    font-weight: 700;
+  }
+
+  .build-feature:hover .build-feature__cta { animation: link-redraw var(--dur-2) var(--ease-out); }
+
+  /* Text 5 columns, image 7: the index sits on the frame's top edge, the CTA on its bottom edge. */
+  @media (min-width: 900px) {
+    .build-feature {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      column-gap: clamp(16px, 2vw, 32px);
+      align-items: stretch;
+    }
+    .build-feature__frame { grid-column: 6 / 13; grid-row: 1; }
+    .build-feature__body { grid-column: 1 / 6; grid-row: 1; padding-right: clamp(0px, 2vw, 32px); }
+    .build-feature__cta { margin-top: auto; }
+    .build-feature__summary { -webkit-line-clamp: 2; }
+    .build-feature--reverse .build-feature__frame { grid-column: 1 / 8; }
+    .build-feature--reverse .build-feature__body { grid-column: 8 / 13; padding-right: 0; padding-left: clamp(0px, 2vw, 32px); }
+  }
+
+  @media (max-width: 899px) {
+    .build-feature__cta { margin-top: 8px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .build-feature__frame, .build-feature__zoom { transition: none; }
+    .build-feature:hover .build-feature__zoom { transform: none; }
+  }
+</style>

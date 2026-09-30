@@ -1,0 +1,41 @@
+---
+import PageHero from '@/components/ui/PageHero.astro'
+import { titleScale } from '@/components/article/format'
+
+/**
+ * Detail-page hero: PageHero with the CMS title sized by its visual length, so long Japanese
+ * sentences wrap in balanced lines (≈3–4 at 1440, ≤6 at 390). Default slot → left foot column.
+ */
+interface Props {
+  index: string
+  label: string
+  title: string
+  lead?: string
+  meta?: { k: string; v: string }[]
+}
+
+const { index, label, title, lead, meta } = Astro.props
+const scale = titleScale(title)
+---
+
+<PageHero index={index} label={label} lines={[title]} lead={lead} meta={meta} class={`article-hero article-hero--${scale}`}>
+  <slot />
+</PageHero>
+
+<style>
+  :global(.article-hero.page-hero) { grid-template-columns: minmax(0, 1fr); }
+  :global(.page-hero.article-hero > .page-hero__title.display-xl) {
+    max-width: 20em;
+    line-height: 1.16;
+    letter-spacing: -0.015em;
+    overflow-wrap: anywhere;
+  }
+  :global(.page-hero.article-hero--xl > .page-hero__title.display-xl) { font-size: clamp(40px, 6.2vw, 96px); max-width: 12em; }
+  :global(.page-hero.article-hero--lg > .page-hero__title.display-xl) { font-size: clamp(36px, 5vw, 74px); max-width: 15em; }
+  :global(.page-hero.article-hero--md > .page-hero__title.display-xl) { font-size: clamp(31px, 4.1vw, 60px); max-width: 19em; line-height: 1.2; }
+  :global(.page-hero.article-hero--sm > .page-hero__title.display-xl) { font-size: clamp(28px, 3.4vw, 50px); max-width: 23em; line-height: 1.24; }
+  @media (max-width: 899px) {
+    :global(.article-hero .page-hero__foot) { grid-template-columns: minmax(0, 1fr); }
+  }
+  :global(.article-hero .page-hero__lead) { overflow-wrap: anywhere;  font-size: clamp(17px, 1.35vw, 20px); }
+</style>

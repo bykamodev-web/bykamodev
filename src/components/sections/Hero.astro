@@ -1,17 +1,30 @@
 ---
 import Icon from '@/components/icons/Icons.astro'
+import RevealLines from '@/components/ui/RevealLines.astro'
+import HeroIllustration from '@/components/sections/HeroIllustration.astro'
 ---
 
-<section class="hero-shell">
-  <div class="section-shell hero-layout">
-    <div class="hero-copy reveal" data-reveal>
-      <p class="hero-kicker"><span></span>Independent developer / KAMO</p>
-      <h1 class="hero-title">AIとコードで、<br />複雑な仕事を<br />組み直す。</h1>
-      <p class="body-text hero-description">
+<section class="hero" aria-labelledby="hero-title">
+  <div class="section-shell hero__grid">
+    <div class="hero__meta" data-reveal>
+      <p class="annotation hero__status"><span class="pulse-dot" aria-hidden="true"></span>AVAILABLE FOR WORK</p>
+      <p class="annotation">INDEPENDENT DEVELOPER / KAMO</p>
+      <p class="annotation hero__clock">TOKYO, JP — <time data-clock aria-hidden="true">JST</time></p>
+    </div>
+
+    <RevealLines
+      as="h1"
+      id="hero-title"
+      class="hero__title display-mega"
+      lines={['AIとコードで、', '複雑な仕事を', { text: '組み直す。', marker: '組み直す' }]}
+    />
+
+    <div class="hero__body">
+      <p class="body-text-lg hero__lead" data-reveal style="--delay:320ms;">
         曖昧な要件をほどき、使い続けられるプロダクトと自動化の仕組みに変えていきます。
       </p>
-      <div class="hero-actions">
-        <a href="/contact" class="group btn-primary">
+      <div class="hero__actions" data-reveal style="--delay:420ms;">
+        <a href="/contact" class="group btn-primary" data-magnetic>
           制作について相談する
           <Icon name="arrow-right" size={18} class="hover-arrow" />
         </a>
@@ -22,90 +35,124 @@ import Icon from '@/components/icons/Icons.astro'
       </div>
     </div>
 
-    <div class="hero-visual reveal" data-reveal style="--delay:140ms;">
-      <div class="hero-illustration" aria-label="要件からプロダクトへ変換するワークフローの図解" role="img">
-        <svg viewBox="0 0 610 550" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="61" y="58" width="406" height="345" fill="#fff" stroke="#0d0129" stroke-width="1.5" />
-          <path d="M61 107H467" stroke="#0d0129" stroke-width="1.5" />
-          <circle cx="86" cy="82" r="6" fill="#fae59b" stroke="#0d0129" stroke-width="1.5" />
-          <path d="M105 82H224" stroke="#0d0129" stroke-width="1.5" />
-          <rect x="92" y="142" width="148" height="182" fill="#fffcf7" stroke="#0d0129" stroke-width="1.5" />
-          <path d="M112 173H204M112 195H216M112 217H185" stroke="#0d0129" stroke-width="1.5" />
-          <rect x="112" y="250" width="97" height="38" fill="#fae59b" stroke="#0d0129" stroke-width="1.5" />
-          <path d="M132 269H190" stroke="#0d0129" stroke-width="1.5" />
-          <rect x="273" y="142" width="155" height="116" fill="#19615c" stroke="#0d0129" stroke-width="1.5" />
-          <path d="M298 228V184M326 228V169M354 228V194M382 228V157" stroke="#fae59b" stroke-width="12" />
-          <path d="M273 292H428" stroke="#0d0129" stroke-width="1.5" />
-          <circle cx="298" cy="325" r="14" fill="#fae59b" stroke="#0d0129" stroke-width="1.5" />
-          <circle cx="350" cy="325" r="14" fill="#fff" stroke="#0d0129" stroke-width="1.5" />
-          <circle cx="402" cy="325" r="14" fill="#fae59b" stroke="#0d0129" stroke-width="1.5" />
-          <path d="M312 325H336M364 325H388" stroke="#0d0129" stroke-width="1.5" />
-          <path d="M196 372H335" stroke="#0d0129" stroke-width="1.5" stroke-dasharray="5 5" />
-          <path d="M335 372L324 366V378L335 372Z" fill="#0d0129" />
-          <g class="diagram-document">
-            <rect x="371" y="249" width="168" height="207" fill="#fff" stroke="#0d0129" stroke-width="1.5" />
-            <path d="M398 284H509M398 310H492M398 336H516M398 362H465" stroke="#0d0129" stroke-width="1.5" />
-            <rect x="398" y="390" width="93" height="35" fill="#fae59b" stroke="#0d0129" stroke-width="1.5" />
-          </g>
-          <circle cx="33" cy="180" r="7" fill="#fae59b" />
-          <circle cx="525" cy="92" r="5" fill="#19615c" />
-          <circle cx="532" cy="469" r="7" fill="#fae59b" />
-          <path d="M526 153L544 171M544 153L526 171" stroke="#0d0129" stroke-width="1.5" />
-          <path d="M75 454L92 471M92 454L75 471" stroke="#19615c" stroke-width="1.5" />
-        </svg>
+    <div class="hero__visual">
+      <HeroIllustration />
+    </div>
+
+    <div class="hero__foot">
+      <span class="rule" data-reveal="rule" style="--delay:500ms;" aria-hidden="true"></span>
+      <div class="hero__foot-row annotation" data-reveal style="--delay:600ms;">
+        <a href="#selected-builds" class="hero__scroll">
+          <span class="hero__tick" aria-hidden="true"></span>SCROLL
+          <svg width="10" height="12" viewBox="0 0 10 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 0v11M1 7l4 4 4-4" /></svg>
+        </a>
+        <span>FROM BRIEF → WORKING SYSTEM</span>
       </div>
-      <p class="hero-visual__caption">FROM BRIEF → WORKING SYSTEM</p>
     </div>
   </div>
 </section>
 
 <style>
-  .hero-shell {
-    overflow: clip;
-    padding: 88px 0 104px;
-    min-height: calc(100svh - 72px);
-    display: grid;
-    align-items: center;
-  }
-  .hero-layout {
-    display: grid;
-    align-items: center;
-    gap: 56px;
-  }
-  .hero-copy { max-width: 650px; }
-  .hero-kicker {
+  .hero {
+    position: relative;
     display: flex;
+    min-height: calc(100svh - var(--header-h));
+    overflow: clip;
+    padding-top: clamp(16px, 2.6vh, 32px);
+  }
+
+  .hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+
+  .hero__meta {
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 24px;
-    font-size: 16px;
-    font-weight: 700;
+    gap: 6px 28px;
   }
-  .hero-kicker span { width: 8px; height: 8px; background: var(--color-butter-yellow); border: 1px solid var(--color-ink-violet); }
-  .hero-description { max-width: 590px; margin-top: 32px; }
-  .hero-actions { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 40px; }
-  .hero-visual { position: relative; }
-  .hero-illustration { width: min(100%, 610px); margin-inline: auto; }
-  .hero-illustration svg { width: 100%; height: auto; }
-  .hero-visual__caption {
-    margin-top: 10px;
-    font-family: var(--font-supply);
-    font-size: 14px;
-    color: var(--color-ink-violet);
+
+  .hero__status { gap: 10px; }
+  .hero__clock { margin-left: auto; font-variant-numeric: tabular-nums; }
+  .hero__clock time { display: inline-block; min-width: 8ch; }
+
+  .hero__grid > :global(.hero__title) {
+    position: relative;
+    z-index: 2;
+    /* Width-bound by the mega scale, height-bound so the whole hero fits one viewport. */
+    font-size: min(var(--text-mega), calc((100svh - var(--header-h)) * 0.145));
+    line-height: 1.04;
+    letter-spacing: -0.02em;
   }
-  .diagram-document { transform-origin: 455px 350px; animation: diagramFloat 4.5s ease-in-out infinite; }
-  @keyframes diagramFloat { 50% { transform: translate(0, -10px); } }
-  @media (min-width: 960px) {
-    .hero-layout { grid-template-columns: minmax(0, 1.05fr) minmax(460px, .95fr); gap: 64px; }
-    .hero-visual { transform: translateX(24px); }
+
+  .hero__body { position: relative; z-index: 2; display: grid; gap: 32px; }
+  .hero__lead { max-width: 24em; text-wrap: balance; }
+  .hero__actions { display: flex; flex-wrap: wrap; gap: 16px; }
+
+  .hero__visual { position: relative; z-index: 1; }
+
+  .hero__foot { align-self: end; display: grid; gap: 12px; padding-bottom: clamp(16px, 2.6vh, 28px); }
+  .hero__foot-row { display: flex; justify-content: space-between; gap: 16px; }
+  .hero__scroll { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; margin-block: -13px; }
+
+  .hero__tick {
+    width: 1px;
+    height: 16px;
+    overflow: hidden;
+    background: currentColor;
+    transform-origin: top;
+    animation: scroll-tick 1.8s var(--ease-in-out) infinite;
   }
+
+  @keyframes scroll-tick {
+    0% { transform: scaleY(0); transform-origin: top; }
+    45% { transform: scaleY(1); transform-origin: top; }
+    55% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  @media (min-width: 1024px) {
+    .hero__grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      grid-template-rows: auto auto 1fr auto;
+      column-gap: clamp(16px, 2vw, 32px);
+      row-gap: 0;
+    }
+    .hero__meta { grid-column: 1 / -1; grid-row: 1; }
+    .hero__grid > :global(.hero__title) { grid-column: 1 / 11; grid-row: 2; margin-top: clamp(20px, 3.6vh, 48px); }
+    .hero__body { grid-column: 1 / 7; grid-row: 3; align-self: end; margin-top: clamp(20px, 3vh, 40px); }
+    .hero__visual {
+      grid-column: 8 / 13;
+      grid-row: 2 / 4;
+      align-self: end;
+      justify-self: end;
+      width: 100%;
+      max-width: min(100%, calc((100svh - var(--header-h)) * 0.72));
+      margin-right: -8px;
+    }
+    .hero__foot { grid-column: 1 / -1; grid-row: 4; margin-top: clamp(20px, 3vh, 40px); }
+  }
+
+  @media (max-width: 1023px) {
+    .hero { min-height: 0; padding-top: 28px; }
+    .hero__grid > :global(.hero__title) { margin-top: 12px; }
+    .hero__visual { margin-top: 8px; }
+  }
+
+  /* Tablet: the drawing sits right, offset against the left-aligned copy. */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .hero__visual { justify-self: end; width: min(76%, 560px); margin-top: -8px; }
+  }
+
   @media (max-width: 767px) {
-    .hero-shell { min-height: auto; padding: 64px 0 72px; }
-    .hero-layout { gap: 56px; }
-    .hero-actions { flex-direction: column; }
-    .hero-visual { width: calc(100% + 16px); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .diagram-document { animation: none; }
+    .hero__grid { gap: 28px; }
+    .hero__meta { display: grid; grid-template-columns: 1fr auto; gap: 6px 16px; }
+    .hero__meta > :nth-child(2) { grid-column: 1 / -1; grid-row: 2; }
+    .hero__grid > :global(.hero__title) { font-size: 13vw; line-height: 1.1; }
+    .hero__actions { flex-direction: column; }
+    .hero__visual { margin-inline: -8px; }
+    .hero__foot-row > span { display: none; }
   }
 </style>

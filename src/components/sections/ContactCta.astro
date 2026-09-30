@@ -1,44 +1,101 @@
 ---
 import Icon from '@/components/icons/Icons.astro'
+import RevealLines from '@/components/ui/RevealLines.astro'
+
+const stampText = "AI × CODE ✳ BYKAMO.DEV ✳ LET'S BUILD ✳ "
 ---
 
-<section class="contact-cta">
-  <div class="section-shell">
-    <div class="contact-cta__frame reveal" data-reveal>
-      <div>
-        <p class="section-label">CONTACT</p>
-        <h2>まだ曖昧な相談から、<br />一緒に形にします。</h2>
-      </div>
-      <div class="contact-cta__action">
-        <p>技術選定の前でも、実装直前でも。今ある情報から、次の一手を整理します。</p>
-        <a href="/contact" class="group btn-primary">相談をはじめる <Icon name="arrow-right" size={18} class="hover-arrow" /></a>
-      </div>
-      <span class="contact-cta__dot" aria-hidden="true"></span>
+<section class="contact-cta surface-dark blueprint-dark" aria-labelledby="contact-cta-title">
+  <div class="section-shell contact-cta__grid">
+    <div class="contact-cta__copy">
+      <p class="annotation contact-cta__label" data-reveal>(04) — CONTACT</p>
+      <RevealLines
+        as="h2"
+        id="contact-cta-title"
+        class="display-xl contact-cta__title"
+        lines={['まだ曖昧な相談から、', { text: '一緒に形にします。', marker: '形にします' }]}
+      />
     </div>
+
+    <div class="contact-cta__action" data-reveal style="--delay:240ms;">
+      <p>技術選定の前でも、実装直前でも。今ある情報から、次の一手を整理します。</p>
+      <a href="/contact" class="group btn-primary contact-cta__button" data-magnetic>
+        相談をはじめる <Icon name="arrow-right" size={20} class="hover-arrow" />
+      </a>
+    </div>
+
+    <svg class="contact-cta__stamp" viewBox="0 0 200 200" width="200" height="200" fill="none" aria-hidden="true">
+      <defs>
+        <path id="contact-stamp-path" d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1-148 0" />
+      </defs>
+      <circle cx="100" cy="100" r="92" stroke="currentColor" stroke-width="1.5" />
+      <circle cx="100" cy="100" r="56" stroke="currentColor" stroke-width="1.5" />
+      <g class="contact-cta__stamp-text">
+        <text>
+          <textPath href="#contact-stamp-path" textLength="462">{stampText}</textPath>
+        </text>
+      </g>
+      <path d="M100 76v48M76 100h48M83 83l34 34M117 83l-34 34" stroke="currentColor" stroke-width="1.5" />
+      <rect x="94" y="94" width="12" height="12" fill="var(--color-butter-yellow)" stroke="var(--color-ink-violet)" stroke-width="1.5" />
+    </svg>
   </div>
 </section>
 
 <style>
-  .contact-cta { padding-top: 120px; }
-  .contact-cta__frame {
+  .contact-cta {
     position: relative;
-    display: grid;
-    gap: 40px;
-    padding: 64px;
-    border: 1px solid var(--color-ink-violet);
-    background: var(--color-pure-white);
-    overflow: hidden;
+    overflow: clip;
+    padding-block: var(--section-gap);
   }
-  .section-label { margin-bottom: 24px; }
-  h2 { font-size: clamp(40px, 4.4vw, 56px); font-weight: 700; line-height: 1.25; }
-  .contact-cta__action { display: grid; gap: 24px; align-content: end; max-width: 500px; }
-  .contact-cta__action p { font-size: 20px; line-height: 1.6; }
-  .contact-cta__action .btn-primary { width: max-content; }
-  .contact-cta__dot { position: absolute; right: 40px; top: 40px; width: 12px; height: 12px; border: 1px solid var(--color-ink-violet); background: var(--color-butter-yellow); }
-  @media (min-width: 768px) { .contact-cta__frame { grid-template-columns: 1.15fr .85fr; } }
+
+  .contact-cta__grid { position: relative; display: grid; gap: 48px; }
+  .contact-cta__copy { display: grid; gap: 28px; }
+  .contact-cta__label { color: var(--color-butter-yellow); }
+  .contact-cta__copy > :global(.contact-cta__title) { max-width: 12em; font-size: clamp(40px, 5.4vw, 84px); }
+
+  .contact-cta__action { display: grid; gap: 28px; align-content: end; max-width: 440px; }
+  .contact-cta__action p { font-size: var(--text-lead); line-height: 1.8; letter-spacing: 0.02em; text-wrap: pretty; word-break: auto-phrase; }
+
+  .contact-cta__button { min-height: 64px; padding-inline: 32px; font-size: 18px; width: max-content; }
+
+  .contact-cta__stamp {
+    width: clamp(120px, 13vw, 184px);
+    height: auto;
+    color: var(--color-butter-yellow);
+  }
+
+  .contact-cta__stamp-text {
+    transform-origin: 100px 100px;
+    animation: stamp-rotate 28s linear infinite;
+  }
+
+  .contact-cta__stamp text {
+    fill: var(--color-butter-yellow);
+    font-family: var(--font-supply);
+    font-size: 13px;
+    letter-spacing: 0.1em;
+  }
+
+  @keyframes stamp-rotate { to { transform: rotate(360deg); } }
+
+  @media (min-width: 1024px) {
+    .contact-cta__grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(16px, 2vw, 32px); }
+    .contact-cta__copy { grid-column: 1 / 8; }
+    .contact-cta__action { grid-column: 8 / 11; align-self: end; }
+    .contact-cta__stamp { grid-column: 11 / 13; grid-row: 1; align-self: end; justify-self: end; }
+  }
+
+  @media (max-width: 1023px) {
+    .contact-cta__stamp { position: absolute; top: -12px; right: 0; width: 104px; }
+    .contact-cta__label { padding-right: 120px; }
+  }
+
   @media (max-width: 767px) {
-    .contact-cta { padding-top: 80px; }
-    .contact-cta__frame { padding: 40px 24px; }
-    .contact-cta__action .btn-primary { width: 100%; }
+    .contact-cta__button { width: 100%; }
+    .contact-cta__copy > :global(.contact-cta__title) { font-size: clamp(32px, 9.4vw, 44px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .contact-cta__stamp-text { animation: none; }
   }
 </style>

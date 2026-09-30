@@ -1,0 +1,104 @@
+---
+import Icon from '@/components/icons/Icons.astro'
+import ArrowLink from '@/components/ui/ArrowLink.astro'
+
+/** Numbered arrow rows (links) with the yellow-wipe hover used by the home Notes rows. */
+interface Item { href: string; title: string }
+
+interface Props {
+  heading: string
+  kicker: string
+  items: Item[]
+  more: { href: string; label: string }
+}
+
+const { heading, kicker, items, more } = Astro.props
+---
+
+<div class="explore-list">
+  <div class="explore-list__head">
+    <span class="annotation">{kicker}</span>
+    <h3 class="explore-list__heading">{heading}</h3>
+  </div>
+  <ol class="explore-list__rows" data-stagger>
+    {items.map((item, index) => (
+      <li data-reveal>
+        <a href={item.href} class="explore-row">
+          <span class="explore-row__index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+          <span class="explore-row__title">{item.title}</span>
+          <span class="explore-row__arrow" aria-hidden="true"><Icon name="arrow-right" size={20} /></span>
+        </a>
+      </li>
+    ))}
+  </ol>
+  <div class="explore-list__more"><ArrowLink href={more.href}>{more.label}</ArrowLink></div>
+</div>
+
+<style>
+  .explore-list { display: grid; align-content: start; gap: 20px; }
+  .explore-list__head { display: grid; gap: 8px; }
+  .explore-list__heading { font-size: clamp(22px, 2vw, 28px); font-weight: 700; font-feature-settings: "palt"; line-height: 1.35; }
+
+  .explore-list__rows { border-top: 1px solid var(--color-ink-violet); }
+  .explore-list__rows li { border-bottom: 1px solid var(--color-ink-violet); }
+
+  .explore-row {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: 3ch minmax(0, 1fr) 24px;
+    align-items: center;
+    gap: 16px;
+    min-height: 72px;
+    padding: 18px 0;
+  }
+
+  .explore-row::before {
+    content: "";
+    position: absolute;
+    inset: 0 -12px;
+    z-index: -1;
+    background: var(--color-butter-yellow);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform var(--dur-2) var(--ease-out);
+  }
+
+  .explore-row > * { transition: transform var(--dur-2) var(--ease-out); }
+
+  .explore-row__index { font-family: var(--font-supply); font-size: 13px; letter-spacing: 0.04em; }
+
+  .explore-row__title {
+    font-size: 17px;
+    font-weight: 700;
+    font-feature-settings: "palt";
+    line-height: 1.55;
+    text-wrap: pretty;
+    word-break: auto-phrase;
+  }
+
+  .explore-row__arrow { justify-self: end; }
+  .explore-row__arrow :global(svg) { transition: transform var(--dur-2) var(--ease-out); }
+
+  .explore-row:focus-visible { outline-offset: -2px; }
+  .explore-row:focus-visible::before { transform: scaleY(1); }
+  .explore-row:focus-visible > * { transform: translateX(8px); }
+  .explore-row:focus-visible .explore-row__arrow { transform: none; }
+  .explore-row:focus-visible .explore-row__arrow :global(svg) { transform: rotate(-45deg); }
+
+  @media (hover: hover) {
+    .explore-row:hover::before { transform: scaleY(1); }
+    .explore-row:hover > * { transform: translateX(8px); }
+    .explore-row:hover .explore-row__arrow { transform: none; }
+    .explore-row:hover .explore-row__arrow :global(svg) { transform: rotate(-45deg); }
+  }
+
+  .explore-row:active::before { transform: scaleY(1); }
+
+  .explore-list__more { margin-top: 8px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .explore-row > *, .explore-row::before { transition: none; }
+    .explore-row:hover > *, .explore-row:focus-visible > * { transform: none; }
+  }
+</style>

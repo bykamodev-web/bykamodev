@@ -1,0 +1,79 @@
+:root {
+  /* Type families: licensed faces first, Google Fonts stand-ins second. */
+  --font-roobert: "Roobert", "Hanken Grotesk", "Zen Kaku Gothic New", ui-sans-serif, system-ui, sans-serif;
+  --font-jp: "Zen Kaku Gothic New", "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-supply: "Supply", "JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Fixed scale (legacy, still used by subpages). */
+  --text-mono: 12px;
+  --text-body-sm: 16px;
+  --text-body: 20px;
+  --text-subheading: 24px;
+  --text-heading-sm: 40px;
+  --text-heading: 48px;
+  --text-heading-lg: 56px;
+
+  /* Fluid display scale. */
+  --text-mega: clamp(56px, 9.2vw, 148px);
+  --text-display-xl: clamp(44px, 6.4vw, 104px);
+  --text-display: clamp(36px, 4.6vw, 64px);
+  --text-title: clamp(26px, 2.6vw, 40px);
+  --text-lead: clamp(17px, 1.3vw, 19px);
+
+  /* Layout. */
+  --page-max-width: 1320px;
+  --gutter: clamp(20px, 4vw, 56px);
+  --shell: min(var(--page-max-width), 100% - 2 * var(--gutter));
+  --section-gap: clamp(88px, 11vw, 176px);
+  --header-h: 72px;
+
+  --spacing-16: 16px;
+  --spacing-24: 24px;
+  --spacing-40: 40px;
+  --spacing-64: 64px;
+  --spacing-80: 80px;
+  --spacing-104: 104px;
+  --spacing-120: 120px;
+
+  /* Motion. */
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+  /* A part landing in its slot: a hair of overshoot, then still. */
+  --ease-snap: cubic-bezier(.2, 1.28, .36, 1);
+  --dur-1: 180ms;
+  --dur-2: 480ms;
+  --dur-3: 900ms;
+  --dur-4: 1400ms;
+  --stagger: 80ms;
+
+  /* Blueprint hairline used for the paper grid. */
+  --grid-line: rgb(13 1 41 / 0.03);
+
+  /* Compatibility aliases for editorial content templates. */
+  --color-ink: var(--color-ink-violet);
+  --color-ink-secondary: var(--color-ink-violet);
+  --color-ink-muted: var(--color-ink-violet);
+  --color-ink-subtle: var(--color-ink-violet);
+  --color-paper: var(--color-cream-paper);
+  --color-paper-strong: var(--color-butter-yellow);
+  --color-brand: var(--color-ink-violet);
+  --color-brand-light: var(--color-butter-yellow);
+  --color-border: var(--color-ink-violet);
+  --color-border-strong: var(--color-ink-violet);
+  --color-surface: var(--color-pure-white);
+  --color-surface-strong: var(--color-pure-white);
+  --color-surface-muted: var(--color-cream-paper);
+  --space-section: var(--spacing-120);
+  --space-section-sm: 80px;
+  --space-block: var(--spacing-40);
+  --space-element: var(--spacing-24);
+  --space-tight: var(--spacing-16);
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+}
+
+@media (max-width: 767px) {
+  :root { --header-h: 64px; }
+}

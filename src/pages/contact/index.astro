@@ -3,6 +3,9 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 import Breadcrumbs from '@/components/seo/Breadcrumbs.astro'
 import JsonLd from '@/components/seo/JsonLd.astro'
 import Icon from '@/components/icons/Icons.astro'
+import PageHero from '@/components/ui/PageHero.astro'
+import RevealLines from '@/components/ui/RevealLines.astro'
+import FocusRows from '@/components/about/FocusRows.astro'
 import { buildBreadcrumbSchema } from '@/lib/schema'
 
 const contactPageSchema = {
@@ -11,10 +14,12 @@ const contactPageSchema = {
 }
 const breadcrumbSchema = buildBreadcrumbSchema([{ label: 'Home', href: '/' }, { label: 'Contact', href: '/contact' }])
 const contactThemes = [
-  { icon: 'brain' as const, title: 'AI実装', text: 'LLM・OCR・自動生成を、プロダクトや業務導線に組み込みます。' },
-  { icon: 'refresh' as const, title: '自動化', text: '手作業の往復を、壊れにくく運用できる仕組みに変えます。' },
-  { icon: 'rocket' as const, title: 'プロダクト開発', text: 'WebアプリからPWAまで、設計と実装を一続きで進めます。' },
+  { icon: 'brain' as const, label: 'AI実装', text: 'LLM・OCR・自動生成を、プロダクトや業務導線に組み込みます。' },
+  { icon: 'refresh' as const, label: '自動化', text: '手作業の往復を、壊れにくく運用できる仕組みに変えます。' },
+  { icon: 'rocket' as const, label: 'プロダクト開発', text: 'WebアプリからPWAまで、設計と実装を一続きで進めます。' },
 ]
+// The fields the form actually asks for (mirrors /contact/form).
+const formFields = ['お名前', 'メールアドレス', 'ご相談の種類', 'お問い合わせ内容']
 ---
 
 <BaseLayout title="Contact" description="ご相談・お問い合わせ。AI実装・自動化・プロダクト開発について。">
@@ -22,45 +27,113 @@ const contactThemes = [
 
   <div class="section-shell contact-page">
     <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Contact' }]} />
-    <div class="contact-page__hero">
-      <p class="section-label">CONTACT</p>
-      <h1 class="page-title">要件がまだ曖昧でも、<br />そこから一緒に詰められます。</h1>
-      <p class="body-text">AI実装、自動化、プロダクト開発の相談を受けています。技術選定の前段でも、実装フェーズ直前でも大丈夫です。</p>
-    </div>
 
-    <div class="contact-page__body">
-      <section class="contact-themes">
-        {contactThemes.map((item, index) => (
-          <div class="contact-theme reveal" data-reveal style={`--delay:${index * 80}ms;`}>
-            <div class="icon-box"><Icon name={item.icon} size={20} /></div>
-            <div><h2>{item.title}</h2><p>{item.text}</p></div>
+    <PageHero
+      index="04"
+      label="CONTACT"
+      lines={['要件がまだ曖昧でも、', { text: 'そこから一緒に詰められます。', marker: '一緒に' }]}
+      lead="AI実装、自動化、プロダクト開発の相談を受けています。技術選定の前段でも、実装フェーズ直前でも大丈夫です。"
+      meta={[{ k: 'STATUS', v: 'AVAILABLE FOR WORK' }, { k: 'BASE', v: 'TOKYO, JP' }]}
+      class="contact-hero"
+    >
+      <a href="#contact-action" class="contact-hero__jump annotation">
+        <span class="pulse-dot" aria-hidden="true"></span>相談の入口へ
+        <svg width="10" height="12" viewBox="0 0 10 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 0v11M1 7l4 4 4-4" /></svg>
+      </a>
+    </PageHero>
+
+    <section class="contact-block contact-themes" aria-labelledby="contact-themes-title">
+      <div class="contact-themes__head">
+        <h2 id="contact-themes-title" class="annotation" data-reveal>(04.1) — THEMES</h2>
+        <p class="annotation contact-themes__count" data-reveal aria-hidden="true">03 AREAS</p>
+      </div>
+      <FocusRows rows={contactThemes} />
+    </section>
+
+    <section id="contact-action" class="contact-block contact-action-wrap" aria-labelledby="contact-action-title">
+      <div class="contact-action" data-reveal>
+        <div class="contact-action__copy">
+          <p class="annotation">(04.2) — REACH OUT</p>
+          <RevealLines as="h2" id="contact-action-title" class="contact-action__title" lines={['まずは、', { text: '相談の入口をつくる。', marker: '入口' }]} />
+          <p class="contact-action__text">やりたいことが一文でも、すでに要件がまとまっていても問題ありません。</p>
+        </div>
+
+        <div class="contact-action__side">
+          <div class="contact-action__fields">
+            <p class="annotation">FORM — 04 FIELDS</p>
+            <ol>
+              {formFields.map((field, index) => (
+                <li><span class="contact-action__num" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>{field}</li>
+              ))}
+            </ol>
           </div>
-        ))}
-      </section>
-
-      <section class="contact-action reveal" data-reveal style="--delay:140ms;">
-        <p class="section-label">REACH OUT</p>
-        <h2>まずは、相談の入口をつくる。</h2>
-        <p>やりたいことが一文でも、すでに要件がまとまっていても問題ありません。</p>
-        <a href="/contact/form" class="group btn-primary">フォームで相談する <Icon name="arrow-right" size={18} class="hover-arrow" /></a>
-      </section>
-    </div>
+          <a href="/contact/form" class="group btn-primary contact-action__button" data-astro-reload data-magnetic>
+            フォームで相談する <Icon name="arrow-right" size={20} class="hover-arrow" />
+          </a>
+        </div>
+      </div>
+    </section>
   </div>
 </BaseLayout>
 
 <style>
-  .contact-page { padding-block: 80px 120px; }
-  .contact-page__hero { max-width: 800px; }
-  .section-label { margin-bottom: 16px; }
-  .contact-page__hero .body-text { max-width: 650px; margin-top: 24px; }
-  .contact-page__body { display: grid; gap: 64px; margin-top: 80px; }
-  .contact-themes { border-top: 1px solid var(--color-ink-violet); }
-  .contact-theme { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 24px; padding: 24px 0; border-bottom: 1px solid var(--color-ink-violet); }
-  h2 { font-size: 24px; font-weight: 700; line-height: 1.4; }
-  .contact-theme p, .contact-action > p:not(.section-label) { margin-top: 8px; font-size: 16px; line-height: 1.6; }
-  .contact-action { padding: 40px; border: 1px solid var(--color-ink-violet); background: var(--color-pure-white); }
-  .contact-action h2 { font-size: 40px; line-height: 1.27; }
-  .contact-action .btn-primary { width: max-content; margin-top: 32px; }
-  @media (min-width: 900px) { .contact-page__body { grid-template-columns: minmax(0, 1fr) minmax(360px, .8fr); align-items: start; } }
-  @media (max-width: 767px) { .contact-page { padding-block: 64px 80px; } .contact-action { padding: 32px 24px; } .contact-action .btn-primary { width: 100%; } }
+  .contact-page { padding-top: clamp(24px, 4vw, 56px); }
+  .contact-block { margin-top: clamp(72px, 8vw, 128px); }
+
+  .contact-hero__jump {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+  }
+  .contact-hero__jump:hover svg,
+  .contact-hero__jump:focus-visible svg { animation: jump-nudge var(--dur-3) var(--ease-in-out); }
+  @keyframes jump-nudge { 50% { transform: translateY(4px); } }
+
+  .contact-action-wrap { scroll-margin-top: calc(var(--header-h) + 24px); }
+  .contact-themes { display: grid; gap: 24px; }
+  .contact-themes__head { display: flex; justify-content: space-between; gap: 16px; }
+
+  .contact-action {
+    display: grid;
+    gap: 40px;
+    padding: clamp(28px, 4vw, 64px);
+    border: 1px solid var(--color-ink-violet);
+    background: var(--color-pure-white);
+    box-shadow: var(--shadow-hard-lg);
+  }
+
+  .contact-action__copy { display: grid; gap: 24px; align-content: start; }
+  .contact-action__copy > :global(.contact-action__title) {
+    font-size: var(--text-display);
+    font-weight: 700;
+    font-feature-settings: "palt";
+    letter-spacing: -0.01em;
+    line-height: 1.16;
+  }
+  .contact-action__text { max-width: 30em; font-size: var(--text-lead); line-height: 1.85; }
+
+  .contact-action__side { display: grid; gap: 32px; align-content: end; }
+
+  .contact-action__fields { display: grid; gap: 12px; }
+  .contact-action__fields ol { border-top: 1px solid var(--color-ink-violet); }
+  .contact-action__fields li {
+    display: flex;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-ink-violet);
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .contact-action__num { font-family: var(--font-supply); font-size: 12px; font-weight: 400; padding-top: 3px; }
+
+  .contact-action__button { width: 100%; min-height: 72px; padding-inline: 32px; font-size: 18px; justify-content: space-between; }
+
+  @media (max-width: 599px) {
+    .contact-action__copy > :global(.contact-action__title) { font-size: clamp(24px, 7vw, 32px); }
+  }
+
+  @media (min-width: 900px) {
+    .contact-action { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(40px, 5vw, 80px); }
+  }
 </style>

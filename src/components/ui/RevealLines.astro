@@ -1,0 +1,46 @@
+---
+/**
+ * Server-rendered masked lines: `.line > .line__inner`, revealed by `data-reveal="lines"`.
+ * A line is a string, or `{ text, marker }` where `marker` is the phrase to highlight
+ * (or `true` for the whole line). Headings get an aria-label with the full sentence.
+ */
+export type RevealLine = string | { text: string; marker?: string | boolean }
+
+interface Props {
+  lines: RevealLine[]
+  as?: string
+  class?: string
+  id?: string
+  /** Extra delay in ms before the first line starts. */
+  delay?: number
+}
+
+const { lines, as: Tag = 'div', class: className, id, delay = 0 } = Astro.props
+
+const split = (line: RevealLine) => {
+  if (typeof line === 'string') return { before: line, mark: '', after: '' }
+  const { text, marker } = line
+  if (marker === true) return { before: '', mark: text, after: '' }
+  const at = marker ? text.indexOf(marker) : -1
+  if (!marker || at < 0) return { before: text, mark: '', after: '' }
+  return { before: text.slice(0, at), mark: marker, after: text.slice(at + marker.length) }
+}
+
+const parts = lines.map(split)
+const label = lines.map((line) => (typeof line === 'string' ? line : line.text)).join('')
+const isHeading = /^h[1-6]$/.test(Tag)
+---
+
+<Tag
+  class:list={['reveal-lines', className]}
+  id={id}
+  data-reveal="lines"
+  style={delay ? `--delay:${delay}ms;` : undefined}
+  aria-label={isHeading ? label : undefined}
+>
+  {parts.map((part, index) => (
+    <span class="line" style={`--i:${index};`}>
+      <span class="line__inner">{part.before}{part.mark && (part.after.length <= 2 ? <span class="nowrap"><span class="marker">{part.mark}</span>{part.after}</span> : <><span class="marker">{part.mark}</span>{part.after}</>)}{!part.mark && part.after}</span>
+    </span>
+  ))}
+</Tag>

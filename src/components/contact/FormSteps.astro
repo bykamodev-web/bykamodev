@@ -1,0 +1,57 @@
+---
+/** "What happens next": three mono steps, each stated by the existing form copy. */
+const steps = [
+  { key: 'INPUT', text: '内容を入力して送信してください。' },
+  { key: 'SEND', text: '送信が完了すると、この画面に「送信しました」と表示されます。' },
+  { key: 'REPLY', text: '折り返しご連絡いたします。' },
+]
+---
+
+<div class="form-steps" data-reveal style="--delay:200ms;">
+  <p class="annotation form-steps__label">WHAT HAPPENS NEXT</p>
+  <ol class="form-steps__list">
+    {steps.map((step, index) => (
+      <li class="form-steps__item">
+        <span class="form-steps__node" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+        <span class="form-steps__body">
+          <span class="form-steps__key">{step.key}</span>
+          <span class="form-steps__text">{step.text}</span>
+        </span>
+      </li>
+    ))}
+  </ol>
+</div>
+
+<style>
+  .form-steps { display: grid; gap: 16px; }
+  .form-steps__list { position: relative; display: grid; gap: 0; }
+
+  /* Schematic connector between nodes. */
+  .form-steps__item:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    top: 42px;
+    bottom: -10px;
+    left: 15.5px;
+    border-left: 1px dashed var(--color-ink-violet);
+  }
+
+  .form-steps__item { position: relative; display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 16px; padding: 10px 0; }
+
+  .form-steps__node {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--color-ink-violet);
+    background: var(--color-cream-paper);
+    font-family: var(--font-supply);
+    font-size: 11px;
+  }
+
+  .form-steps__item:last-child .form-steps__node { background: var(--color-butter-yellow); }
+
+  .form-steps__body { display: grid; gap: 2px; padding-top: 5px; }
+  .form-steps__key { font-family: var(--font-supply); font-size: 12px; font-weight: 500; letter-spacing: 0.08em; }
+  .form-steps__text { font-size: 15px; line-height: 1.7; }
+</style>

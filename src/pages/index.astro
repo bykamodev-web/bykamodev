@@ -4,23 +4,29 @@ import Hero from '@/components/sections/Hero.astro'
 import FeaturedBuilds from '@/components/sections/FeaturedBuilds.astro'
 import FeaturedNotes from '@/components/sections/FeaturedNotes.astro'
 import ContactCta from '@/components/sections/ContactCta.astro'
+import Marquee from '@/components/ui/Marquee.astro'
 import JsonLd from '@/components/seo/JsonLd.astro'
 import { getBuilds, getNotes } from '@/lib/microcms'
 import { buildProfilePageSchema } from '@/lib/schema'
 
-const { contents: featuredBuilds } = await getBuilds({ featured: true, limit: 3 })
-const { contents: featuredNotes } = await getNotes({ featured: true, limit: 3 })
+const [{ contents: featuredBuilds }, { totalCount: totalBuilds }, { contents: featuredNotes }] = await Promise.all([
+  getBuilds({ featured: true, limit: 3 }),
+  getBuilds({ limit: 1 }),
+  getNotes({ featured: true, limit: 3 }),
+])
 
+const capabilities = ['AI IMPLEMENTATION', 'AUTOMATION', 'PRODUCT DESIGN', 'WEB DEVELOPMENT', 'LLM / OCR / RAG']
 const profileSchema = buildProfilePageSchema()
 ---
 
-<BaseLayout description="AIとコードで、情報・運用・体験を組み直す開発者 KAMO のサイト。AI実装、自動化、プロダクト設計の実績と開発ログを公開。">
+<BaseLayout class="page-flush" description="AIとコードで、情報・運用・体験を組み直す開発者 KAMO のサイト。AI実装、自動化、プロダクト設計の実績と開発ログを公開。">
   <Fragment slot="head">
     <JsonLd schemas={[profileSchema]} />
   </Fragment>
 
   <Hero />
-  <FeaturedBuilds builds={featuredBuilds} />
+  <Marquee items={capabilities} label="対応領域" />
+  <FeaturedBuilds builds={featuredBuilds} total={Math.max(totalBuilds, featuredBuilds.length)} />
   <FeaturedNotes notes={featuredNotes} />
   <ContactCta />
 </BaseLayout>

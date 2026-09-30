@@ -2,39 +2,106 @@
 import type { Note } from '@/types'
 import { getOptimizedImageUrl } from '@/lib/microcms'
 import Icon from '@/components/icons/Icons.astro'
+import { formatDotDate, kindLabel } from '@/components/article/format'
 
-interface Props { note: Note }
-const { note } = Astro.props
+/**
+ * Grid card for a note (equal heights in a grid). Lists prefer article/NoteRow; this card stays
+ * for grid contexts. The footer only shows topics when there are any — no orphan separator.
+ */
+interface Props {
+  note: Note
+  headingLevel?: 'h2' | 'h3'
+}
 
-const publishedDate = note.publishedAt
-  ? new Date(note.publishedAt).toLocaleDateString('ja-JP', { year: 'numeric', month: 'short', day: 'numeric' })
-  : 'Draft'
-const kindLabels: Record<string, string> = { log: 'Log', howto: 'How-to', 'case-study': 'Case Study', thinking: 'Thinking' }
-const kind = note.kind?.[0]
-const coverImage = note.coverImage
-  ? getOptimizedImageUrl(note.coverImage.url, { width: 800, quality: 78, aspectRatio: '16:9' })
+const { note, headingLevel: Heading = 'h3' } = Astro.props
+const image = note.coverImage
+  ? (width: number) => getOptimizedImageUrl(note.coverImage!.url, { width, quality: 76, aspectRatio: '16:9' })
   : null
+const topics = (note.topics || []).map((topic) => topic.title).filter(Boolean).slice(0, 2)
 ---
 
-<a href={`/notes/${note.slug}`} class="group note-card-link">
-  <article class="note-card">
-    {coverImage && <figure class="note-card__image"><img src={coverImage} alt={note.title} loading="lazy" /></figure>}
-    <div class="note-card__topline"><span>{kind ? kindLabels[kind] || kind : 'Note'}</span><span>{publishedDate}</span></div>
-    <h3>{note.title}</h3>
-    <p>{note.excerpt}</p>
-    <div class="note-card__footer"><span>{note.topics?.slice(0, 2).map((topic) => topic.title).join(' / ') || 'bykamo.dev'}</span><Icon name="arrow-right" size={18} class="hover-arrow" /></div>
-  </article>
+<a href={`/notes/${note.slug}`} class="group note-card" data-cursor="READ">
+  {image && (
+    <span class="note-card__frame">
+      <span class="note-card__clip" data-reveal="clip">
+        <img
+          src={image(640)}
+          srcset={`${image(480)} 480w, ${image(640)} 640w, ${image(960)} 960w`}
+          sizes="(max-width: 767px) calc(100vw - 40px), 620px"
+          width="960"
+          height="540"
+          alt=""
+          loading="lazy"
+          decoding="async"
+        />
+      </span>
+    </span>
+  )}
+  <span class="note-card__body">
+    <span class="note-card__meta annotation">
+      <time datetime={note.publishedAt}>{formatDotDate(note.publishedAt)}</time>
+      <span>{kindLabel(note.kind?.[0])}</span>
+    </span>
+    <Heading class="note-card__title">{note.title}</Heading>
+    {note.excerpt && <span class="note-card__excerpt">{note.excerpt}</span>}
+    <span class="note-card__footer">
+      {topics.length > 0 && <span class="annotation note-card__topics">{topics.join(' · ')}</span>}
+      <span class="note-card__arrow" aria-hidden="true"><Icon name="arrow-right" size={20} class="hover-arrow" /></span>
+    </span>
+  </span>
 </a>
 
 <style>
-  .note-card-link { display: block; height: 100%; }
-  .note-card { display: flex; flex-direction: column; height: 100%; min-height: 290px; padding: 32px; border: 1px solid var(--color-ink-violet); background: var(--color-pure-white); transition: transform 180ms ease; }
-  .note-card-link:hover .note-card { transform: translate(-3px, -3px); }
-  .note-card__image { margin: -32px -32px 32px; border-bottom: 1px solid var(--color-ink-violet); background: var(--color-cream-paper); }
-  .note-card__image img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
-  .note-card__topline { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 40px; font-family: var(--font-supply); font-size: 14px; }
-  h3 { font-size: 24px; font-weight: 700; line-height: 1.4; }
-  p { margin-top: 16px; font-size: 16px; line-height: 1.6; }
-  .note-card__footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: auto; padding-top: 24px; border-top: 1px solid var(--color-ink-violet); font-size: 14px; }
-  @media (prefers-reduced-motion: reduce) { .note-card { transition: none; } .note-card-link:hover .note-card { transform: none; } }
+  .note-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 1px solid var(--color-ink-violet);
+    background: var(--color-pure-white);
+    transition: transform var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+  }
+  .note-card:hover,
+  .note-card:focus-visible { transform: translate(-4px, -4px); box-shadow: var(--shadow-hard-lg); }
+
+  .note-card__frame { display: block; border-bottom: 1px solid var(--color-ink-violet); background: var(--color-cream-paper); }
+  .note-card__clip { display: block; overflow: hidden; aspect-ratio: 16 / 9; }
+  .note-card__clip img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-3) var(--ease-out); }
+  .note-card:hover .note-card__clip img,
+  .note-card:focus-visible .note-card__clip img { transform: scale(1.05); }
+
+  .note-card__body { display: flex; flex: 1; flex-direction: column; gap: 14px; padding: clamp(20px, 2.2vw, 28px); }
+  .note-card__meta { flex-wrap: wrap; gap: 4px 16px; }
+  .note-card__title {
+    font-size: clamp(19px, 1.6vw, 23px);
+    font-weight: 700;
+    font-feature-settings: "palt";
+    line-height: 1.45;
+    text-wrap: balance;
+    word-break: auto-phrase;
+    overflow-wrap: anywhere;
+  }
+  .note-card__excerpt {
+    font-size: 15px;
+    line-height: 1.8;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+  .note-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid var(--color-ink-violet);
+  }
+  .note-card__topics { min-width: 0; }
+  .note-card__arrow { display: inline-flex; margin-left: auto; overflow: hidden; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .note-card, .note-card__clip img { transition: none; }
+    .note-card:hover, .note-card:focus-visible, .note-card:hover .note-card__clip img { transform: none; }
+  }
 </style>

@@ -1,0 +1,28 @@
+---
+/**
+ * Live character count for a field that already has `maxlength`. Purely additive UI:
+ * it only reads the field's value, never touches validation or submission.
+ */
+interface Props { for: string; max: number }
+
+const { for: fieldId, max } = Astro.props
+---
+
+<span class="char-counter" data-char-counter={fieldId} aria-hidden="true"><span data-char-count>0</span> / {max}</span>
+
+<style>
+  .char-counter { font-family: var(--font-supply); font-size: 12px; letter-spacing: 0.06em; font-variant-numeric: tabular-nums; }
+</style>
+
+<script>
+  const bindCounter = (counter: HTMLElement): void => {
+    const field = document.getElementById(counter.dataset.charCounter || '') as HTMLTextAreaElement | HTMLInputElement | null
+    const output = counter.querySelector('[data-char-count]')
+    if (!field || !output) return
+    const update = (): void => { output.textContent = String(field.value.length) }
+    field.addEventListener('input', update, { passive: true })
+    update()
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-char-counter]').forEach(bindCounter)
+</script>

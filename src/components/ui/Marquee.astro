@@ -1,0 +1,65 @@
+---
+/**
+ * CSS-driven infinite marquee. Content is rendered twice for a seamless loop; the clone is
+ * aria-hidden. Pauses offscreen (motion/marquee.ts) and is static under reduced motion.
+ */
+interface Props {
+  items: string[]
+  /** Seconds per loop. */
+  duration?: number
+  variant?: 'band' | 'plain'
+  class?: string
+  label?: string
+}
+
+const { items, duration = 36, variant = 'band', class: className, label } = Astro.props
+const groups = [false, true]
+---
+
+<div
+  class:list={['marquee', `marquee--${variant}`, className]}
+  style={`--marquee-duration:${duration}s;`}
+  role={label ? 'region' : undefined}
+  aria-label={label}
+>
+  <div class="marquee__track">
+    {groups.map((isClone) => (
+      <div class="marquee__group" aria-hidden={isClone ? 'true' : undefined}>
+        {items.map((item) => (
+          <span class="marquee__item">
+            <span>{item}</span>
+            <svg class="marquee__sep" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true">
+              <path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9 4.9 19.1" vector-effect="non-scaling-stroke" />
+              <rect x="8.5" y="8.5" width="7" height="7" vector-effect="non-scaling-stroke" />
+            </svg>
+          </span>
+        ))}
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .marquee { position: relative; }
+  .marquee--band {
+    border-block: 1px solid var(--color-ink-violet);
+    background: var(--color-butter-yellow);
+    color: var(--color-ink-violet);
+  }
+  .marquee__item {
+    display: inline-flex;
+    align-items: center;
+    gap: clamp(20px, 2.4vw, 40px);
+    padding: clamp(16px, 2vw, 28px) clamp(10px, 1.2vw, 20px);
+    font-size: clamp(28px, 3.6vw, 56px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  /* Cap height of the bold label, 2px stroke at every size. */
+  .marquee__sep { flex: none; width: 0.74em; height: 0.74em; }
+  .marquee__sep rect { fill: var(--color-butter-yellow); }
+  .marquee--plain .marquee__sep rect { fill: var(--color-cream-paper); }
+  .marquee__item:first-child { padding-left: clamp(20px, 2.4vw, 40px); }
+</style>

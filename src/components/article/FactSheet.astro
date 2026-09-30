@@ -1,0 +1,118 @@
+---
+import type { Build } from '@/types'
+import { formatDotDate, hostOf } from '@/components/article/format'
+
+/**
+ * Mono fact sheet for a build. Sticky left rail from 1100px; below that a compact
+ * two-column definition grid under the hero.
+ */
+interface Props { build: Build }
+
+const { build } = Astro.props
+const status = build.statusLabel?.[0] || 'planning'
+const topics = build.topics || []
+const stack = build.stack || []
+const links = build.links || []
+---
+
+<aside class="fact-sheet" aria-label="プロジェクト概要" data-reveal>
+  <p class="fact-sheet__head annotation"><span class="fact-sheet__mark" aria-hidden="true"></span>FACT SHEET</p>
+  <dl class="fact-sheet__list">
+    <div class="fact-sheet__row">
+      <dt>STATUS</dt>
+      <dd><span class={`badge badge-${status}`}>{status}</span></dd>
+    </div>
+    <div class="fact-sheet__row">
+      <dt>DATE</dt>
+      <dd><time datetime={build.publishedAt}>{formatDotDate(build.publishedAt)}</time></dd>
+    </div>
+    {topics.length > 0 && (
+      <div class="fact-sheet__row fact-sheet__row--full">
+        <dt>TOPICS</dt>
+        <dd class="fact-sheet__links">
+          {topics.map((topic) => <a href={`/topics/${topic.slug}`} class="fact-sheet__link">{topic.title}</a>)}
+        </dd>
+      </div>
+    )}
+    {stack.length > 0 && (
+      <div class="fact-sheet__row fact-sheet__row--full">
+        <dt>STACK</dt>
+        <dd>
+          <ul class="fact-sheet__stack">
+            {stack.map((item) => (
+              <li><span class="fact-sheet__name">{item.name}</span>{item.role && <span class="fact-sheet__role">{item.role}</span>}</li>
+            ))}
+          </ul>
+        </dd>
+      </div>
+    )}
+    {links.length > 0 && (
+      <div class="fact-sheet__row fact-sheet__row--full">
+        <dt>LINKS</dt>
+        <dd class="fact-sheet__links">
+          {links.map((link) => (
+            <a href={link.url} class="fact-sheet__link" target="_blank" rel="noopener noreferrer">
+              {link.label || hostOf(link.url)}<span aria-hidden="true"> ↗</span><span class="sr-only">（新しいタブで開く）</span>
+            </a>
+          ))}
+        </dd>
+      </div>
+    )}
+  </dl>
+</aside>
+
+<style>
+  .fact-sheet {
+    border-top: 1px solid var(--color-ink-violet);
+    font-family: var(--font-supply);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .fact-sheet__head { padding-block: 14px; }
+  .fact-sheet__mark { width: 8px; height: 8px; background: var(--color-butter-yellow); outline: 1px solid var(--color-ink-violet); }
+
+  .fact-sheet__list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px solid var(--color-ink-violet);
+  }
+
+  .fact-sheet__row {
+    display: grid;
+    align-content: start;
+    gap: 8px;
+    padding: 14px 12px 16px 0;
+    border-bottom: 1px solid var(--color-ink-violet);
+    min-width: 0;
+  }
+  .fact-sheet__row--full { grid-column: 1 / -1; }
+
+  dt { font-size: 11px; letter-spacing: 0.1em; opacity: 0.64; }
+  dd { min-width: 0; overflow-wrap: anywhere; }
+
+  .fact-sheet__links { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+  .fact-sheet__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    font-family: var(--font-roobert);
+    font-size: 14px;
+    font-weight: 700;
+    background: linear-gradient(currentColor, currentColor) left calc(100% - 3px) / 100% 1px no-repeat;
+  }
+  .fact-sheet__link:hover,
+  .fact-sheet__link:focus-visible { animation: link-redraw var(--dur-2) var(--ease-out); }
+
+  .fact-sheet__stack { display: grid; gap: 6px; }
+  .fact-sheet__stack li { display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: baseline; }
+  .fact-sheet__name { font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
+  .fact-sheet__role { font-family: var(--font-jp); font-size: 12px; opacity: 0.72; }
+
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+  @media (min-width: 1100px) {
+    .fact-sheet { position: sticky; top: calc(var(--header-h) + 24px); }
+    .fact-sheet__list { grid-template-columns: minmax(0, 1fr); }
+    .fact-sheet__row { padding-right: 0; }
+  }
+</style>

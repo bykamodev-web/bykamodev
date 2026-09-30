@@ -1,10 +1,12 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import NoteCard from '@/components/cards/NoteCard.astro'
+import NoteList from '@/components/article/NoteList.astro'
+import PageHero from '@/components/ui/PageHero.astro'
 import Breadcrumbs from '@/components/seo/Breadcrumbs.astro'
 import JsonLd from '@/components/seo/JsonLd.astro'
 import { getNotes } from '@/lib/microcms'
 import { buildCollectionPageSchema } from '@/lib/schema'
+import { formatDotDate, pad2 } from '@/components/article/format'
 
 const { contents: notes } = await getNotes()
 
@@ -13,6 +15,8 @@ const collectionSchema = buildCollectionPageSchema({
   description: '開発ログ・設計メモ・技術記事',
   url: 'https://bykamo.dev/notes',
 })
+
+const latest = notes[0]?.publishedAt
 ---
 
 <BaseLayout title="Notes" description="開発ログ・設計メモ・技術記事。設計判断の記録。">
@@ -26,18 +30,25 @@ const collectionSchema = buildCollectionPageSchema({
       { label: 'Notes' },
     ]} />
 
-    <p class="section-label">NOTES</p>
-    <h1 class="page-title">設計の途中経過を、捨てずに残す。</h1>
-    <p class="body-text-lg collection-page__lead">開発ログ、設計メモ、技術記事。あとから見返しても使える粒度で、判断の履歴を保存しています。</p>
+    <PageHero
+      index="02"
+      label="NOTES"
+      lines={['設計の途中経過を、', '捨てずに残す。']}
+      lead="開発ログ、設計メモ、技術記事。あとから見返しても使える粒度で、判断の履歴を保存しています。"
+      meta={[
+        { k: 'ENTRIES', v: pad2(notes.length) },
+        ...(latest ? [{ k: 'LATEST', v: formatDotDate(latest) }] : []),
+      ]}
+      class="collection-page__hero"
+    />
 
     {notes.length > 0 ? (
-      <div class="collection-grid">
-        {notes.map((note, index) => (
-          <div class="reveal" data-reveal style={`--delay:${index * 70}ms;`}>
-            <NoteCard note={note} />
-          </div>
-        ))}
-      </div>
+      <section class="collection-page__list" aria-label="Notes一覧">
+        <div class="list-head annotation" aria-hidden="true">
+          <span>NO.</span><span>DATE / KIND</span><span>TITLE</span><span>COVER</span>
+        </div>
+        <NoteList notes={notes} />
+      </section>
     ) : (
       <p class="body-text">まだ公開されたNotesはありません。</p>
     )}
@@ -45,11 +56,22 @@ const collectionSchema = buildCollectionPageSchema({
 </BaseLayout>
 
 <style>
-  .collection-page { padding-block: 80px 120px; }
-  .section-label { margin-bottom: 16px; }
-  .page-title { max-width: 760px; }
-  .collection-page__lead { max-width: 680px; margin-top: 24px; margin-bottom: 64px; }
-  .collection-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
-  @media (min-width: 768px) { .collection-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (min-width: 1100px) { .collection-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .collection-page { padding-block: clamp(40px, 6vw, 80px) clamp(80px, 9vw, 120px); }
+  .collection-page :global(.collection-page__hero) { grid-template-columns: minmax(0, 1fr); margin-bottom: clamp(56px, 7vw, 104px); }
+
+  .list-head { display: none; }
+
+  @media (min-width: 768px) {
+    .list-head {
+      display: grid;
+      grid-template-columns: 64px 148px minmax(0, 1fr) 200px 32px;
+      gap: 28px;
+      padding-bottom: 12px;
+      opacity: 0.6;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .list-head { grid-template-columns: 80px 168px minmax(0, 1fr) 208px 40px; gap: 32px; }
+  }
 </style>

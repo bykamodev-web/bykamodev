@@ -1,0 +1,59 @@
+---
+import RevealLines, { type RevealLine } from '@/components/ui/RevealLines.astro'
+
+/**
+ * Editorial page / section header. Renders no `.section-shell`; place it inside one.
+ * Annotation row `(01) — LABEL` + optional meta, huge line-revealed title, drawn hairline,
+ * lead in the right-hand column. The default slot sits in the left column under the rule.
+ */
+interface Props {
+  index: string
+  label: string
+  lines: RevealLine[]
+  lead?: string
+  meta?: { k: string; v: string }[]
+  as?: 'h1' | 'h2'
+  /** id for the title element (for aria-labelledby). */
+  titleId?: string
+  class?: string
+}
+
+const { index, label, lines, lead, meta = [], as = 'h1', titleId, class: className } = Astro.props
+---
+
+<header class:list={['page-hero', className]}>
+  <div class="page-hero__top" data-reveal>
+    <p class="annotation">({index}) — {label}</p>
+    {meta.length > 0 && (
+      <dl class="page-hero__meta">
+        {meta.map((item) => <div><dt>{item.k}</dt><dd>{item.v}</dd></div>)}
+      </dl>
+    )}
+  </div>
+  <RevealLines as={as} id={titleId} class="page-hero__title display-xl" lines={lines} delay={80} />
+  <span class="rule page-hero__rule" data-reveal="rule" style="--delay:200ms;" aria-hidden="true"></span>
+  <div class="page-hero__foot">
+    <div class="page-hero__slot"><slot /></div>
+    {lead && <p class="page-hero__lead body-text-lg" data-reveal style="--delay:260ms;">{lead}</p>}
+  </div>
+</header>
+
+<style>
+  .page-hero { display: grid; gap: clamp(24px, 3vw, 40px); }
+  .page-hero__top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 24px; }
+  .page-hero__meta { display: flex; flex-wrap: wrap; gap: 8px 24px; font-family: var(--font-supply); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .page-hero__meta div { display: flex; gap: 8px; }
+  .page-hero__meta dt { opacity: 0.72; }
+  .page-hero > :global(.page-hero__title) { max-width: 14em; }
+  .page-hero__rule { width: 100%; }
+  .page-hero__foot { display: grid; gap: 24px; }
+  .page-hero__slot:empty { display: none; }
+  .page-hero__lead { max-width: 34em; }
+  @media (min-width: 900px) {
+    .page-hero__foot { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(16px, 2vw, 32px); align-items: start; }
+    .page-hero__slot { grid-column: 1 / 7; }
+    .page-hero__lead { grid-column: 7 / 13; }
+    /* No slot content: the lead takes the left columns instead of leaving a hole beside it. */
+    .page-hero__slot:empty + .page-hero__lead { grid-column: 1 / 9; }
+  }
+</style>

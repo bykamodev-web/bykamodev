@@ -1,0 +1,194 @@
+---
+import type { Note } from '@/types'
+import { getOptimizedImageUrl } from '@/lib/microcms'
+import Icon from '@/components/icons/Icons.astro'
+import { formatDotDate, kindLabel, pad2 } from '@/components/article/format'
+
+/**
+ * Editorial list row for notes on cream: index, mono date / kind, title, 2-line excerpt and an
+ * optional framed 16:9 thumbnail. Hover and keyboard focus share the yellow wipe.
+ * Render through NoteList (an `<ol>` with the top hairline).
+ */
+interface Props {
+  note: Note
+  index: number
+  headingLevel?: 'h2' | 'h3'
+  showThumb?: boolean
+}
+
+const { note, index, headingLevel: Heading = 'h2', showThumb = true } = Astro.props
+const thumb = showThumb && note.coverImage
+  ? (width: number) => getOptimizedImageUrl(note.coverImage!.url, { width, quality: 72, aspectRatio: '16:9' })
+  : null
+const topics = (note.topics || []).map((topic) => topic?.title).filter(Boolean).slice(0, 2)
+---
+
+<li class="note-row-item" data-reveal style={`--i:${index % 5};`}>
+  <a href={`/notes/${note.slug}`} class="group nrow" data-cursor="READ">
+    <span class="nrow__index" aria-hidden="true">{pad2(index + 1)}</span>
+    <span class="nrow__meta annotation">
+      <time datetime={note.publishedAt}>{formatDotDate(note.publishedAt)}</time>
+      <span class="nrow__kind">{kindLabel(note.kind?.[0])}</span>
+      {topics.length > 0 && <span class="nrow__topics">{topics.join(' · ')}</span>}
+    </span>
+    <span class="nrow__text">
+      <Heading class="nrow__title">{note.title}</Heading>
+      {note.excerpt && <span class="nrow__excerpt">{note.excerpt}</span>}
+    </span>
+    {thumb && (
+      <span class="nrow__thumb">
+        <span class="nrow__clip" data-reveal="clip">
+          <img
+            src={thumb(320)}
+            srcset={`${thumb(320)} 320w, ${thumb(560)} 560w`}
+            sizes="(max-width: 767px) 112px, 208px"
+            width="560"
+            height="315"
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        </span>
+      </span>
+    )}
+    <span class="nrow__arrow" aria-hidden="true"><Icon name="arrow-right" size={22} /></span>
+  </a>
+</li>
+
+<style>
+  .note-row-item { border-bottom: 1px solid var(--color-ink-violet); }
+
+  .nrow {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) 112px;
+    grid-template-areas:
+      "index meta meta"
+      "title title thumb"
+      "excerpt excerpt excerpt";
+    gap: 10px 16px;
+    padding: 22px 0 24px;
+  }
+
+  .nrow::before {
+    content: "";
+    position: absolute;
+    inset: 0 calc(var(--gutter) * -0.5);
+    z-index: -1;
+    background: var(--color-butter-yellow);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform var(--dur-2) var(--ease-out);
+  }
+
+  .nrow > * { transition: transform var(--dur-2) var(--ease-out); }
+  .nrow:hover::before,
+  .nrow:focus-visible::before { transform: scaleY(1); }
+  .nrow:focus-visible { outline-offset: -2px; }
+
+  .nrow__index {
+    grid-area: index;
+    font-family: var(--font-supply);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    line-height: 1.5;
+  }
+
+  .nrow__meta {
+    grid-area: meta;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 14px;
+    opacity: 0.84;
+  }
+  .nrow__topics { word-break: keep-all; overflow-wrap: anywhere; }
+  .nrow__kind::before { content: "■"; margin-right: 6px; font-size: 8px; vertical-align: 2px; }
+
+  .nrow__text { display: contents; }
+  .nrow__title { grid-area: title; align-self: start; }
+  .nrow__excerpt { grid-area: excerpt; }
+
+  .nrow__title {
+    font-size: clamp(18px, 1.7vw, 24px);
+    font-weight: 700;
+    font-feature-settings: "palt";
+    line-height: 1.45;
+    text-wrap: balance;
+    word-break: auto-phrase;
+    overflow-wrap: anywhere;
+  }
+
+  .nrow__excerpt {
+    max-width: 46em;
+    font-size: 15px;
+    line-height: 1.75;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .nrow__thumb {
+    grid-area: thumb;
+    align-self: start;
+    border: 1px solid var(--color-ink-violet);
+    background: var(--color-pure-white);
+  }
+  .nrow__clip { display: block; overflow: hidden; aspect-ratio: 16 / 9; }
+  .nrow__clip img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--dur-3) var(--ease-out);
+  }
+  .nrow:hover .nrow__clip img,
+  .nrow:focus-visible .nrow__clip img { transform: scale(1.06); }
+
+  .nrow__arrow { display: none; }
+  .nrow__arrow :global(svg) { transition: transform var(--dur-2) var(--ease-out); }
+  .nrow:hover .nrow__arrow :global(svg),
+  .nrow:focus-visible .nrow__arrow :global(svg) { transform: rotate(-45deg); }
+
+  @media (max-width: 767px) {
+    .nrow:not(:has(.nrow__thumb)) { grid-template-areas: "index meta meta" "title title title" "excerpt excerpt excerpt"; }
+    .nrow__excerpt { font-size: 14px; }
+  }
+
+  @media (min-width: 768px) {
+    .nrow {
+      grid-template-columns: 64px 148px minmax(0, 1fr) 200px 32px;
+      grid-template-areas: "index meta text thumb arrow";
+      align-items: start;
+      gap: 28px;
+      padding: 28px 0;
+    }
+    .nrow:not(:has(.nrow__thumb)) { grid-template-areas: "index meta text text arrow"; }
+    .nrow__text { grid-area: text; display: grid; align-content: start; gap: 8px; min-width: 0; }
+    .nrow__title, .nrow__excerpt { grid-area: auto; }
+    .nrow__index {
+      font-size: clamp(24px, 2.2vw, 32px);
+      font-weight: 400;
+      letter-spacing: -0.06em;
+      line-height: 1;
+    }
+    .nrow__meta { flex-direction: column; align-items: flex-start; padding-top: 4px; }
+    .nrow__arrow { grid-area: arrow; display: block; justify-self: end; padding-top: 2px; }
+    .nrow:hover > *,
+    .nrow:focus-visible > * { transform: translateX(10px); }
+    .nrow:hover > .nrow__arrow,
+    .nrow:focus-visible > .nrow__arrow { transform: none; }
+  }
+
+  @media (min-width: 1100px) {
+    .nrow { grid-template-columns: 80px 168px minmax(0, 1fr) 208px 40px; gap: 32px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nrow > *, .nrow::before, .nrow__clip img { transition: none; }
+    .nrow:hover > *, .nrow:focus-visible > * { transform: none; }
+    .nrow:hover .nrow__clip img { transform: none; }
+  }
+</style>

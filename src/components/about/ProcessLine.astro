@@ -1,0 +1,122 @@
+---
+/**
+ * Schematic process line: a dashed guide with an ink line that draws itself with scroll
+ * (motion/process-draw.ts sets `--draw` 0→1 and `.is-on` on reached steps).
+ * Without JS / under reduced motion `--draw` stays 1: the drawing is complete and static.
+ */
+interface Step { word: string; en: string; caption: string }
+
+interface Props {
+  steps: Step[]
+  label: string
+}
+
+const { steps, label } = Astro.props
+---
+
+<div class="process" data-process-draw>
+  <div class="process__rail" aria-hidden="true">
+    <svg class="process__svg process__svg--h" viewBox="0 0 1000 12" preserveAspectRatio="none" fill="none">
+      <path class="process__guide" d="M0 6H1000" />
+      <path class="process__ink" d="M0 6H1000" pathLength="1" />
+    </svg>
+    <svg class="process__svg process__svg--v" viewBox="0 0 12 1000" preserveAspectRatio="none" fill="none">
+      <path class="process__guide" d="M6 0V1000" />
+      <path class="process__ink" d="M6 0V1000" pathLength="1" />
+    </svg>
+    <svg class="process__head" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M2 2l12 6-12 6" />
+    </svg>
+  </div>
+
+  <ol class="process__steps" aria-label={label}>
+    {steps.map((step, index) => (
+      <li class="process__step" data-process-step>
+        <span class="process__node" aria-hidden="true">
+          <span class="process__node-fill"></span>
+          <span class="process__node-num">{String(index + 1).padStart(2, '0')}</span>
+        </span>
+        <span class="process__en annotation">{step.en}</span>
+        <strong class="process__word">{step.word}</strong>
+        <span class="process__caption">{step.caption}</span>
+      </li>
+    ))}
+  </ol>
+</div>
+
+<style>
+  .process { --draw: 1; --node: 48px; position: relative; }
+
+  .process__rail { position: absolute; pointer-events: none; }
+  .process__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .process__guide { stroke: var(--color-ink-violet); stroke-width: 1; stroke-dasharray: 4 6; opacity: 0.4; }
+  .process__ink {
+    stroke: var(--color-ink-violet);
+    stroke-width: 2;
+    stroke-dasharray: 1;
+    stroke-dashoffset: calc(1 - var(--draw));
+  }
+
+  .process__head {
+    position: absolute;
+    color: var(--color-ink-violet);
+    opacity: clamp(0, (var(--draw) - 0.94) * 20, 1);
+  }
+
+  .process__steps { position: relative; display: grid; gap: 40px; }
+
+  .process__step { position: relative; display: grid; align-content: start; gap: 8px; }
+
+  .process__node {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: var(--node);
+    height: var(--node);
+    margin-bottom: 12px;
+    border: 1px solid var(--color-ink-violet);
+    background: var(--color-cream-paper);
+    font-family: var(--font-supply);
+    font-size: 13px;
+  }
+
+  .process__node-fill {
+    position: absolute;
+    inset: 0;
+    background: var(--color-butter-yellow);
+    transform: scale(0);
+    transition: transform var(--dur-2) var(--ease-snap);
+  }
+
+  .process__node-num { position: relative; }
+
+  .process__step.is-on .process__node-fill,
+  .process:not(.is-drawing) .process__node-fill { transform: none; }
+
+  .process__word {
+    font-size: clamp(36px, 4vw, 60px);
+    font-weight: 700;
+    font-feature-settings: "palt";
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+
+  .process__caption { max-width: 22em; font-size: 15px; line-height: 1.75; text-wrap: balance; word-break: auto-phrase; }
+
+  /* Mobile / tablet: vertical line down the node column. */
+  .process__rail { top: 0; bottom: 0; left: calc(var(--node) / 2 - 6px); width: 12px; }
+  .process__svg--h { display: none; }
+  .process__head { bottom: -14px; left: -2px; transform: rotate(90deg); }
+  .process__step { padding-left: calc(var(--node) + 20px); min-height: var(--node); }
+  .process__node { position: absolute; top: 0; left: 0; margin: 0; }
+
+  @media (min-width: 900px) {
+    .process__rail { top: calc(var(--node) / 2 - 6px); bottom: auto; left: 0; right: 0; width: auto; height: 12px; }
+    .process__svg--h { display: block; }
+    .process__svg--v { display: none; }
+    .process__head { top: -2px; bottom: auto; left: auto; right: -3px; transform: none; }
+    .process__steps { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: clamp(16px, 2vw, 32px); }
+    .process__step { padding-left: 0; }
+    .process__node { position: relative; margin-bottom: 20px; }
+  }
+</style>

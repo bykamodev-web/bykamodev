@@ -1,48 +1,73 @@
 ---
-import BuildCard from '@/components/cards/BuildCard.astro'
-import Icon from '@/components/icons/Icons.astro'
+import BuildFeature from '@/components/cards/BuildFeature.astro'
+import PageHero from '@/components/ui/PageHero.astro'
+import ArrowLink from '@/components/ui/ArrowLink.astro'
 import type { Build } from '@/types'
 
-interface Props { builds: Build[] }
-const { builds } = Astro.props
+interface Props {
+  builds: Build[]
+  total?: number
+}
+
+const { builds, total = builds.length } = Astro.props
+const pad = (value: number) => String(value).padStart(2, '0')
 ---
 
 {builds.length > 0 && (
-  <section class="builds-section">
+  <section class="builds-section" id="selected-builds" aria-labelledby="selected-builds-title">
     <div class="section-shell">
-      <div class="section-heading reveal" data-reveal>
-        <p class="section-label">SELECTED BUILDS</p>
-        <div>
-          <h2 class="page-title">実装を、<br />使われる構造にする。</h2>
-          <p class="body-text">課題の整理から設計、実装、運用まで。成果物の外側にある判断も含めて残しています。</p>
+      <PageHero
+        as="h2"
+        titleId="selected-builds-title"
+        index="01"
+        label="SELECTED BUILDS"
+        lines={['実装を、', '使われる構造にする。']}
+        lead="課題の整理から設計、実装、運用まで。成果物の外側にある判断も含めて残しています。"
+        class="builds-section__head"
+      >
+        <div class="section-facts" data-reveal style="--delay:260ms;">
+          <dl class="fact-list">
+            <div><dt>INDEX</dt><dd><span data-count={total} data-count-pad="2">{pad(total)}</span> BUILDS</dd></div>
+            <div><dt>SHOWING</dt><dd>{pad(builds.length)} / {pad(total)} SELECTED</dd></div>
+            <div><dt>FORMAT</dt><dd>CASE STUDY</dd></div>
+          </dl>
+          <ArrowLink href="/builds">すべてのBuildsを見る</ArrowLink>
         </div>
-      </div>
+      </PageHero>
 
-      <div class="builds-grid">
+      <div class="builds-section__list">
         {builds.map((build, index) => (
-          <div class="reveal" data-reveal style={`--delay:${index * 90}ms;`}>
-            <BuildCard build={build} />
-          </div>
+          <BuildFeature build={build} index={index} reverse={index % 2 === 1} />
         ))}
       </div>
 
-      <div class="section-action reveal" data-reveal>
-        <a href="/builds" class="group hairline-link">すべてのBuildsを見る <Icon name="arrow-right" size={18} class="hover-arrow" /></a>
+      <div class="builds-section__foot" data-reveal>
+        <p class="annotation">({pad(builds.length)} / {pad(total)})</p>
+        <ArrowLink href="/builds">すべてのBuildsを見る</ArrowLink>
       </div>
     </div>
   </section>
 )}
 
 <style>
-  .builds-section { padding: 120px 0; }
-  .section-heading { display: grid; gap: 24px; margin-bottom: 64px; }
-  .section-heading > div { display: grid; gap: 24px; }
-  .section-heading .body-text { max-width: 570px; }
-  .builds-grid { display: grid; gap: 24px; }
-  .section-action { margin-top: 40px; }
-  @media (min-width: 768px) {
-    .section-heading { grid-template-columns: minmax(170px, .36fr) minmax(0, 1fr); }
-    .builds-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .builds-section { padding-block: var(--section-gap); }
+  .builds-section :global(.builds-section__head) { margin-bottom: clamp(8px, 1.5vw, 24px); }
+  /* The header rule already opens the list, so the first row drops its own top hairline. */
+  .builds-section__list { border-bottom: 1px solid var(--color-ink-violet); }
+  .builds-section__list > :global(.build-feature:first-child) { border-top: 0; }
+  /* padding-top sets the first mono line on the lead's first line of text. */
+  .section-facts { display: grid; gap: 24px; justify-items: start; padding-top: 6px; }
+  /* Single column: the lead reads first, the spec strip follows it. */
+  @media (max-width: 899px) {
+    .builds-section :global(.page-hero__lead) { order: -1; }
+    .section-facts { padding-top: 0; }
   }
-  @media (max-width: 767px) { .builds-section { padding: 80px 0; } }
+  .builds-section__foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px 32px;
+    margin-top: 40px;
+  }
 </style>

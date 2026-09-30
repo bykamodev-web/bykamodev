@@ -1,10 +1,13 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import BuildCard from '@/components/cards/BuildCard.astro'
+import BuildFeature from '@/components/cards/BuildFeature.astro'
+import PageHero from '@/components/ui/PageHero.astro'
 import Breadcrumbs from '@/components/seo/Breadcrumbs.astro'
 import JsonLd from '@/components/seo/JsonLd.astro'
 import { getBuilds } from '@/lib/microcms'
 import { buildCollectionPageSchema } from '@/lib/schema'
+import { pad2 } from '@/components/article/format'
 
 const { contents: builds } = await getBuilds()
 
@@ -13,6 +16,9 @@ const collectionSchema = buildCollectionPageSchema({
   description: '実績・ケーススタディ一覧',
   url: 'https://bykamo.dev/builds',
 })
+
+const [lead, ...rest] = builds
+const liveCount = builds.filter((build) => build.statusLabel?.[0] === 'live').length
 ---
 
 <BaseLayout title="Builds" description="実績・ケーススタディ一覧。課題の整理から設計・実装・結果まで。">
@@ -26,18 +32,50 @@ const collectionSchema = buildCollectionPageSchema({
       { label: 'Builds' },
     ]} />
 
-    <p class="section-label">BUILDS</p>
-    <h1 class="page-title">公開できるかたちまで、実装を整える。</h1>
-    <p class="body-text-lg collection-page__lead">課題の整理、設計、実装、運用まで。成果物だけでなく、その輪郭が伝わる単位でまとめています。</p>
+    <PageHero
+      index="01"
+      label="BUILDS"
+      lines={['公開できるかたちまで、', '実装を整える。']}
+      lead="課題の整理、設計、実装、運用まで。成果物だけでなく、その輪郭が伝わる単位でまとめています。"
+      meta={[
+        { k: 'ENTRIES', v: pad2(builds.length) },
+        ...(liveCount ? [{ k: 'LIVE', v: pad2(liveCount) }] : []),
+      ]}
+      class="collection-page__hero"
+    />
 
-    {builds.length > 0 ? (
-      <div class="collection-grid">
-        {builds.map((build, index) => (
-          <div class="reveal" data-reveal style={`--delay:${index * 70}ms;`}>
-            <BuildCard build={build} />
-          </div>
-        ))}
-      </div>
+    {lead ? (
+      <>
+        <section class="builds-lead" aria-label="最新のBuild">
+          <p class="annotation builds-lead__label" data-reveal>LATEST CASE</p>
+          <BuildFeature build={lead} index={0} headingLevel="h2" />
+        </section>
+
+        {rest.length > 0 && (
+          <section class="builds-index" aria-labelledby="builds-index-title">
+            <div class="builds-index__head" data-reveal>
+              <h2 id="builds-index-title" class="annotation">ARCHIVE — {pad2(rest.length)} CASES</h2>
+              <span class="rule" aria-hidden="true"></span>
+            </div>
+            <ul class="builds-grid">
+              {rest.map((build, i) => (
+                <li
+                  class:list={[rest.length % 2 === 1 && i === rest.length - 1 && 'is-wide']}
+                  data-reveal
+                  style={`--i:${i % 2};`}
+                >
+                  <BuildCard
+                    build={build}
+                    index={i + 1}
+                    headingLevel="h3"
+                    wide={rest.length % 2 === 1 && i === rest.length - 1 && rest.length > 1}
+                  />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </>
     ) : (
       <p class="body-text">まだ公開されたBuildsはありません。</p>
     )}
@@ -45,12 +83,27 @@ const collectionSchema = buildCollectionPageSchema({
 </BaseLayout>
 
 <style>
-  .collection-page { padding-block: 80px 120px; }
-  .collection-page :global(.breadcrumbs) { margin-bottom: 40px; }
-  .section-label { margin-bottom: 16px; }
-  .page-title { max-width: 760px; }
-  .collection-page__lead { max-width: 680px; margin-top: 24px; margin-bottom: 64px; }
-  .collection-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
-  @media (min-width: 768px) { .collection-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (min-width: 1100px) { .collection-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .collection-page { padding-block: clamp(40px, 6vw, 80px) clamp(80px, 9vw, 120px); }
+  .collection-page :global(.collection-page__hero) { grid-template-columns: minmax(0, 1fr); margin-bottom: clamp(56px, 7vw, 104px); }
+
+  .builds-lead__label { margin-bottom: 16px; }
+  .builds-lead { border-bottom: 1px solid var(--color-ink-violet); }
+
+  .builds-index { margin-top: clamp(64px, 8vw, 120px); }
+  .builds-index__head { display: flex; align-items: center; gap: 20px; margin-bottom: clamp(32px, 4vw, 56px); }
+  .builds-index__head .rule { flex: 1; }
+  .builds-index__head h2 { flex: none; }
+
+  .builds-grid { display: grid; gap: 32px; }
+
+  @media (min-width: 768px) {
+    .builds-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(24px, 3vw, 48px); row-gap: 56px; }
+    .builds-grid > .is-wide { grid-column: 1 / -1; }
+  }
+
+  /* Editorial stagger: the right column sits a step lower. */
+  @media (min-width: 1100px) {
+    .builds-grid { align-items: start; }
+    .builds-grid > li:nth-child(even):not(.is-wide) { margin-top: 96px; }
+  }
 </style>

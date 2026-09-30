@@ -1,0 +1,111 @@
+---
+import Icon from '@/components/icons/Icons.astro'
+
+/**
+ * Large numbered rows (not links). The yellow wipe on hover is decorative only, echoing the home
+ * Notes rows, so nothing here suggests clickability (no pointer, no arrow, no focus stop).
+ */
+type IconName = 'brain' | 'gear' | 'code' | 'chart' | 'refresh' | 'rocket'
+interface Row { icon: IconName; label: string; text: string }
+
+interface Props {
+  rows: Row[]
+  label?: string
+}
+
+const { rows, label } = Astro.props
+---
+
+<ol class="focus-rows" aria-label={label} data-stagger>
+  {rows.map((row, index) => (
+    <li class="focus-row" data-reveal>
+      <span class="focus-row__index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+      <span class="icon-box focus-row__icon" aria-hidden="true"><Icon name={row.icon} size={22} /></span>
+      <span class="focus-row__body">
+        <strong class="focus-row__title">{row.label}</strong>
+        <span class="focus-row__text">{row.text}</span>
+      </span>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .focus-rows { container-type: inline-size; border-top: 1px solid var(--color-ink-violet); }
+
+  .focus-row {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: auto 48px minmax(0, 1fr);
+    align-items: center;
+    gap: 16px 20px;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--color-ink-violet);
+    cursor: default;
+  }
+
+  .focus-row::before {
+    content: "";
+    position: absolute;
+    inset: 0 -12px;
+    z-index: -1;
+    background: var(--color-butter-yellow);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform var(--dur-2) var(--ease-out);
+  }
+
+  .focus-row > * { transition: transform var(--dur-2) var(--ease-out); }
+  @media (hover: hover) {
+    .focus-row:hover::before { transform: scaleY(1); }
+    .focus-row:hover > * { transform: translateX(12px); }
+    .focus-row:hover .focus-row__icon { background: var(--color-pure-white); }
+  }
+
+  .focus-row__index {
+    min-width: 2.2ch;
+    font-family: var(--font-supply);
+    font-size: clamp(24px, 2.4vw, 36px);
+    letter-spacing: -0.06em;
+    line-height: 1;
+  }
+
+  .focus-row__icon { transition: transform var(--dur-2) var(--ease-out), background-color var(--dur-2) var(--ease-out); }
+
+  .focus-row__body { display: grid; gap: 6px; }
+
+  .focus-row__title {
+    font-size: clamp(24px, 2.6vw, 38px);
+    font-weight: 700;
+    font-feature-settings: "palt";
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+
+  .focus-row__text { font-size: 15px; line-height: 1.75; }
+
+  @container (min-width: 700px) {
+    .focus-row {
+      grid-template-columns: 64px 48px minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 24px;
+      padding: 30px 0;
+    }
+    .focus-row__body { display: contents; }
+    .focus-row__title, .focus-row__text { transition: transform var(--dur-2) var(--ease-out); }
+    @media (hover: hover) {
+      .focus-row:hover :is(.focus-row__title, .focus-row__text) { transform: translateX(12px); }
+    }
+  }
+
+  @container (max-width: 520px) {
+    .focus-row { grid-template-columns: auto minmax(0, 1fr); align-items: start; }
+    .focus-row__index { grid-column: 1 / -1; font-size: 14px; letter-spacing: 0.04em; }
+    .focus-row__icon { grid-row: 2; }
+    .focus-row__body { grid-row: 2; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .focus-row > *, .focus-row::before { transition: none; }
+    .focus-row:hover > *, .focus-row:hover .focus-row__title, .focus-row:hover .focus-row__text { transform: none; }
+  }
+</style>

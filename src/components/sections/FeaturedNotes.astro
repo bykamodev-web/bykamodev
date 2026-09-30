@@ -1,5 +1,8 @@
 ---
 import Icon from '@/components/icons/Icons.astro'
+import PageHero from '@/components/ui/PageHero.astro'
+import ArrowLink from '@/components/ui/ArrowLink.astro'
+import { getOptimizedImageUrl } from '@/lib/microcms'
 import type { Note } from '@/types'
 
 interface Props { notes: Note[] }
@@ -11,64 +14,213 @@ const kindLabels: Record<string, string> = {
   'case-study': 'Case Study',
   thinking: 'Thinking',
 }
+
+const formatDate = (value?: string) =>
+  value ? new Date(value).toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }) : 'Draft'
+
+const rows = notes.map((note, index) => ({
+  note,
+  number: String(index + 1).padStart(2, '0'),
+  date: formatDate(note.publishedAt),
+  kind: note.kind?.[0] ? kindLabels[note.kind[0]] || note.kind[0] : 'Note',
+  preview: note.coverImage
+    ? getOptimizedImageUrl(note.coverImage.url, { width: 640, quality: 72, aspectRatio: '16:10' })
+    : undefined,
+}))
 ---
 
 {notes.length > 0 && (
-  <section class="notes-band">
-    <div class="section-shell notes-band__inner">
-      <div class="notes-band__intro reveal" data-reveal>
-        <p class="section-label">NOTES</p>
-        <h2>設計判断を、<br />次の一手のために残す。</h2>
-        <p>開発ログ、技術比較、プロダクトの考え方。作ったものの背景まで、短く記録しています。</p>
-      </div>
+  <section class="notes-band surface-teal" aria-labelledby="notes-band-title" data-notes-preview>
+    <div class="section-shell">
+      <PageHero
+        as="h2"
+        titleId="notes-band-title"
+        index="02"
+        label="NOTES"
+        lines={['設計判断を、', '次の一手のために残す。']}
+        lead="開発ログ、技術比較、プロダクトの考え方。作ったものの背景まで、短く記録しています。"
+        class="notes-band__head"
+      >
+        <div class="section-facts" data-reveal style="--delay:260ms;">
+          <dl class="fact-list">
+            <div><dt>LATEST</dt><dd>{String(rows.length).padStart(2, '0')} ENTRIES</dd></div>
+            <div><dt>KINDS</dt><dd>LOG / HOW-TO / CASE STUDY / THINKING</dd></div>
+          </dl>
+          <ArrowLink href="/notes">すべてのNotesを見る</ArrowLink>
+        </div>
+      </PageHero>
 
-      <div class="notes-list">
-        {notes.map((note, index) => {
-          const kind = note.kind?.[0]
-          const publishedDate = note.publishedAt
-            ? new Date(note.publishedAt).toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' })
-            : 'Draft'
-          return (
-            <a href={`/notes/${note.slug}`} class="notes-list__item reveal" data-reveal style={`--delay:${index * 90}ms;`}>
-              <div class="notes-list__meta"><span>{publishedDate}</span>{kind && <span>{kindLabels[kind] || kind}</span>}</div>
-              <div>
-                <h3>{note.title}</h3>
-                <p>{note.excerpt}</p>
-              </div>
-              <Icon name="arrow-right" size={20} class="hover-arrow" />
+      <ol class="notes-band__list" data-stagger>
+        {rows.map(({ note, number, date, kind, preview }) => (
+          <li data-reveal>
+            <a href={`/notes/${note.slug}`} class="notes-row" data-preview-src={preview}>
+              <span class="notes-row__index" aria-hidden="true">{number}</span>
+              <span class="notes-row__meta"><time datetime={note.publishedAt}>{date}</time><span>{kind}</span></span>
+              <span class="notes-row__text">
+                <span class="notes-row__title">{note.title}</span>
+                <span class="notes-row__excerpt">{note.excerpt}</span>
+              </span>
+              <span class="notes-row__arrow"><Icon name="arrow-right" size={22} /></span>
             </a>
-          )
-        })}
-      </div>
+          </li>
+        ))}
+      </ol>
 
-      <a href="/notes" class="group notes-band__action reveal" data-reveal>すべてのNotesを見る <Icon name="arrow-right" size={18} class="hover-arrow" /></a>
+      <div class="notes-band__foot" data-reveal>
+        <ArrowLink href="/notes">すべてのNotesを見る</ArrowLink>
+      </div>
+    </div>
+
+    <div class="notes-preview" data-preview-frame aria-hidden="true">
+      <img alt="" width="300" height="188" decoding="async" />
     </div>
   </section>
 )}
 
 <style>
-  .notes-band { background: var(--color-deep-teal); color: var(--color-cream-paper); }
-  .notes-band__inner { padding-block: 104px; }
-  .notes-band__intro { display: grid; gap: 24px; max-width: 700px; }
-  .notes-band .section-label { color: var(--color-butter-yellow); }
-  h2 { font-size: clamp(40px, 4.4vw, 48px); font-weight: 700; line-height: 1.27; }
-  .notes-band__intro > p:last-child { font-size: 20px; line-height: 1.6; max-width: 610px; }
-  .notes-list { margin-top: 64px; border-top: 1px solid var(--color-cream-paper); }
-  .notes-list__item {
+  .notes-band { position: relative; padding-block: var(--section-gap); }
+  .notes-band :global(.notes-band__head) { margin-bottom: clamp(8px, 1.5vw, 24px); }
+  .notes-band :global(.annotation),
+  .notes-band :global(.fact-list) { color: var(--color-butter-yellow); }
+  /* padding-top sets the first mono line on the lead's first line of text. */
+  .section-facts { display: grid; gap: 24px; justify-items: start; padding-top: 6px; }
+  /* Single column: the lead reads first, the spec strip follows it. */
+  @media (max-width: 899px) {
+    .notes-band :global(.page-hero__lead) { order: -1; }
+    .section-facts { padding-top: 0; }
+  }
+  .section-facts :global(.arrow-link) { color: var(--color-cream-paper); }
+  .notes-band__list li { border-bottom: 1px solid var(--color-cream-paper); }
+
+  .notes-row {
+    position: relative;
+    isolation: isolate;
     display: grid;
-    gap: 16px;
-    padding: 24px 0;
-    border-bottom: 1px solid var(--color-cream-paper);
-    transition: padding 180ms ease, background-color 180ms ease;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 12px 20px;
+    padding: 28px 0;
+    transition: color var(--dur-2) var(--ease-out);
   }
-  .notes-list__item:hover { padding-inline: 16px; background: rgba(255, 252, 247, .08); }
-  .notes-list__meta { display: flex; gap: 16px; font-family: var(--font-supply); font-size: 14px; color: var(--color-butter-yellow); }
-  h3 { font-size: 24px; font-weight: 700; line-height: 1.4; }
-  .notes-list__item p { margin-top: 8px; font-size: 16px; line-height: 1.6; }
-  .notes-band__action { display: inline-flex; gap: 12px; align-items: center; margin-top: 40px; border-bottom: 1px solid var(--color-cream-paper); padding-bottom: 2px; color: var(--color-cream-paper); font-size: 16px; font-weight: 700; }
-  @media (min-width: 768px) {
-    .notes-list__item { grid-template-columns: 180px minmax(0, 1fr) auto; align-items: center; gap: 40px; }
+
+  .notes-row::before {
+    content: "";
+    position: absolute;
+    inset: 0 calc(var(--gutter) * -0.5);
+    z-index: -1;
+    background: var(--color-butter-yellow);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform var(--dur-2) var(--ease-out);
   }
-  @media (max-width: 767px) { .notes-band__inner { padding-block: 80px; } }
-  @media (prefers-reduced-motion: reduce) { .notes-list__item { transition: none; } .notes-list__item:hover { padding-inline: 0; } }
+
+  .notes-row > * { transition: transform var(--dur-2) var(--ease-out); }
+
+  .notes-row:hover,
+  .notes-row:focus-visible { color: var(--color-ink-violet); }
+  .notes-row:hover::before,
+  .notes-row:focus-visible::before { transform: scaleY(1); }
+  .notes-row:hover > *,
+  .notes-row:focus-visible > * { transform: translateX(12px); }
+  /* The outline traces the yellow band (which bleeds half a gutter), not the narrower row box. */
+  .notes-row:focus-visible { outline: none; }
+  .notes-row:focus-visible::before { outline: 2px solid var(--color-ink-violet); outline-offset: -2px; }
+
+  .notes-row__index {
+    grid-row: 1 / 3;
+    min-width: 2.4ch;
+    font-family: var(--font-supply);
+    font-size: clamp(28px, 3vw, 44px);
+    letter-spacing: -0.06em;
+    line-height: 1;
+  }
+
+  .notes-row__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    color: var(--color-butter-yellow);
+    font-family: var(--font-supply);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color var(--dur-2) var(--ease-out), transform var(--dur-2) var(--ease-out);
+  }
+
+  .notes-row:hover .notes-row__meta,
+  .notes-row:focus-visible .notes-row__meta { color: var(--color-ink-violet); }
+
+  .notes-row__text { grid-column: 2 / 4; display: grid; gap: 10px; }
+
+  .notes-row__title {
+    font-size: clamp(21px, 2.2vw, 30px);
+    font-weight: 700;
+    font-feature-settings: "palt";
+    line-height: 1.4;
+    text-wrap: balance;
+    word-break: auto-phrase;
+  }
+
+  .notes-row__excerpt {
+    max-width: 52em;
+    font-size: 15px;
+    line-height: 1.8;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .notes-row__arrow { grid-column: 3; grid-row: 1; justify-self: end; }
+  .notes-row__arrow :global(svg) { transition: transform var(--dur-2) var(--ease-out); }
+  .notes-row:hover .notes-row__arrow :global(svg),
+  .notes-row:focus-visible .notes-row__arrow :global(svg) { transform: rotate(-45deg); }
+
+  .notes-band__foot { margin-top: 40px; color: var(--color-cream-paper); }
+
+  .notes-preview {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 40;
+    width: 300px;
+    height: 188px;
+    border: 1px solid var(--color-cream-paper);
+    background: var(--color-deep-teal);
+    pointer-events: none;
+    clip-path: inset(0 0 100% 0);
+    visibility: hidden;
+    transition: clip-path var(--dur-2) var(--ease-out), visibility 0s linear var(--dur-2);
+  }
+
+  .notes-preview.is-active {
+    visibility: visible;
+    clip-path: inset(0 0 0 0);
+    transition: clip-path var(--dur-2) var(--ease-out), visibility 0s;
+  }
+
+  .notes-preview img { width: 100%; height: 100%; object-fit: cover; }
+  .notes-preview img:not([src]) { visibility: hidden; }
+
+  @media (min-width: 900px) {
+    .notes-row {
+      grid-template-columns: 96px 200px minmax(0, 1fr) 48px;
+      align-items: start;
+      gap: 32px;
+      padding: 36px 0;
+    }
+    .notes-row__index { grid-row: 1; }
+    .notes-row__meta { padding-top: 10px; flex-direction: column; }
+    .notes-row__text { grid-column: 3; }
+    .notes-row__arrow { grid-column: 4; padding-top: 6px; }
+  }
+
+  @media (max-width: 899px) {
+    .notes-row__index { grid-row: 1; }
+    .notes-row__meta { align-self: center; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .notes-row > *, .notes-row::before { transition: none; }
+    .notes-row:hover > *, .notes-row:focus-visible > * { transform: none; }
+  }
 </style>

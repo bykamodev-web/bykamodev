@@ -11,16 +11,14 @@ const schema = buildBreadcrumbSchema(items)
 ---
 
 <nav aria-label="パンくずリスト" class="breadcrumbs">
-  <ol class="flex flex-wrap items-center gap-1">
+  <ol>
     {items.map((item, i) => (
-      <li class="flex items-center gap-1">
-        {i > 0 && <span aria-hidden="true">/</span>}
+      <li class:list={[i === items.length - 1 && 'is-current']}>
+        {i > 0 && <span class="breadcrumbs__sep" aria-hidden="true">/</span>}
         {item.href && i < items.length - 1 ? (
-          <a href={item.href}>
-            {item.label}
-          </a>
+          <a href={item.href}>{item.label}</a>
         ) : (
-          <span>{item.label}</span>
+          <span class="breadcrumbs__current" aria-current={i === items.length - 1 ? 'page' : undefined}>{item.label}</span>
         )}
       </li>
     ))}
@@ -28,11 +26,37 @@ const schema = buildBreadcrumbSchema(items)
 </nav>
 
 <style>
-  .breadcrumbs { margin-bottom: 40px; font-family: var(--font-supply); font-size: 14px; }
-  ol { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-  li { display: flex; align-items: center; gap: 6px; }
-  a { border-bottom: 1px solid transparent; }
-  a:hover { border-color: var(--color-ink-violet); }
+  .breadcrumbs {
+    margin-bottom: 40px;
+    font-family: var(--font-supply);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+  ol { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 0; min-width: 0; }
+  li { display: flex; align-items: center; min-width: 0; }
+  .breadcrumbs__sep { margin-inline: 10px; opacity: 0.4; }
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    background: linear-gradient(currentColor, currentColor) left calc(100% - 6px) / 0% 1px no-repeat;
+    transition: background-size var(--dur-2) var(--ease-out);
+  }
+  a:hover, a:focus-visible { background-size: 100% 1px; }
+  .breadcrumbs__current { opacity: 0.72; overflow-wrap: anywhere; }
+  .is-current { flex: 1 1 0; min-width: 0; }
+  .is-current .breadcrumbs__current {
+    display: block;
+    max-width: 48ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  @media (max-width: 767px) {
+    .is-current .breadcrumbs__current { max-width: 100%; }
+  }
 </style>
 
 <script type="application/ld+json" set:html={JSON.stringify(schema)} />

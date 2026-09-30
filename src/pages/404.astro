@@ -1,0 +1,80 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Icon from '@/components/icons/Icons.astro'
+import RevealLines from '@/components/ui/RevealLines.astro'
+import HeroIllustration from '@/components/sections/HeroIllustration.astro'
+---
+
+<BaseLayout title="404" description="お探しのページは見つかりませんでした。" noindex>
+  <section class="section-shell not-found" aria-labelledby="not-found-title">
+    <div class="not-found__copy">
+      <p class="annotation" data-reveal>(404) — PAGE NOT FOUND</p>
+      <p class="not-found__code" aria-hidden="true" data-reveal="lines">
+        <span class="line"><span class="line__inner">404</span></span>
+      </p>
+      <RevealLines
+        as="h1"
+        id="not-found-title"
+        class="not-found__title"
+        lines={['このページは、まだ', { text: '組み上がっていません。', marker: '組み上がっていません' }]}
+        delay={120}
+      />
+      <p class="body-text not-found__lead" data-reveal style="--delay:240ms;">
+        URLが変わったか、削除された可能性があります。トップページか Builds から辿ってください。
+      </p>
+      <div class="not-found__actions" data-reveal style="--delay:320ms;">
+        <a href="/" class="group btn-primary">トップへ戻る <Icon name="arrow-right" size={18} class="hover-arrow" /></a>
+        <a href="/builds" class="group btn-ghost">Buildsを見る <Icon name="arrow-right" size={18} class="hover-arrow" /></a>
+      </div>
+    </div>
+    <div class="not-found__visual">
+      <HeroIllustration mode="scattered" label="組み上がる前の、散らばったままの部品の図解" />
+      <p class="annotation not-found__hint">HOVER TO REASSEMBLE</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    display: grid;
+    gap: 48px;
+    align-items: center;
+    min-height: calc(100svh - var(--header-h));
+    padding-block: clamp(48px, 8vw, 112px);
+  }
+
+  .not-found__copy { display: grid; gap: 24px; justify-items: start; }
+
+  .not-found__code {
+    font-family: var(--font-supply);
+    font-size: clamp(120px, 22vw, 320px);
+    font-weight: 400;
+    letter-spacing: -0.08em;
+    line-height: 0.82;
+    /* Optical alignment: cancel the mono "4" side bearing so digits sit on the text edge. */
+    margin-left: -0.075em;
+  }
+
+  .not-found__copy > :global(.not-found__title) {
+    font-size: clamp(30px, 3.7vw, 54px);
+    font-weight: 700;
+    font-feature-settings: "palt";
+    line-height: 1.2;
+  }
+
+  .not-found__lead { max-width: 30em; }
+  .not-found__actions { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 8px; }
+  .not-found__visual { display: grid; gap: 12px; }
+  /* Scattered parts fly outside the drawing's box; leave them room inside the shell. */
+  .not-found__visual :global(.hero-illustration) { width: 86%; justify-self: center; }
+  .not-found__hint { justify-self: end; }
+
+  @media (min-width: 1024px) {
+    .not-found { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); }
+  }
+
+  @media (max-width: 767px) {
+    .not-found__actions { flex-direction: column; width: 100%; }
+    .not-found__hint { display: none; }
+  }
+</style>

@@ -1,0 +1,70 @@
+---
+/**
+ * Numbered editorial section for a build story (CHALLENGE / SOLUTION / OUTCOME).
+ * Hairline-separated, no box; body keeps CMS line breaks (`white-space: pre-line`).
+ */
+interface Props {
+  index: string
+  label: string
+  title: string
+  text: string
+}
+
+const { index, label, title, text } = Astro.props
+const id = `story-${label.toLowerCase()}`
+---
+
+<section class="story" aria-labelledby={id}>
+  <span class="rule" data-reveal="rule" aria-hidden="true"></span>
+  <div class="story__grid">
+    <p class="story__index" aria-hidden="true" data-reveal>{index}</p>
+    <div class="story__body">
+      <p class="annotation story__label" data-reveal>{label}</p>
+      <h2 id={id} class="story__title" data-reveal style="--delay:60ms;">{title}</h2>
+      <p class="story__text" data-reveal style="--delay:120ms;">{text}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .story__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding-block: clamp(28px, 4vw, 48px) clamp(48px, 6vw, 88px);
+  }
+
+  .story__index {
+    font-family: var(--font-supply);
+    font-size: clamp(44px, 5vw, 80px);
+    font-weight: 400;
+    letter-spacing: -0.06em;
+    line-height: 0.9;
+  }
+
+  .story__body { display: grid; gap: 14px; min-width: 0; }
+
+  .story__title {
+    font-size: clamp(28px, 3vw, 44px);
+    font-weight: 700;
+    font-feature-settings: "palt";
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .story__text {
+    max-width: 720px;
+    margin-top: 10px;
+    font-family: var(--font-jp);
+    font-size: clamp(17px, 1.25vw, 18px);
+    line-height: 1.9;
+    letter-spacing: 0.02em;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+    text-wrap: pretty;
+  }
+
+  @media (min-width: 768px) {
+    .story__grid { grid-template-columns: 136px minmax(0, 1fr); gap: 32px; }
+  }
+</style>
