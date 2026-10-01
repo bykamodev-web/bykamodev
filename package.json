@@ -13,6 +13,7 @@
   "dependencies": {
     "astro": "^5.1.1",
     "microcms-js-sdk": "^3.1.2",
+    "openai": "^7.25.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
