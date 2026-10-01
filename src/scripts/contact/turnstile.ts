@@ -18,11 +18,19 @@ export interface TokenSource {
   getFreshToken(): Promise<string>
 }
 
+export interface TurnstileHooks {
+  /** The widget started or stopped asking the visitor to tick its checkbox. */
+  onInteractive?: (needed: boolean) => void
+  /** Someone is waiting for a token that only the visitor's click can produce. */
+  onAttention?: () => void
+}
+
 type Waiter = { resolve: (fresh: string) => void; reject: (error: Error) => void }
 
 const POLL_MS = 100
 const READY_TIMEOUT_MS = 15_000
 const TOKEN_TIMEOUT_MS = 60_000
+const INTERACTIVE_TOKEN_TIMEOUT_MS = 180_000
 
 export class TurnstileError extends Error {
   readonly code: string
@@ -51,13 +59,28 @@ function whenReady(): Promise<TurnstileApi> {
   })
 }
 
-export function createTurnstile(container: HTMLElement): TokenSource {
+/** The key embedded at build time, or the one the Worker serves when the build had none. */
+async function resolveSiteKey(container: HTMLElement): Promise<string> {
+  if (container.dataset.sitekey) return container.dataset.sitekey
+
+  try {
+    const data: unknown = await (await fetch('/api/turnstile')).json()
+    const siteKey = data && typeof data === 'object' ? (data as Record<string, unknown>).siteKey : undefined
+    if (typeof siteKey === 'string' && siteKey) return siteKey
+  } catch {
+    // Reported below with the same code as a missing key.
+  }
+  throw new TurnstileError('site-key-unavailable')
+}
+
+export function createTurnstile(container: HTMLElement, hooks: TurnstileHooks = {}): TokenSource {
   let token: string | null = null
   /** True when the widget holds no usable token and must be reset before it issues another. */
   let needsReset = false
+  let interactive = false
   let waiters: ReadonlyArray<Waiter> = []
 
-  const widget = whenReady().then((api) => {
+  const widget = Promise.all([whenReady(), resolveSiteKey(container)]).then(([api, sitekey]) => {
     const onToken = (fresh: string): void => {
       const [next, ...queued] = waiters
       waiters = queued
@@ -79,13 +102,21 @@ export function createTurnstile(container: HTMLElement): TokenSource {
       for (const waiter of failed) waiter.reject(new TurnstileError(String(code ?? 'unknown')))
     }
 
+    const setInteractive = (needed: boolean): void => {
+      interactive = needed
+      hooks.onInteractive?.(needed)
+      if (needed && waiters.length > 0) hooks.onAttention?.()
+    }
+
     const id: string = api.render(container, {
-      sitekey: container.dataset.sitekey ?? '',
+      sitekey,
       theme: 'light',
       appearance: 'interaction-only',
       callback: onToken,
       'expired-callback': () => { token = null },
       'error-callback': onError,
+      'before-interactive-callback': () => setInteractive(true),
+      'after-interactive-callback': () => setInteractive(false),
     })
     return { api, id }
   })
@@ -105,16 +136,19 @@ export function createTurnstile(container: HTMLElement): TokenSource {
         const settle = <T>(finish: (value: T) => void) => (value: T): void => { clearTimeout(timer); finish(value) }
         const waiter: Waiter = { resolve: settle(resolve), reject: settle(reject) }
         // A caller that gave up must leave the queue, or the next token would go to nobody.
-        const timer = setTimeout(() => {
+        const giveUp = (): void => {
           waiters = waiters.filter((queued) => queued !== waiter)
           needsReset = true
           reject(new TurnstileError('timeout'))
-        }, TOKEN_TIMEOUT_MS)
+        }
+        // A visitor who has to find and tick the checkbox gets longer than a silent challenge.
+        const timer = setTimeout(giveUp, interactive ? INTERACTIVE_TOKEN_TIMEOUT_MS : TOKEN_TIMEOUT_MS)
         waiters = [...waiters, waiter]
         if (needsReset) {
           needsReset = false
           api.reset(id)
         }
+        if (interactive) hooks.onAttention?.()
       })
     },
   }

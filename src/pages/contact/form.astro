@@ -14,7 +14,8 @@ import TurnstileWidget from '@/components/contact/TurnstileWidget.astro'
 import { CATEGORIES } from '@/lib/contact-schema'
 import { TURNSTILE_TEST_KEYS } from '@/lib/contact/turnstile'
 
-// A real site key refuses localhost, so `astro dev` runs on Cloudflare's test pair (see _secrets.ts).
+// A real site key refuses localhost, so `astro dev` runs on Cloudflare's test pair (see api/_secrets.ts).
+// A build without the key leaves this empty and the page script asks the Worker (GET /api/turnstile).
 const siteKey = import.meta.env.DEV ? TURNSTILE_TEST_KEYS.siteKey : import.meta.env.TURNSTILE_SITE_KEY
 ---
 

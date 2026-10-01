@@ -2,11 +2,18 @@
 /**
  * Mount point for the page's single Turnstile widget. Rendered explicitly by
  * src/scripts/contact/turnstile.ts (the API script is loaded with `?render=explicit`),
- * and only takes up space when Cloudflare needs the visitor to interact.
+ * and only takes up space when Cloudflare needs the visitor to tick the checkbox;
+ * the page script then shows the hint and scrolls here.
+ * An empty `siteKey` is fine: the script asks the Worker for it (GET /api/turnstile).
  */
-interface Props { siteKey: string }
+interface Props { siteKey?: string }
 
 const { siteKey } = Astro.props
 ---
 
-<div id="turnstile-container" data-sitekey={siteKey}></div>
+<div id="turnstile-box" class="turnstile-box">
+  <p id="turnstile-hint" class="turnstile-hint hidden" role="status">
+    送信の前に、下の「私はロボットではありません」にチェックを入れてください。
+  </p>
+  <div id="turnstile-container" data-sitekey={siteKey ?? ''}></div>
+</div>

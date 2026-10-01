@@ -7,6 +7,14 @@ export function turnstileSecret(env: ServerEnv): string | undefined {
 }
 
 /**
+ * The public site key, read at request time. The page is prerendered, and a build without
+ * `TURNSTILE_SITE_KEY` in its environment (CI) would otherwise ship a widget that cannot render.
+ */
+export function turnstileSiteKey(env: ServerEnv): string | undefined {
+  return import.meta.env.DEV ? TURNSTILE_TEST_KEYS.siteKey : getSecret(env, 'TURNSTILE_SITE_KEY', import.meta.env.TURNSTILE_SITE_KEY)
+}
+
+/**
  * Production reads Worker secrets from the runtime env. For the three chat secrets the
  * `import.meta.env` values (from `.env.local`) are used only under `astro dev`; the `DEV`
  * guard keeps them out of the built Worker bundle. `TURNSTILE_SECRET_KEY` keeps its older,

@@ -61,8 +61,24 @@ test('the Turnstile test keys are only reachable under astro dev', async () => {
 
   assert.match(secrets, /import\.meta\.env\.DEV \? TURNSTILE_TEST_KEYS\.secret : getSecret\(env, 'TURNSTILE_SECRET_KEY'/)
   assert.match(page, /import\.meta\.env\.DEV \? TURNSTILE_TEST_KEYS\.siteKey : import\.meta\.env\.TURNSTILE_SITE_KEY/)
-  for (const source of [secrets, page]) assert.equal(source.match(/TURNSTILE_TEST_KEYS\./g)?.length, 1)
+  assert.match(secrets, /import\.meta\.env\.DEV \? TURNSTILE_TEST_KEYS\.siteKey : getSecret\(env, 'TURNSTILE_SITE_KEY'/)
+  assert.equal(secrets.match(/TURNSTILE_TEST_KEYS\./g)?.length, 2)
+  assert.equal(page.match(/TURNSTILE_TEST_KEYS\./g)?.length, 1)
   for (const route of routes) assert.doesNotMatch(route, /TURNSTILE_TEST_KEYS|TURNSTILE_SECRET_KEY/)
+})
+
+test('the form works without a build-time site key: the script asks the Worker for it', async () => {
+  const [widget, script, route] = await Promise.all([
+    readSource('src/components/contact/TurnstileWidget.astro'),
+    readSource('src/scripts/contact/turnstile.ts'),
+    readSource('src/pages/api/turnstile.ts'),
+  ])
+
+  assert.match(widget, /data-sitekey=\{siteKey \?\? ''\}/)
+  assert.match(script, /container\.dataset\.sitekey\) return container\.dataset\.sitekey/)
+  assert.match(script, /fetch\('\/api\/turnstile'\)/)
+  assert.match(route, /turnstileSiteKey\(getEnv\(locals\)\)/)
+  assert.match(script, /before-interactive-callback/)
 })
 
 test('server secrets from .env.local are only read in dev', async () => {

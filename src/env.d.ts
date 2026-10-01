@@ -22,6 +22,7 @@ type Runtime = import('@astrojs/cloudflare').Runtime<{
     put: (key: string, value: string, options?: { expirationTtl?: number }) => Promise<void>
   }
   TURNSTILE_SECRET_KEY?: string
+  TURNSTILE_SITE_KEY?: string
   OPENAI_API_KEY?: string
   TYPESAFE_API_KEY?: string
   CHAT_SESSION_SECRET?: string

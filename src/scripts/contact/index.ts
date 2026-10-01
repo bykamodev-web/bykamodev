@@ -42,7 +42,19 @@ const categoryEl = byId<HTMLSelectElement>('category')
 const summaryEl = byId<HTMLTextAreaElement>('summary')
 const messageEl = byId<HTMLTextAreaElement>('message')
 
-const tokens = createTurnstile(byId('turnstile-container'))
+const turnstileBox = byId('turnstile-box')
+const tokens = createTurnstile(byId('turnstile-container'), {
+  onInteractive: (needed) => {
+    turnstileBox.classList.toggle('is-interactive', needed)
+    byId('turnstile-hint').classList.toggle('hidden', !needed)
+    if (!needed) turnstileBox.classList.remove('is-urgent')
+  },
+  // A send is waiting on the checkbox: bring it into view instead of leaving the visitor to wonder.
+  onAttention: () => {
+    turnstileBox.classList.add('is-urgent')
+    turnstileBox.scrollIntoView({ block: 'center', behavior: 'smooth' })
+  },
+})
 const chat = createChatController(tokens)
 
 let state: ContactState = initialState
