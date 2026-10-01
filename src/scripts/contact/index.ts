@@ -3,14 +3,13 @@ import { createChatController } from './chat-controller.ts'
 import { clearErrors, setSubmitting, showAlert, showFieldErrors } from './form-view.ts'
 import { canSend, carryOverText, initialState, reduce, type Action, type ContactState } from './state.ts'
 import { buildPayload, submitContact, type ContactFields } from './submit.ts'
-import { createTurnstile } from './turnstile.ts'
+import { createTurnstile, describeTurnstileFailure } from './turnstile.ts'
 import { render, type ContactElements } from './view.ts'
 
 /** Entry point for /contact/form: looks up the DOM once and wires the modules together. */
 
 const MIN_DWELL_MS = 3500
 const MAX_DWELL_MS = 50 * 60 * 1000
-const AUTH_FAILED = '認証を完了できませんでした。ページを再読み込みしてお試しください。'
 
 const byId = <T extends HTMLElement>(id: string): T => {
   const el = document.getElementById(id)
@@ -145,8 +144,8 @@ async function submit(event: SubmitEvent): Promise<void> {
     }
     showFieldErrors(result.details ?? [])
     showAlert(alertEl, result.error)
-  } catch {
-    showAlert(alertEl, AUTH_FAILED)
+  } catch (error) {
+    showAlert(alertEl, describeTurnstileFailure(error))
   } finally {
     setSubmitting(submitBtn, false)
   }

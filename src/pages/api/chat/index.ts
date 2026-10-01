@@ -6,7 +6,7 @@ import { MAX_USER_TURNS, MIN_USER_TURNS_FOR_SUMMARY } from '@/lib/contact/limits
 import { chatEventStream } from '@/lib/contact/ndjson'
 import { createOpenAIClient, streamChatReply } from '@/lib/contact/openai-chat'
 import { getEnv } from '@/lib/contact/server-env'
-import { chatSecrets } from './_secrets'
+import { chatSecrets } from '../_secrets'
 
 export const prerender = false
 

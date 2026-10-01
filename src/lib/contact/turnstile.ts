@@ -1,5 +1,16 @@
 const SITEVERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
 
+/**
+ * Cloudflare's documented always-pass test keys. A real site key only issues tokens on the
+ * hostnames registered for its widget (localhost gets error 110200), and a real secret
+ * rejects test tokens, so `astro dev` uses this pair. Only ever read behind `import.meta.env.DEV`.
+ * https://developers.cloudflare.com/turnstile/troubleshooting/testing/
+ */
+export const TURNSTILE_TEST_KEYS = {
+  siteKey: '1x00000000000000000000AA',
+  secret: '1x0000000000000000000000000000000AA',
+} as const
+
 export type TurnstileVerdict = { ok: boolean; errorCodes: string[] }
 
 /** Turnstile tokens are single-use: verify each one exactly once. */

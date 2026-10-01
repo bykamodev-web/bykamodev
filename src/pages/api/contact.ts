@@ -5,8 +5,9 @@ import { GREETING } from '@/lib/contact/greeting'
 import { clientIp, errorResponse, jsonResponse, readJsonBody, zodDetails } from '@/lib/contact/http'
 import { checkRateLimit, type RateLimiter } from '@/lib/contact/rate-limit'
 import { FROM_ADDRESS, TO_ADDRESS, sendContactEmail } from '@/lib/contact/send-contact-email'
-import { getEnv, getSecret } from '@/lib/contact/server-env'
+import { getEnv } from '@/lib/contact/server-env'
 import { verifyTurnstile } from '@/lib/contact/turnstile'
+import { turnstileSecret } from './_secrets'
 
 export const prerender = false
 
@@ -63,10 +64,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
     })
   }
 
-  const turnstileSecret = getSecret(env, 'TURNSTILE_SECRET_KEY', import.meta.env.TURNSTILE_SECRET_KEY)
-  if (!turnstileSecret) return errorResponse(500, 'Server configuration error')
+  const secret = turnstileSecret(env)
+  if (!secret) return errorResponse(500, 'Server configuration error')
 
-  const verdict = await verifyTurnstile({ secret: turnstileSecret, token: data._turnstile, remoteIp: ip })
+  const verdict = await verifyTurnstile({ secret, token: data._turnstile, remoteIp: ip })
   if (!verdict.ok) {
     return errorResponse(403, '認証に失敗しました。もう一度お試しください。', { code: 'turnstile_failed' })
   }

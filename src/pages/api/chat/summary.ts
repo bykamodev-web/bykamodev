@@ -4,7 +4,7 @@ import { summaryRequestSchema } from '@/lib/contact/chat-schema'
 import { errorResponse, jsonResponse } from '@/lib/contact/http'
 import { createOpenAIClient, generateSummary } from '@/lib/contact/openai-chat'
 import { getEnv } from '@/lib/contact/server-env'
-import { chatSecrets } from './_secrets'
+import { chatSecrets } from '../_secrets'
 
 export const prerender = false
 

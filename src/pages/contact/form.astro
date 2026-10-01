@@ -12,8 +12,10 @@ import DirectFields from '@/components/contact/DirectFields.astro'
 import ContactFields from '@/components/contact/ContactFields.astro'
 import TurnstileWidget from '@/components/contact/TurnstileWidget.astro'
 import { CATEGORIES } from '@/lib/contact-schema'
+import { TURNSTILE_TEST_KEYS } from '@/lib/contact/turnstile'
 
-const siteKey = import.meta.env.TURNSTILE_SITE_KEY
+// A real site key refuses localhost, so `astro dev` runs on Cloudflare's test pair (see _secrets.ts).
+const siteKey = import.meta.env.DEV ? TURNSTILE_TEST_KEYS.siteKey : import.meta.env.TURNSTILE_SITE_KEY
 ---
 
 <BaseLayout title="お問い合わせフォーム" description="AI実装・自動化・プロダクト開発のご相談フォーム。AI と話しながら相談内容を整理できます。" clientRouter={false}>

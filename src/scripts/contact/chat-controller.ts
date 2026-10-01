@@ -1,7 +1,7 @@
 import type { ChatMessage } from '../../lib/contact/chat-schema.ts'
 import { requestSummary, startSession, streamChat } from './chat-api.ts'
 import type { ApiFailure } from './request.ts'
-import type { TokenSource } from './turnstile.ts'
+import { describeTurnstileFailure, type TokenSource } from './turnstile.ts'
 
 /**
  * Owns the chat session: gets one from Turnstile on first use, renews it when the server
@@ -28,7 +28,7 @@ export interface ChatController {
 }
 
 const RENEW_MARGIN_MS = 60_000
-const AUTH_FAILED = '認証を完了できませんでした。ページを再読み込みしてお試しください。'
+const SESSION_FAILED = 'セッションを更新できませんでした。ページを再読み込みしてお試しください。'
 
 const failed = (failure: ApiFailure): { kind: 'rejected' | 'unavailable'; notice: string } => ({
   kind: failure.code === 'chat_unavailable' ? 'unavailable' : 'rejected',
@@ -44,8 +44,8 @@ export function createChatController(tokens: TokenSource): ChatController {
     let turnstile: string
     try {
       turnstile = await tokens.getFreshToken()
-    } catch {
-      return { ok: false, status: 0, error: AUTH_FAILED }
+    } catch (error) {
+      return { ok: false, status: 0, error: describeTurnstileFailure(error) }
     }
 
     const started = await startSession(turnstile)
@@ -65,7 +65,7 @@ export function createChatController(tokens: TokenSource): ChatController {
       if (result.ok || result.code !== 'session_invalid' || attempt === 2) return result
       session = null
     }
-    return { ok: false, status: 401, error: AUTH_FAILED }
+    return { ok: false, status: 401, error: SESSION_FAILED }
   }
 
   return {

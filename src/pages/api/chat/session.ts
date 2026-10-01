@@ -6,7 +6,7 @@ import { checkRateLimit, type RateLimiter } from '@/lib/contact/rate-limit'
 import { getEnv } from '@/lib/contact/server-env'
 import { issueSessionToken } from '@/lib/contact/session-token'
 import { verifyTurnstile } from '@/lib/contact/turnstile'
-import { chatSecrets } from './_secrets'
+import { chatSecrets } from '../_secrets'
 
 export const prerender = false
 
