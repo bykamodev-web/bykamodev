@@ -1,123 +1,85 @@
 import type { APIRoute } from 'astro'
-import { contactFormSchema, getCategoryLabel } from '@/lib/contact-schema'
-import { buildMimeMessage, buildContactEmailBody } from '@/lib/email'
+import { contactPayloadSchema, getCategoryLabel, type ContactPayload } from '@/lib/contact-schema'
+import { buildChatContactEmailBody, buildContactEmailBody, buildMimeMessage } from '@/lib/email'
+import { GREETING } from '@/lib/contact/chat-prompt'
+import { clientIp, errorResponse, jsonResponse, readJsonBody, zodDetails } from '@/lib/contact/http'
+import { checkRateLimit, type RateLimiter } from '@/lib/contact/rate-limit'
+import { FROM_ADDRESS, TO_ADDRESS, sendContactEmail } from '@/lib/contact/send-contact-email'
+import { getEnv, getSecret } from '@/lib/contact/server-env'
+import { verifyTurnstile } from '@/lib/contact/turnstile'
 
 export const prerender = false
 
-const FROM_ADDRESS = 'noreply@bykamo.dev'
-const TO_ADDRESS = 'hello@bykamo.dev'
 const MIN_SUBMIT_MS = 3000
 const MAX_SUBMIT_MS = 60 * 60 * 1000
 
-function getEnv(locals: App.Locals): Record<string, unknown> {
-  const l = locals as unknown as Record<string, unknown>
-  if (l.runtime && typeof l.runtime === 'object') {
-    const rt = l.runtime as Record<string, unknown>
-    if (rt.env && typeof rt.env === 'object') return rt.env as Record<string, unknown>
+/** The owner's inbox is the only destination: this route never calls an AI. */
+function buildEmail(data: ContactPayload): { subject: string; body: string } {
+  const categoryLabel = getCategoryLabel(data.category)
+  const subject = `[bykamo.dev] ${categoryLabel} - ${data.name}`
+
+  if (data.mode === 'chat') {
+    return {
+      subject: `${subject} (AIチャット)`,
+      body: buildChatContactEmailBody({
+        name: data.name,
+        email: data.email,
+        categoryLabel,
+        summary: data.summary,
+        greeting: GREETING,
+        transcript: data.transcript,
+      }),
+    }
   }
-  return l
+
+  return {
+    subject,
+    body: buildContactEmailBody({ name: data.name, email: data.email, categoryLabel, message: data.message }),
+  }
 }
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const env = getEnv(locals)
 
-  const contentType = request.headers.get('content-type')
-  if (!contentType?.includes('application/json')) {
-    return new Response(
-      JSON.stringify({ success: false, error: 'Invalid content type' }),
-      { status: 400, headers: { 'Content-Type': 'application/json' } },
-    )
-  }
+  const parsed = await readJsonBody(request)
+  if (!parsed.ok) return parsed.response
 
-  let body: unknown
-  try {
-    body = await request.json()
-  } catch {
-    return new Response(
-      JSON.stringify({ success: false, error: 'Invalid JSON' }),
-      { status: 400, headers: { 'Content-Type': 'application/json' } },
-    )
-  }
-
-  const result = contactFormSchema.safeParse(body)
+  const result = contactPayloadSchema.safeParse(parsed.body)
   if (!result.success) {
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: 'バリデーションエラー',
-        details: result.error.issues.map((e) => ({
-          field: e.path.join('.'),
-          message: e.message,
-        })),
-      }),
-      { status: 400, headers: { 'Content-Type': 'application/json' } },
-    )
+    return errorResponse(400, 'バリデーションエラー', { details: zodDetails(result.error) })
   }
-
   const data = result.data
 
   const elapsed = Date.now() - data._timestamp
   if (elapsed < MIN_SUBMIT_MS || elapsed > MAX_SUBMIT_MS) {
-    return new Response(
-      JSON.stringify({ success: false, error: 'Request rejected' }),
-      { status: 400, headers: { 'Content-Type': 'application/json' } },
-    )
+    return errorResponse(400, 'Request rejected')
   }
 
-  const turnstileSecret = (env.TURNSTILE_SECRET_KEY as string) || import.meta.env.TURNSTILE_SECRET_KEY
-  if (!turnstileSecret) {
-    return new Response(
-      JSON.stringify({ success: false, error: 'Server configuration error' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } },
-    )
+  const ip = clientIp(request)
+  if (!(await checkRateLimit(env.RL_SUBMIT_IP as RateLimiter | undefined, `submit:${ip}`))) {
+    return errorResponse(429, '送信が続いています。1分ほど待ってからお試しください。', {
+      code: 'rate_limited',
+      headers: { 'Retry-After': '60' },
+    })
   }
 
-  const turnstileRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      secret: turnstileSecret,
-      response: data._turnstile,
-    }),
-  })
-  const turnstileData = await turnstileRes.json() as { success: boolean; 'error-codes'?: string[] }
-  if (!turnstileData.success) {
-    return new Response(
-      JSON.stringify({ success: false, error: '認証に失敗しました。ページを再読み込みしてお試しください。' }),
-      { status: 403, headers: { 'Content-Type': 'application/json' } },
-    )
+  const turnstileSecret = getSecret(env, 'TURNSTILE_SECRET_KEY', import.meta.env.TURNSTILE_SECRET_KEY)
+  if (!turnstileSecret) return errorResponse(500, 'Server configuration error')
+
+  const verdict = await verifyTurnstile({ secret: turnstileSecret, token: data._turnstile, remoteIp: ip })
+  if (!verdict.ok) {
+    return errorResponse(403, '認証に失敗しました。もう一度お試しください。', { code: 'turnstile_failed' })
   }
 
-  const categoryLabel = getCategoryLabel(data.category)
-  const emailBody = buildContactEmailBody({
-    name: data.name,
-    email: data.email,
-    categoryLabel,
-    message: data.message,
-  })
-
-  const mimeContent = buildMimeMessage({
-    from: FROM_ADDRESS,
-    to: TO_ADDRESS,
-    subject: `[bykamo.dev] ${categoryLabel} - ${data.name}`,
-    body: emailBody,
-  })
+  const { subject, body } = buildEmail(data)
+  const mimeContent = buildMimeMessage({ from: FROM_ADDRESS, to: TO_ADDRESS, replyTo: data.email, subject, body })
 
   try {
-    const { EmailMessage } = await import('cloudflare:email')
-    const msg = new EmailMessage(FROM_ADDRESS, TO_ADDRESS, mimeContent)
-    const emailBinding = env.EMAIL as { send: (msg: unknown) => Promise<void> }
-    await emailBinding.send(msg)
+    await sendContactEmail(env, mimeContent)
   } catch (error) {
     console.error('Email send failed:', error)
-    return new Response(
-      JSON.stringify({ success: false, error: 'メッセージの送信に失敗しました。時間をおいて再度お試しください。' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } },
-    )
+    return errorResponse(500, 'メッセージの送信に失敗しました。時間をおいて再度お試しください。')
   }
 
-  return new Response(
-    JSON.stringify({ success: true }),
-    { status: 200, headers: { 'Content-Type': 'application/json' } },
-  )
+  return jsonResponse({ success: true }, 200)
 }

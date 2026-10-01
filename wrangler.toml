@@ -14,3 +14,35 @@ head_sampling_rate = 1
 [[send_email]]
 name = "EMAIL"
 destination_address = "hello@bykamo.dev"
+
+# Contact chat cost guards. Windows are 10s or 60s only, counted per Cloudflare location,
+# and a namespace_id is shared by every Worker on the account that uses the same number.
+[[ratelimits]]
+name = "RL_CHAT_SESSION" # key: chat session id
+namespace_id = "1001"
+
+  [ratelimits.simple]
+  limit = 6
+  period = 60
+
+[[ratelimits]]
+name = "RL_CHAT_IP" # key: client IP
+namespace_id = "1002"
+
+  [ratelimits.simple]
+  limit = 15
+  period = 60
+
+[[ratelimits]]
+name = "RL_SUBMIT_IP" # key: "start:<ip>" / "submit:<ip>"
+namespace_id = "1003"
+
+  [ratelimits.simple]
+  limit = 5
+  period = 60
+
+# Daily ceiling on AI calls (src/lib/contact/daily-cap.ts). The cap is skipped until this
+# binding exists: run `wrangler kv namespace create CONTACT_KV` and paste the id here.
+# [[kv_namespaces]]
+# binding = "CONTACT_KV"
+# id = "<namespace id>"
