@@ -41,8 +41,7 @@ namespace_id = "1003"
   limit = 5
   period = 60
 
-# Daily ceiling on AI calls (src/lib/contact/daily-cap.ts). The cap is skipped until this
-# binding exists: run `wrangler kv namespace create CONTACT_KV` and paste the id here.
-# [[kv_namespaces]]
-# binding = "CONTACT_KV"
-# id = "<namespace id>"
+# Daily ceilings on AI calls, per client and site-wide (src/lib/contact/daily-cap.ts).
+[[kv_namespaces]]
+binding = "CONTACT_KV"
+id = "d282832740f14719ab14d128ac1f1181"
