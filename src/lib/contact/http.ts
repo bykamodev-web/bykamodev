@@ -35,3 +35,12 @@ export function zodDetails(error: z.ZodError): FieldIssue[] {
 export function clientIp(request: Request): string {
   return request.headers.get('CF-Connecting-IP') ?? 'unknown'
 }
+
+/**
+ * Key for per-client limits. One IPv6 subscriber holds a whole /64, so the key is that
+ * prefix: rotating the interface half of the address must not reset the counters.
+ */
+export function clientKey(request: Request): string {
+  const ip = clientIp(request)
+  return ip.includes(':') ? ip.split(':').slice(0, 4).join(':') : ip
+}

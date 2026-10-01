@@ -1,8 +1,11 @@
+import { MAX_ASSISTANT_MESSAGE_CHARS } from './limits.ts'
+
 /** Wire format of POST /api/chat: one JSON event per line. Shared by the Worker and the browser. */
 
 export type ChatStreamEvent =
   | { type: 'delta'; text: string }
-  | { type: 'done'; readyForSummary: boolean }
+  /** `sig` signs the whole reply; the browser sends it back with the reply on later turns. */
+  | { type: 'done'; readyForSummary: boolean; sig: string }
   | { type: 'error'; error: string; code: string }
 
 export const UPSTREAM_ERROR_MESSAGE = 'AI の応答を取得できませんでした。もう一度送るか、フォームから直接お送りください。'
@@ -28,10 +31,13 @@ export function parseNdjson(rest: string, chunk: string): { events: ChatStreamEv
   return { events: complete.flatMap(parseLine), rest: lines.at(-1) ?? '' }
 }
 
-/** Turns model text deltas into the NDJSON body. Upstream errors become one generic `error` event. */
+/**
+ * Turns model text deltas into the NDJSON body. The reply is cut at the length later
+ * requests accept, then signed. Upstream errors become one generic `error` event.
+ */
 export function chatEventStream(
   deltas: AsyncIterable<string>,
-  closing: { readyForSummary: boolean },
+  closing: { readyForSummary: boolean; sign: (reply: string) => Promise<string> },
   onCancel?: () => void,
 ): ReadableStream<Uint8Array> {
   const encoder = new TextEncoder()
@@ -41,8 +47,17 @@ export function chatEventStream(
   return new ReadableStream<Uint8Array>({
     async start(controller) {
       try {
-        for await (const text of deltas) send(controller, { type: 'delta', text })
-        send(controller, { type: 'done', readyForSummary: closing.readyForSummary })
+        let reply = ''
+        for await (const delta of deltas) {
+          const text = delta.slice(0, MAX_ASSISTANT_MESSAGE_CHARS - reply.length)
+          if (text) send(controller, { type: 'delta', text })
+          reply += text
+          if (reply.length >= MAX_ASSISTANT_MESSAGE_CHARS) {
+            onCancel?.()
+            break
+          }
+        }
+        send(controller, { type: 'done', readyForSummary: closing.readyForSummary, sig: await closing.sign(reply) })
       } catch (error) {
         console.error('Chat stream failed:', error)
         send(controller, { type: 'error', error: UPSTREAM_ERROR_MESSAGE, code: 'upstream_error' })

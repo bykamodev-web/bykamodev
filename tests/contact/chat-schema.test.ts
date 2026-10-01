@@ -10,7 +10,7 @@ import {
 import { MAX_USER_TURNS } from '../../src/lib/contact/limits.ts'
 
 const user = (content: string) => ({ role: 'user' as const, content })
-const assistant = (content: string) => ({ role: 'assistant' as const, content })
+const assistant = (content: string) => ({ role: 'assistant' as const, content, sig: 'c2ln' })
 const base = { session: 'v1.abc.def' }
 
 const alternating = (userTurns: number) =>
@@ -57,6 +57,12 @@ test('summary requests need at least two user turns and accept either tail role'
   assert.equal(summaryRequestSchema.safeParse({ ...base, messages: alternating(2) }).success, true)
   assert.equal(summaryRequestSchema.safeParse({ ...base, messages: [...alternating(2), assistant('ほかには？')] }).success, true)
   assert.equal(summaryRequestSchema.safeParse({ ...base, messages: alternating(2), email: 'a@example.com' }).success, false)
+})
+
+test('AI requests require a signature on every assistant turn', () => {
+  const unsigned = [user('相談'), { role: 'assistant', content: '質問' }, user('答え')]
+  assert.equal(chatRequestSchema.safeParse({ ...base, messages: unsigned }).success, false)
+  assert.equal(chatRequestSchema.safeParse({ ...base, messages: [{ ...user('相談'), sig: 'x' }] }).success, false)
 })
 
 test('session requests carry only a Turnstile token', () => {

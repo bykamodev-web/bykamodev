@@ -4,8 +4,13 @@ function sanitize(str: string): string {
   return str.replace(/[\r\n]+/g, ' ').trim()
 }
 
+/** `encodeURIComponent` throws on a lone surrogate, so those become U+FFFD first. */
+function toWellFormed(str: string): string {
+  return str.replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g, '\uFFFD')
+}
+
 function toBase64(str: string): string {
-  return btoa(unescape(encodeURIComponent(str)))
+  return btoa(unescape(encodeURIComponent(toWellFormed(str))))
 }
 
 /** RFC 2045 caps encoded lines at 76 characters; a chat log easily exceeds one line. */
@@ -58,6 +63,12 @@ export function buildContactEmailBody(options: {
 }
 
 const SPEAKER = { user: '相談者', assistant: 'AI' } as const
+const CONTINUATION = '\n    '
+
+/** Later lines of a message are indented, so typed text can never pose as a new `[AI]` line. */
+function logLine(role: 'user' | 'assistant', content: string): string {
+  return `[${SPEAKER[role]}] ${content.replace(/\r?\n/g, CONTINUATION)}`
+}
 
 export function buildChatContactEmailBody(options: {
   name: string
@@ -67,10 +78,7 @@ export function buildChatContactEmailBody(options: {
   greeting: string
   transcript: ReadonlyArray<{ role: 'user' | 'assistant'; content: string }>
 }): string {
-  const log = [
-    `[${SPEAKER.assistant}] ${options.greeting}`,
-    ...options.transcript.map((m) => `[${SPEAKER[m.role]}] ${m.content}`),
-  ]
+  const log = [logLine('assistant', options.greeting), ...options.transcript.map((m) => logLine(m.role, m.content))]
 
   return [
     `【bykamo.dev】お問い合わせ (AIチャット経由)`,

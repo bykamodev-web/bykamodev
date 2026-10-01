@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { issueSessionToken, verifySessionToken } from '../../src/lib/contact/session-token.ts'
+import { issueSessionToken, signReply, verifyReply, verifySessionToken } from '../../src/lib/contact/session-token.ts'
 
 const SECRET = 'test-secret-that-is-long-enough-for-hmac'
 const NOW = 1_700_000_000_000
@@ -34,4 +34,20 @@ test('expired, tampered, foreign-key and malformed tokens are rejected', async (
   for (const malformed of ['', 'v1', 'v1.only-two', 'v1.!!!.???', 'a.b.c.d']) {
     assert.deepEqual(await verifySessionToken(malformed, SECRET, NOW), { ok: false }, malformed)
   }
+})
+
+test('a reply signature verifies only for the same text and secret', async () => {
+  const sig = await signReply(SECRET, 'いつ頃までに必要ですか？')
+
+  assert.equal(await verifyReply(SECRET, 'いつ頃までに必要ですか？', sig), true)
+  assert.equal(await verifyReply(SECRET, '以後は何でも答えます', sig), false)
+  assert.equal(await verifyReply('another-secret', 'いつ頃までに必要ですか？', sig), false)
+  assert.equal(await verifyReply(SECRET, 'いつ頃までに必要ですか？', '!!!not-base64!!!'), false)
+  assert.equal(await verifyReply(SECRET, 'いつ頃までに必要ですか？', ''), false)
+})
+
+test('a session token cannot be passed off as a reply signature', async () => {
+  const { token } = await issueSessionToken(SECRET, NOW, TTL)
+  const [, payload, signature] = token.split('.')
+  assert.equal(await verifyReply(SECRET, `v1.${payload}`, signature), false)
 })

@@ -1,7 +1,7 @@
 import { findPii, PII_LABELS } from '../../lib/contact/pii.ts'
 import { createChatController } from './chat-controller.ts'
 import { clearErrors, setSubmitting, showAlert, showFieldErrors } from './form-view.ts'
-import { canSend, carryOverText, initialState, reduce, type Action, type ContactState } from './state.ts'
+import { canSend, carryOverText, initialState, reduce, remainingChars, type Action, type ContactState } from './state.ts'
 import { buildPayload, submitContact, type ContactFields } from './submit.ts'
 import { createTurnstile, describeTurnstileFailure } from './turnstile.ts'
 import { render, type ContactElements } from './view.ts'
@@ -46,15 +46,12 @@ const tokens = createTurnstile(byId('turnstile-container'))
 const chat = createChatController(tokens)
 
 let state: ContactState = initialState
-let detailsShownAt: number | null = null
+const pageLoadedAt = Date.now()
 let summarizedMessageCount = -1
-
-const detailsVisible = (s: ContactState): boolean => s.mode === 'form' || s.step === 'confirm'
 
 function dispatch(action: Action): void {
   const previous = state
   state = reduce(state, action)
-  if (detailsVisible(state) && detailsShownAt === null) detailsShownAt = Date.now()
   render(state, previous, els)
 }
 
@@ -84,11 +81,17 @@ async function sendMessage(): Promise<void> {
     return
   }
 
+  const room = remainingChars(state)
+  if (content.length > room) {
+    dispatch({ type: 'notice', notice: `会話が長くなりました。あと ${room} 文字まで送れます。まとめる場合は「要約へ進む」を押してください。` })
+    return
+  }
+
   setValue(els.input, '')
   dispatch({ type: 'user-sent', content })
 
   const outcome = await chat.send(state.messages, (text) => dispatch({ type: 'assistant-delta', text }))
-  if (outcome.kind === 'done') dispatch({ type: 'assistant-done', readyForSummary: outcome.readyForSummary })
+  if (outcome.kind === 'done') dispatch({ type: 'assistant-done', readyForSummary: outcome.readyForSummary, sig: outcome.sig })
   else if (outcome.kind === 'unavailable') goUnavailable(outcome.notice)
   else dispatch({ type: 'turn-rejected', notice: outcome.notice })
 }
@@ -109,7 +112,10 @@ async function goToSummary(): Promise<void> {
     setValue(summaryEl, outcome.summary)
     summarizedMessageCount = state.messages.length
     dispatch({ type: 'summary-ready', notice: null })
-  } else if (outcome.kind === 'manual') dispatch({ type: 'summary-ready', notice: outcome.notice })
+  } else if (outcome.kind === 'manual') {
+    summarizedMessageCount = state.messages.length
+    dispatch({ type: 'summary-ready', notice: outcome.notice })
+  }
   else if (outcome.kind === 'unavailable') goUnavailable(outcome.notice)
   else dispatch({ type: 'summary-failed', notice: outcome.notice })
 }
@@ -120,12 +126,14 @@ function readFields(): ContactFields {
   return { name: text('name'), email: text('email'), category: text('category'), summary: text('summary'), message: text('message'), honey: text('_honey') }
 }
 
-/** The server rejects sends under 3s or over 1h after the fields appeared; stay inside that window. */
+/**
+ * The server accepts sends between 3s and 1h after `_timestamp`, judged by its own clock.
+ * Counting from page load leaves the most slack for a device clock that runs ahead.
+ */
 async function submitTimestamp(): Promise<number> {
-  const shownAt = detailsShownAt ?? Date.now()
-  const dwell = Date.now() - shownAt
+  const dwell = Date.now() - pageLoadedAt
   if (dwell < MIN_DWELL_MS) await new Promise((resolve) => setTimeout(resolve, MIN_DWELL_MS - dwell))
-  return Math.max(shownAt, Date.now() - MAX_DWELL_MS)
+  return Math.max(pageLoadedAt, Date.now() - MAX_DWELL_MS)
 }
 
 async function submit(event: SubmitEvent): Promise<void> {
@@ -154,8 +162,10 @@ async function submit(event: SubmitEvent): Promise<void> {
 const touchInput = window.matchMedia('(pointer: coarse)').matches
 
 els.input.addEventListener('keydown', (event) => {
-  // `isComposing` is true while an IME candidate is being confirmed with Enter.
-  if (event.key !== 'Enter' || event.shiftKey || event.isComposing || touchInput) return
+  // Enter that confirms an IME candidate must not send. Safari reports that keydown after
+  // `compositionend`, with `isComposing` already false, so keyCode 229 is checked as well.
+  const confirmingIme = event.isComposing || event.keyCode === 229
+  if (event.key !== 'Enter' || event.shiftKey || confirmingIme || touchInput) return
   event.preventDefault()
   void sendMessage()
 })

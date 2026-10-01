@@ -1,5 +1,5 @@
 import { GREETING } from '../../lib/contact/greeting.ts'
-import { canSend, remainingTurns, type ContactState } from './state.ts'
+import { canSend, chatClosed, remainingTurns, type ContactState } from './state.ts'
 
 /** Paints the page from state. Model and visitor text only ever goes through `textContent`. */
 
@@ -22,7 +22,7 @@ export interface ContactElements {
 }
 
 const SPEAKER = { user: 'YOU', assistant: 'AI' } as const
-const OUT_OF_TURNS = 'やり取りの上限に達しました。「要約へ進む」を押してください。'
+const CLOSED = 'やり取りの上限に達しました。「要約へ進む」を押してください。'
 const PLACEHOLDER = '例: 請求書の処理を自動化したい'
 
 const BAR: Record<string, readonly [string, string]> = {
@@ -86,14 +86,13 @@ export function render(state: ContactState, previous: ContactState | null, els: 
   toggle(els.detailsSection, !showChat)
   toggle(els.summaryField, state.mode === 'chat')
   toggle(els.messageField, state.mode === 'form')
-  toggle(els.backToChat, state.mode === 'chat' && remainingTurns(state) > 0)
+  toggle(els.backToChat, state.mode === 'chat' && !chatClosed(state))
 
   renderLog(els.log, state)
 
   const sendable = canSend(state)
-  const outOfTurns = remainingTurns(state) === 0
   els.input.disabled = !sendable
-  els.input.placeholder = outOfTurns ? OUT_OF_TURNS : PLACEHOLDER
+  els.input.placeholder = chatClosed(state) ? CLOSED : PLACEHOLDER
   els.send.disabled = !sendable
   els.remaining.textContent = `あと ${remainingTurns(state)} 回`
   toggle(els.toSummary, state.readyForSummary)

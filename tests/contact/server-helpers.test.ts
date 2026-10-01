@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { z } from 'zod'
-import { clientIp, errorResponse, jsonResponse, readJsonBody, zodDetails } from '../../src/lib/contact/http.ts'
+import { clientIp, clientKey, errorResponse, jsonResponse, readJsonBody, zodDetails } from '../../src/lib/contact/http.ts'
 import { checkRateLimit } from '../../src/lib/contact/rate-limit.ts'
 import { getEnv, getSecret } from '../../src/lib/contact/server-env.ts'
 import { verifyTurnstile } from '../../src/lib/contact/turnstile.ts'
@@ -46,6 +46,14 @@ test('clientIp reads the Cloudflare header and falls back to a constant', () => 
   const withHeader = new Request('https://bykamo.dev/', { headers: { 'CF-Connecting-IP': '203.0.113.7' } })
   assert.equal(clientIp(withHeader), '203.0.113.7')
   assert.equal(clientIp(new Request('https://bykamo.dev/')), 'unknown')
+})
+
+test('clientKey groups an IPv6 /64 and leaves IPv4 alone', () => {
+  const from = (ip: string) => new Request('https://bykamo.dev/', { headers: { 'CF-Connecting-IP': ip } })
+  assert.equal(clientKey(from('203.0.113.7')), '203.0.113.7')
+  assert.equal(clientKey(from('2001:db8:1234:5678:aaaa:bbbb:cccc:dddd')), '2001:db8:1234:5678')
+  assert.equal(clientKey(from('2001:db8:1234:5678:1111:2222:3333:4444')), '2001:db8:1234:5678')
+  assert.notEqual(clientKey(from('2001:db8:1234:9999::1')), '2001:db8:1234:5678')
 })
 
 test('checkRateLimit passes when the binding is missing and follows the binding otherwise', async () => {

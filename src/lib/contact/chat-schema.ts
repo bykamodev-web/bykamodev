@@ -16,18 +16,30 @@ import {
  * extra key is rejected, so contact details cannot ride along to an AI endpoint.
  */
 
+const userMessageSchema = z.strictObject({
+  role: z.literal('user'),
+  content: z.string().trim().min(1, 'メッセージを入力してください').max(MAX_USER_MESSAGE_CHARS, `${MAX_USER_MESSAGE_CHARS}文字以内で入力してください`),
+})
+
+const assistantContent = z.string().min(1).max(MAX_ASSISTANT_MESSAGE_CHARS)
+
+/** A turn as it is e-mailed: role and text only. */
 export const chatMessageSchema = z.discriminatedUnion('role', [
-  z.strictObject({
-    role: z.literal('user'),
-    content: z.string().trim().min(1, 'メッセージを入力してください').max(MAX_USER_MESSAGE_CHARS, `${MAX_USER_MESSAGE_CHARS}文字以内で入力してください`),
-  }),
-  z.strictObject({
-    role: z.literal('assistant'),
-    content: z.string().min(1).max(MAX_ASSISTANT_MESSAGE_CHARS),
-  }),
+  userMessageSchema,
+  z.strictObject({ role: z.literal('assistant'), content: assistantContent }),
+])
+
+/**
+ * A turn as the AI endpoints accept it: each assistant reply carries the signature the
+ * Worker issued with it, so a client cannot invent what the assistant "said".
+ */
+export const signedChatMessageSchema = z.discriminatedUnion('role', [
+  userMessageSchema,
+  z.strictObject({ role: z.literal('assistant'), content: assistantContent, sig: z.string().min(1).max(128) }),
 ])
 
 export type ChatMessage = z.infer<typeof chatMessageSchema>
+export type SignedChatMessage = z.infer<typeof signedChatMessageSchema>
 
 export function countUserTurns(messages: ReadonlyArray<{ role: string }>): number {
   return messages.filter((m) => m.role === 'user').length
@@ -40,7 +52,7 @@ export function conversationLength(messages: ReadonlyArray<{ content: string }>)
 type Issue = { message: string }
 
 /** Conversations start with the user and strictly alternate. */
-export function conversationIssues(messages: ReadonlyArray<ChatMessage>): Issue[] {
+export function conversationIssues(messages: ReadonlyArray<{ role: string; content: string }>): Issue[] {
   const outOfOrder = messages.some((m, i) => m.role !== (i % 2 === 0 ? 'user' : 'assistant'))
   return [
     ...(outOfOrder ? [{ message: '会話の順序が正しくありません' }] : []),
@@ -49,7 +61,7 @@ export function conversationIssues(messages: ReadonlyArray<ChatMessage>): Issue[
   ]
 }
 
-const messagesSchema = z.array(chatMessageSchema).min(1).max(MAX_MESSAGES)
+const messagesSchema = z.array(signedChatMessageSchema).min(1).max(MAX_MESSAGES)
 
 const addIssues = (ctx: z.RefinementCtx, issues: Issue[]): void => {
   for (const issue of issues) ctx.addIssue({ code: 'custom', path: ['messages'], message: issue.message })

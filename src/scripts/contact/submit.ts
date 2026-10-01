@@ -25,7 +25,7 @@ export function buildPayload(state: ContactState, fields: ContactFields, turnsti
   }
 
   return state.mode === 'chat'
-    ? { mode: 'chat', ...common, summary: fields.summary, transcript: state.messages }
+    ? { mode: 'chat', ...common, summary: fields.summary, transcript: state.messages.map(({ role, content }) => ({ role, content })) }
     : { mode: 'form', ...common, message: fields.message }
 }
 

@@ -6,7 +6,11 @@ import { MAX_MESSAGES, SUMMARY_MAX_CHARS, SUMMARY_MIN_CHARS } from './contact/li
 export { CATEGORIES, getCategoryLabel } from './contact/categories.ts'
 
 const common = {
-  name: z.string().min(1, 'お名前を入力してください').max(100, '100文字以内で入力してください'),
+  name: z
+    .string()
+    .min(1, 'お名前を入力してください')
+    .max(100, '100文字以内で入力してください')
+    .regex(/^[^\r\n]*$/, 'お名前に改行は使えません'),
   email: z.email('有効なメールアドレスを入力してください'),
   category: z.enum(CATEGORY_VALUES, { error: 'ご相談の種類を選択してください' }),
   _timestamp: z.number(),

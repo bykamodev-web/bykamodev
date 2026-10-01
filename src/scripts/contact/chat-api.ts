@@ -1,4 +1,4 @@
-import type { ChatMessage } from '../../lib/contact/chat-schema.ts'
+import type { SignedChatMessage } from '../../lib/contact/chat-schema.ts'
 import { parseNdjson, UPSTREAM_ERROR_MESSAGE, type ChatStreamEvent } from '../../lib/contact/ndjson.ts'
 import { failureOf, postJson, readJson, type ApiFailure } from './request.ts'
 
@@ -7,7 +7,8 @@ import { failureOf, postJson, readJson, type ApiFailure } from './request.ts'
  * and nothing else: this module has no access to the contact fields.
  */
 
-type Conversation = ReadonlyArray<ChatMessage>
+type Conversation = ReadonlyArray<SignedChatMessage>
+type ReplyDone = { ok: true; readyForSummary: boolean; sig: string }
 
 const CHAT_FAILED = 'AI の応答を取得できませんでした。もう一度お試しください。'
 
@@ -26,7 +27,7 @@ export async function streamChat(
   session: string,
   messages: Conversation,
   onDelta: (text: string) => void,
-): Promise<{ ok: true; readyForSummary: boolean } | ApiFailure> {
+): Promise<ReplyDone | ApiFailure> {
   const res = await postJson('/api/chat', { session, messages })
   if (!res?.ok || !res.body) return failureOf(res, CHAT_FAILED)
 
@@ -34,10 +35,10 @@ export async function streamChat(
   const upstream: ApiFailure = { ok: false, status: 502, code: 'upstream_error', error: UPSTREAM_ERROR_MESSAGE }
   let rest = ''
 
-  const handle = (events: ChatStreamEvent[]): { ok: true; readyForSummary: boolean } | ApiFailure | null => {
+  const handle = (events: ChatStreamEvent[]): ReplyDone | ApiFailure | null => {
     for (const event of events) {
       if (event.type === 'delta') onDelta(event.text)
-      else if (event.type === 'done') return { ok: true, readyForSummary: event.readyForSummary }
+      else if (event.type === 'done') return { ok: true, readyForSummary: event.readyForSummary, sig: event.sig }
       else return { ...upstream, error: event.error, code: event.code }
     }
     return null

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { MAX_USER_TURNS } from '../../src/lib/contact/limits.ts'
-import { canSend, carryOverText, initialState, reduce, remainingTurns, type ContactState } from '../../src/scripts/contact/state.ts'
+import { FORM_MESSAGE_MAX_CHARS, MAX_ASSISTANT_MESSAGE_CHARS, MAX_CONVERSATION_CHARS, MAX_USER_TURNS } from '../../src/lib/contact/limits.ts'
+import { canSend, carryOverText, chatClosed, initialState, reduce, remainingChars, remainingTurns, type ContactState } from '../../src/scripts/contact/state.ts'
 
 const run = (actions: Parameters<typeof reduce>[1][], from: ContactState = initialState): ContactState =>
   actions.reduce(reduce, from)
@@ -10,7 +10,7 @@ const oneTurn = (content: string, reply: string) => [
   { type: 'user-sent' as const, content },
   { type: 'assistant-delta' as const, text: reply.slice(0, 2) },
   { type: 'assistant-delta' as const, text: reply.slice(2) },
-  { type: 'assistant-done' as const, readyForSummary: true },
+  { type: 'assistant-done' as const, readyForSummary: true, sig: 'c2ln' },
 ]
 
 test('the page starts in chat mode on the talk step', () => {
@@ -31,8 +31,8 @@ test('a turn appends the user message, streams the reply and settles into the lo
   const streaming = reduce(reduce(sent, { type: 'assistant-delta', text: 'いつ' }), { type: 'assistant-delta', text: '頃ですか？' })
   assert.equal(streaming.streaming, 'いつ頃ですか？')
 
-  const done = reduce(streaming, { type: 'assistant-done', readyForSummary: false })
-  assert.deepEqual(done.messages.at(-1), { role: 'assistant', content: 'いつ頃ですか？' })
+  const done = reduce(streaming, { type: 'assistant-done', readyForSummary: false, sig: 'c2ln' })
+  assert.deepEqual(done.messages.at(-1), { role: 'assistant', content: 'いつ頃ですか？', sig: 'c2ln' })
   assert.deepEqual([done.pending, done.streaming, done.readyForSummary], [false, '', false])
 })
 
@@ -101,4 +101,26 @@ test('switching modes by hand keeps the conversation and clears notices', () => 
   const form = reduce(talked, { type: 'mode', mode: 'form' })
   assert.deepEqual([form.mode, form.notice, form.messages.length], ['form', null, 2])
   assert.equal(reduce(form, { type: 'mode', mode: 'chat' }).mode, 'chat')
+})
+
+test('the character budget closes the chat while the conversation still fits the server limit', () => {
+  assert.equal(remainingChars(initialState), MAX_CONVERSATION_CHARS - MAX_ASSISTANT_MESSAGE_CHARS)
+
+  const long = Array.from({ length: 10 }, (_, i) => [
+    { type: 'user-sent' as const, content: `${i}`.padEnd(500, 'あ') },
+    { type: 'assistant-delta' as const, text: 'い'.repeat(230) },
+    { type: 'assistant-done' as const, readyForSummary: false, sig: 'c2ln' },
+  ]).flat()
+  const full = run(long)
+  const total = full.messages.reduce((n, m) => n + m.content.length, 0)
+
+  assert.equal(remainingTurns(full), 2)
+  assert.equal(remainingChars(full), 0)
+  assert.deepEqual([chatClosed(full), canSend(full), full.readyForSummary], [true, false, true])
+  assert.ok(total <= MAX_CONVERSATION_CHARS, `conversation is ${total} characters`)
+})
+
+test('text carried over to the form is cut to what the form accepts', () => {
+  const turns = Array.from({ length: 6 }, (_, i) => oneTurn('あ'.repeat(600), `質問 ${i}`)).flat()
+  assert.equal(carryOverText(run(turns)).length, FORM_MESSAGE_MAX_CHARS)
 })

@@ -30,5 +30,9 @@ export const JEV_THRESHOLDS = {
   jailbreak: 0.8,
 } as const
 
-/** Site-wide ceiling on AI calls per UTC day (Rate Limiting windows are 60s at most). */
+/** Ceilings on AI calls per UTC day (Rate Limiting windows are 60s at most). One conversation is up to 14 calls. */
 export const DAILY_AI_CALL_LIMIT = 300
+export const DAILY_AI_CALL_LIMIT_PER_IP = 60
+
+/** What the plain form's message field accepts; used when a chat is carried over to it. */
+export const FORM_MESSAGE_MAX_CHARS = 2000

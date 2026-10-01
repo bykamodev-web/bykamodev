@@ -59,6 +59,12 @@ test('the honeypot and the Turnstile token are still enforced', () => {
   assert.equal(contactPayloadSchema.safeParse({ ...formPayload, _turnstile: '' }).success, false)
 })
 
+test('a name cannot span lines, and transcript turns carry no signature', () => {
+  assert.equal(contactPayloadSchema.safeParse({ ...formPayload, name: '山田\nメールアドレス: forged@example.com' }).success, false)
+  const signed = transcript.map((m) => (m.role === 'assistant' ? { ...m, sig: 'c2ln' } : m))
+  assert.equal(contactPayloadSchema.safeParse({ ...chatPayload, transcript: signed }).success, false)
+})
+
 test('category labels resolve from the shared list', () => {
   assert.equal(CATEGORIES.length, 4)
   assert.equal(getCategoryLabel('ai-implementation'), 'AI実装の相談')

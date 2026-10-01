@@ -1,4 +1,4 @@
-import type { ChatMessage } from '../../lib/contact/chat-schema.ts'
+import type { SignedChatMessage } from '../../lib/contact/chat-schema.ts'
 import { requestSummary, startSession, streamChat } from './chat-api.ts'
 import type { ApiFailure } from './request.ts'
 import { describeTurnstileFailure, type TokenSource } from './turnstile.ts'
@@ -8,11 +8,11 @@ import { describeTurnstileFailure, type TokenSource } from './turnstile.ts'
  * says it expired, and maps server answers to what the page should do next.
  */
 
-type Conversation = ReadonlyArray<ChatMessage>
+type Conversation = ReadonlyArray<SignedChatMessage>
 type Session = { token: string; expiresAt: number }
 
 export type TurnOutcome =
-  | { kind: 'done'; readyForSummary: boolean }
+  | { kind: 'done'; readyForSummary: boolean; sig: string }
   | { kind: 'rejected'; notice: string }
   | { kind: 'unavailable'; notice: string }
 
@@ -71,7 +71,7 @@ export function createChatController(tokens: TokenSource): ChatController {
   return {
     async send(messages, onDelta) {
       const result = await withSession((token) => streamChat(token, messages, onDelta))
-      return result.ok ? { kind: 'done', readyForSummary: result.readyForSummary } : failed(result)
+      return result.ok ? { kind: 'done', readyForSummary: result.readyForSummary, sig: result.sig } : failed(result)
     },
 
     async summarize(messages) {

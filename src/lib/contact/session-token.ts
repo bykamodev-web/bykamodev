@@ -31,6 +31,26 @@ function isPayload(value: unknown): value is Payload {
   return typeof v.sid === 'string' && typeof v.iat === 'number' && typeof v.exp === 'number'
 }
 
+const replyMessage = (content: string): Uint8Array<ArrayBuffer> => encoder.encode(`reply\n${content}`)
+
+/**
+ * Signs an assistant reply so the next request can prove the Worker produced it.
+ * Bound to the secret, not the session, so a renewed session can continue the same chat.
+ */
+export async function signReply(secret: string, content: string): Promise<string> {
+  const signature = await crypto.subtle.sign('HMAC', await importKey(secret), replyMessage(content))
+  return toBase64Url(new Uint8Array(signature))
+}
+
+export async function verifyReply(secret: string, content: string, signature: string): Promise<boolean> {
+  try {
+    return await crypto.subtle.verify('HMAC', await importKey(secret), fromBase64Url(signature), replyMessage(content))
+  } catch {
+    // Not base64url: a forged signature, not a server fault.
+    return false
+  }
+}
+
 export async function issueSessionToken(
   secret: string,
   now: number,

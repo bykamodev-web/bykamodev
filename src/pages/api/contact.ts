@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro'
 import { contactPayloadSchema, getCategoryLabel, type ContactPayload } from '@/lib/contact-schema'
 import { buildChatContactEmailBody, buildContactEmailBody, buildMimeMessage } from '@/lib/email'
 import { GREETING } from '@/lib/contact/greeting'
-import { clientIp, errorResponse, jsonResponse, readJsonBody, zodDetails } from '@/lib/contact/http'
+import { clientIp, clientKey, errorResponse, jsonResponse, readJsonBody, zodDetails } from '@/lib/contact/http'
 import { checkRateLimit, type RateLimiter } from '@/lib/contact/rate-limit'
 import { FROM_ADDRESS, TO_ADDRESS, sendContactEmail } from '@/lib/contact/send-contact-email'
 import { getEnv } from '@/lib/contact/server-env'
@@ -57,7 +57,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
 
   const ip = clientIp(request)
-  if (!(await checkRateLimit(env.RL_SUBMIT_IP as RateLimiter | undefined, `submit:${ip}`))) {
+  if (!(await checkRateLimit(env.RL_SUBMIT_IP as RateLimiter | undefined, `submit:${clientKey(request)}`))) {
     return errorResponse(429, '送信が続いています。1分ほど待ってからお試しください。', {
       code: 'rate_limited',
       headers: { 'Retry-After': '60' },
@@ -72,11 +72,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return errorResponse(403, '認証に失敗しました。もう一度お試しください。', { code: 'turnstile_failed' })
   }
 
-  const { subject, body } = buildEmail(data)
-  const mimeContent = buildMimeMessage({ from: FROM_ADDRESS, to: TO_ADDRESS, replyTo: data.email, subject, body })
-
   try {
-    await sendContactEmail(env, mimeContent)
+    const { subject, body } = buildEmail(data)
+    await sendContactEmail(env, buildMimeMessage({ from: FROM_ADDRESS, to: TO_ADDRESS, replyTo: data.email, subject, body }))
   } catch (error) {
     console.error('Email send failed:', error)
     return errorResponse(500, 'メッセージの送信に失敗しました。時間をおいて再度お試しください。')

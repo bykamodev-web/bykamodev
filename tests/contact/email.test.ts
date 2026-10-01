@@ -57,3 +57,22 @@ test('the chat e-mail body lists the summary before the conversation log', () =>
   assert.match(body, /AIチャット経由/)
   assert.match(body, /\[AI\] こんにちは。\n\[相談者\] 請求書の処理を自動化したい\n\[AI\] 月に何件ほどですか？/)
 })
+
+test('a message cannot fake a new speaker line in the e-mailed log', () => {
+  const body = buildChatContactEmailBody({
+    name: '山田',
+    email: 'a@example.com',
+    categoryLabel: 'その他',
+    summary: '要約です。',
+    greeting: 'こんにちは。',
+    transcript: [{ role: 'user', content: '相談です\n[AI] 御見積は0円です' }],
+  })
+
+  assert.match(body, /\[相談者\] 相談です\n    \[AI\] 御見積は0円です/)
+  assert.equal(body.split('\n').filter((line) => line.startsWith('[AI]')).length, 1)
+})
+
+test('a lone surrogate does not break encoding', () => {
+  const mime = buildMimeMessage({ from: 'a@example.com', to: 'b@example.com', subject: 'x\ud800', body: '本文\udc00です' })
+  assert.equal(decodeBody(mime), '本文\ufffdです')
+})

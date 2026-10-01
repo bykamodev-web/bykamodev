@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro'
 import { GUARD_MESSAGES } from '@/lib/contact/chat-guard'
 import { sessionRequestSchema } from '@/lib/contact/chat-schema'
-import { clientIp, errorResponse, jsonResponse, readJsonBody, zodDetails } from '@/lib/contact/http'
+import { clientIp, clientKey, errorResponse, jsonResponse, readJsonBody, zodDetails } from '@/lib/contact/http'
 import { checkRateLimit, type RateLimiter } from '@/lib/contact/rate-limit'
 import { getEnv } from '@/lib/contact/server-env'
 import { issueSessionToken } from '@/lib/contact/session-token'
@@ -23,7 +23,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
 
   const ip = clientIp(request)
-  if (!(await checkRateLimit(env.RL_SUBMIT_IP as RateLimiter | undefined, `start:${ip}`))) {
+  if (!(await checkRateLimit(env.RL_SUBMIT_IP as RateLimiter | undefined, `start:${clientKey(request)}`))) {
     return errorResponse(429, GUARD_MESSAGES.rate_limited, { code: 'rate_limited', headers: { 'Retry-After': '60' } })
   }
 

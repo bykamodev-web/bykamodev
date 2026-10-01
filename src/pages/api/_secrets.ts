@@ -7,9 +7,10 @@ export function turnstileSecret(env: ServerEnv): string | undefined {
 }
 
 /**
- * Production reads Worker secrets from the runtime env. The `import.meta.env` values come
- * from `.env.local` and are used only under `astro dev`; the `DEV` guard keeps them out of
- * the built Worker bundle.
+ * Production reads Worker secrets from the runtime env. For the three chat secrets the
+ * `import.meta.env` values (from `.env.local`) are used only under `astro dev`; the `DEV`
+ * guard keeps them out of the built Worker bundle. `TURNSTILE_SECRET_KEY` keeps its older,
+ * unguarded build-time fallback so existing deploys behave as before.
  */
 export function chatSecrets(env: ServerEnv) {
   return {

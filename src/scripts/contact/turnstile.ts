@@ -102,9 +102,15 @@ export function createTurnstile(container: HTMLElement): TokenSource {
       }
 
       return new Promise((resolve, reject) => {
-        const timer = setTimeout(() => reject(new TurnstileError('timeout')), TOKEN_TIMEOUT_MS)
         const settle = <T>(finish: (value: T) => void) => (value: T): void => { clearTimeout(timer); finish(value) }
-        waiters = [...waiters, { resolve: settle(resolve), reject: settle(reject) }]
+        const waiter: Waiter = { resolve: settle(resolve), reject: settle(reject) }
+        // A caller that gave up must leave the queue, or the next token would go to nobody.
+        const timer = setTimeout(() => {
+          waiters = waiters.filter((queued) => queued !== waiter)
+          needsReset = true
+          reject(new TurnstileError('timeout'))
+        }, TOKEN_TIMEOUT_MS)
+        waiters = [...waiters, waiter]
         if (needsReset) {
           needsReset = false
           api.reset(id)
