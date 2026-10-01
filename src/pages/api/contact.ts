@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro'
 import { contactPayloadSchema, getCategoryLabel, type ContactPayload } from '@/lib/contact-schema'
 import { buildChatContactEmailBody, buildContactEmailBody, buildMimeMessage } from '@/lib/email'
-import { GREETING } from '@/lib/contact/chat-prompt'
+import { GREETING } from '@/lib/contact/greeting'
 import { clientIp, errorResponse, jsonResponse, readJsonBody, zodDetails } from '@/lib/contact/http'
 import { checkRateLimit, type RateLimiter } from '@/lib/contact/rate-limit'
 import { FROM_ADDRESS, TO_ADDRESS, sendContactEmail } from '@/lib/contact/send-contact-email'

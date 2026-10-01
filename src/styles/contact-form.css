@@ -1,0 +1,331 @@
+/*
+ * /contact/form only (imported by that page, so no other page inlines it).
+ * Hooks used by src/scripts/contact: `.hidden`, `.form-error`, `.form-alert`, `[aria-pressed]`.
+ */
+
+.form-page { --error: #b3261e; --error-bg: #fdf1f0; padding-top: clamp(24px, 4vw, 56px); }
+
+.form-page__grid { display: grid; gap: 48px; }
+.form-page__sticky { display: grid; gap: 24px; align-content: start; }
+.form-page__sticky > .form-page__title {
+  font-size: var(--text-display);
+  font-weight: 700;
+  font-feature-settings: "palt";
+  letter-spacing: -0.01em;
+  line-height: 1.16;
+}
+.form-page__lead { max-width: 26em; }
+
+.hidden { display: none !important; }
+
+/* ---------- Panel ---------- */
+
+.form-panel { box-shadow: var(--shadow-hard-lg); }
+
+.form-panel__bar {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px clamp(20px, 3vw, 40px);
+  background: var(--color-ink-violet);
+  color: var(--color-cream-paper);
+  font-family: var(--font-supply);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+
+.form-panel__fields { display: grid; gap: 28px; padding: clamp(24px, 3.4vw, 48px) clamp(20px, 3vw, 40px); }
+
+/* ---------- Mode switch: two drawing sheets, the active one highlighted ---------- */
+
+.mode-switch { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--color-ink-violet); }
+
+.mode-switch__btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  padding: 12px clamp(16px, 3vw, 40px);
+  background: var(--color-cream-paper);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+
+.mode-switch__btn + .mode-switch__btn { border-left: 1px solid var(--color-ink-violet); }
+.mode-switch__btn:hover { background: #fffbe8; }
+.mode-switch__btn[aria-pressed="true"] { background: var(--color-butter-yellow); }
+.mode-switch__btn:focus-visible { outline-offset: -4px; }
+.mode-switch__btn:disabled { cursor: not-allowed; opacity: 0.56; text-decoration: line-through; }
+
+.mode-switch__key {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--color-ink-violet);
+  background: var(--color-pure-white);
+  font-family: var(--font-supply);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.panel-notice {
+  margin: clamp(20px, 3vw, 32px) clamp(20px, 3vw, 40px) 0;
+  padding: 14px 16px;
+  border: 1px solid var(--color-ink-violet);
+  border-left-width: 4px;
+  background: #fffbe8;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.7;
+}
+
+/* ---------- Chat ---------- */
+
+.chat { display: grid; gap: 24px; padding: clamp(24px, 3.4vw, 48px) clamp(20px, 3vw, 40px); }
+
+.chat-log {
+  display: grid;
+  gap: 18px;
+  align-content: start;
+  min-height: 240px;
+  max-height: min(56vh, 520px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 20px;
+  border: 1px solid var(--color-ink-violet);
+  background:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px) 0 0 / 40px 100%,
+    var(--color-cream-paper);
+}
+
+.chat-bubble { display: grid; gap: 6px; max-width: min(88%, 34em); }
+.chat-bubble--assistant { justify-self: start; }
+.chat-bubble--user { justify-self: end; }
+
+.chat-bubble__who { font-family: var(--font-supply); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; }
+.chat-bubble--user .chat-bubble__who { justify-self: end; }
+
+.chat-bubble__text {
+  padding: 12px 16px;
+  border: 1px solid var(--color-ink-violet);
+  background: var(--color-pure-white);
+  font-size: 16px;
+  line-height: 1.75;
+  letter-spacing: 0.02em;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.chat-bubble--user .chat-bubble__text { background: var(--color-butter-yellow); }
+
+.chat-typing { display: inline-flex; gap: 6px; align-items: center; min-height: 1.75em; }
+.chat-typing i { width: 6px; height: 6px; background: var(--color-ink-violet); animation: chat-typing 1200ms var(--ease-in-out) infinite; }
+.chat-typing i:nth-child(2) { animation-delay: 160ms; }
+.chat-typing i:nth-child(3) { animation-delay: 320ms; }
+
+@keyframes chat-typing {
+  0%, 60%, 100% { opacity: 0.24; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-3px); }
+}
+
+.chat-compose { display: grid; gap: 12px; }
+.chat-input { min-height: 104px; resize: vertical; }
+.chat-hint { opacity: 0.72; }
+.chat-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 4px; }
+.chat-send { min-width: 180px; }
+
+.chat-privacy,
+.field__help,
+.contact-box__note { font-size: 14px; line-height: 1.75; letter-spacing: 0.02em; }
+
+/* ---------- Fields ---------- */
+
+.field { display: grid; gap: 10px; }
+
+.form-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-ink-violet);
+}
+
+.form-tag {
+  flex: none;
+  padding: 2px 6px;
+  border: 1px solid var(--color-ink-violet);
+  font-family: var(--font-supply);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+}
+
+.form-input {
+  width: 100%;
+  min-height: 56px;
+  padding: 15px 16px;
+  border: 1px solid var(--color-ink-violet);
+  background: var(--color-pure-white);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--color-ink-violet);
+  transition:
+    transform var(--dur-1) var(--ease-out),
+    box-shadow var(--dur-1) var(--ease-out),
+    background-color var(--dur-1) var(--ease-out);
+}
+
+.form-input:hover { background-color: #fffdf6; }
+
+.form-input:focus {
+  outline: none;
+  background-color: #fffbe8;
+  box-shadow: var(--shadow-hard);
+  transform: translate(-2px, -2px);
+}
+
+.form-input:disabled { cursor: not-allowed; background-image: repeating-linear-gradient(-45deg, transparent 0 6px, rgb(13 1 41 / 0.06) 6px 7px); }
+.form-input::placeholder { color: rgb(13 1 41 / 0.56); }
+
+.form-select {
+  appearance: none;
+  padding-right: 64px;
+  cursor: pointer;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M2 5l5 5 5-5' fill='none' stroke='%230d0129' stroke-width='1.5'/%3E%3C/svg%3E"),
+    linear-gradient(var(--color-ink-violet), var(--color-ink-violet));
+  background-repeat: no-repeat;
+  background-position: right 17px center, right 48px top 0;
+  background-size: 14px 14px, 1px 100%;
+}
+
+.form-select:invalid { color: rgb(13 1 41 / 0.56); }
+.form-select option { color: var(--color-ink-violet); }
+
+.form-textarea { resize: vertical; min-height: 12rem; }
+.form-textarea--summary { min-height: 18rem; }
+
+.field__foot { display: flex; justify-content: space-between; align-items: start; gap: 16px; }
+.field__back { justify-self: start; margin-top: 4px; cursor: pointer; }
+
+/* The one box the AI never sees: drawn as a separate, dashed sheet. */
+.contact-box {
+  display: grid;
+  gap: 24px;
+  padding: clamp(20px, 2.6vw, 32px);
+  border: 1px dashed var(--color-ink-violet);
+  background: var(--color-cream-paper);
+}
+
+.contact-box__legend { padding: 0 8px; margin-left: -8px; }
+
+/* ---------- Errors ---------- */
+
+.form-error {
+  display: flex;
+  gap: 8px;
+  min-height: 1.4em;
+  color: var(--error);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.form-error:not(:empty)::before {
+  content: "!";
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  background: var(--error);
+  color: var(--color-pure-white);
+  font-family: var(--font-supply);
+  font-size: 12px;
+}
+
+.field:has(.form-error:not(:empty)) .form-input { border-color: var(--error); box-shadow: inset 0 0 0 1px var(--error); }
+.field:has(.form-error:not(:empty)) .form-input:focus { box-shadow: 4px 4px 0 0 var(--error); }
+
+.form-alert {
+  padding: 14px 16px;
+  border: 1px solid var(--error);
+  border-left-width: 4px;
+  background: var(--error-bg);
+  color: var(--error);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+/* ---------- Submit (loading state rides on the script's `disabled` + text swap) ---------- */
+
+.form-panel__submit { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; }
+.form-panel__note { opacity: 0.72; }
+
+.form-submit { min-width: 220px; min-height: 60px; padding-inline: 32px; font-size: 17px; }
+.form-submit::after,
+.chat-send::after { content: "→"; font-family: var(--font-supply); font-weight: 500; transition: transform var(--dur-2) var(--ease-out); }
+.form-submit:hover::after,
+.form-submit:focus-visible::after,
+.chat-send:hover::after,
+.chat-send:focus-visible::after { transform: translateX(4px); }
+
+.form-submit:disabled,
+.chat-send:disabled {
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  background-image: repeating-linear-gradient(-45deg, transparent 0 6px, rgb(13 1 41 / 0.12) 6px 7px);
+}
+
+.form-submit:disabled { cursor: progress; }
+
+.form-submit:disabled::after {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid currentColor;
+  animation: submit-spin 900ms var(--ease-in-out) infinite;
+}
+
+.btn-ghost:disabled { cursor: progress; opacity: 0.56; }
+
+@keyframes submit-spin { to { transform: rotate(180deg); } }
+
+/* ---------- Layout ---------- */
+
+@media (min-width: 1000px) {
+  .form-page__grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(16px, 2vw, 32px); align-items: start; }
+  .form-page__intro { grid-column: 1 / 6; align-self: stretch; }
+  .form-page__sticky { position: sticky; top: calc(var(--header-h) + 24px); }
+  .form-page__main { grid-column: 6 / 13; }
+}
+
+@media (max-width: 767px) {
+  .form-submit { width: 100%; }
+  .form-panel__note { width: 100%; text-align: center; }
+  .mode-switch__btn { font-size: 14px; gap: 8px; }
+  .chat-log { padding: 14px; max-height: 60vh; }
+  .chat-bubble { max-width: 94%; }
+}
+
+/* Touch keyboards keep Enter for new lines (see src/scripts/contact/index.ts). */
+@media (pointer: coarse), (max-width: 767px) {
+  .chat-compose .chat-hint { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form-input:focus { transform: none; }
+  .form-submit:disabled::after,
+  .chat-typing i { animation: none; }
+}

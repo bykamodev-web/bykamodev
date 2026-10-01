@@ -1,0 +1,28 @@
+---
+/** The AI's draft summary, editable before sending. Chat mode only. */
+import CharCounter from '@/components/contact/CharCounter.astro'
+import { SUMMARY_MAX_CHARS, SUMMARY_MIN_CHARS } from '@/lib/contact/limits'
+---
+
+<div id="summary-field" class="field">
+  <label for="summary" class="form-label">
+    <span>ご相談の要約</span>
+    <span class="form-tag" aria-hidden="true">EDITABLE · {SUMMARY_MIN_CHARS}–{SUMMARY_MAX_CHARS}</span>
+  </label>
+  <textarea
+    id="summary"
+    name="summary"
+    rows="10"
+    maxlength={SUMMARY_MAX_CHARS}
+    aria-describedby="summary-help summary-error"
+    class="form-input form-textarea form-textarea--summary"
+  ></textarea>
+  <div class="field__foot">
+    <p class="form-error" id="summary-error" data-error="summary"></p>
+    <CharCounter for="summary" max={SUMMARY_MAX_CHARS} />
+  </div>
+  <p id="summary-help" class="field__help">
+    AI が会話からまとめた下書きです。違うところは直してから送信してください。この要約と会話の記録が、あわせて bykamo.dev に届きます。
+  </p>
+  <button type="button" id="back-to-chat" class="hairline-link field__back">← 会話に戻って続ける</button>
+</div>

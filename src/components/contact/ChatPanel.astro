@@ -1,0 +1,39 @@
+---
+/**
+ * The conversation step. Sits outside the <form>, so nothing typed here can be submitted
+ * with the contact fields, and Enter never triggers the form's submit.
+ */
+import CharCounter from '@/components/contact/CharCounter.astro'
+import { MAX_USER_MESSAGE_CHARS, MAX_USER_TURNS } from '@/lib/contact/limits'
+---
+
+<div id="chat-section" class="chat">
+  <ol id="chat-log" class="chat-log" role="log" aria-live="polite" aria-label="AI との会話" tabindex="0"></ol>
+
+  <div class="chat-compose">
+    <label for="chat-input" class="form-label">
+      <span>メッセージ</span>
+      <span id="chat-remaining" class="form-tag">あと {MAX_USER_TURNS} 回</span>
+    </label>
+    <textarea
+      id="chat-input"
+      rows="3"
+      maxlength={MAX_USER_MESSAGE_CHARS}
+      aria-describedby="chat-privacy"
+      class="form-input chat-input"
+    ></textarea>
+    <div class="field__foot">
+      <p class="annotation chat-hint" aria-hidden="true">ENTER TO SEND · SHIFT + ENTER FOR A NEW LINE</p>
+      <CharCounter for="chat-input" max={MAX_USER_MESSAGE_CHARS} />
+    </div>
+
+    <div class="chat-actions">
+      <button type="button" id="chat-send" class="btn-primary chat-send">送る</button>
+      <button type="button" id="to-summary" class="btn-ghost hidden">要約へ進む</button>
+    </div>
+
+    <p id="chat-privacy" class="chat-privacy">
+      会話の内容は、返答の作成と内容の確認のために OpenAI と TypeSafe に送信されます。お名前や連絡先は書かないでください。連絡先は最後の専用欄でお伺いし、その欄は AI に送信されません。
+    </p>
+  </div>
+</div>

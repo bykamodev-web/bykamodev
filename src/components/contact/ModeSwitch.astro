@@ -1,0 +1,12 @@
+---
+/** Chooses how to send the inquiry. The page script flips `aria-pressed` and the panels. */
+---
+
+<div class="mode-switch" role="group" aria-label="相談の送り方">
+  <button type="button" class="mode-switch__btn" data-mode-button="chat" aria-pressed="true">
+    <span class="mode-switch__key" aria-hidden="true">A</span>AI と整理する
+  </button>
+  <button type="button" class="mode-switch__btn" data-mode-button="form" aria-pressed="false">
+    <span class="mode-switch__key" aria-hidden="true">B</span>フォームで直接送る
+  </button>
+</div>

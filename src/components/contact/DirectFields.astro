@@ -1,0 +1,22 @@
+---
+/** The free-text field of the plain form. Form mode only. */
+import CharCounter from '@/components/contact/CharCounter.astro'
+---
+
+<div id="message-field" class="field hidden">
+  <label for="message" class="form-label"><span>お問い合わせ内容</span><span class="form-tag" aria-hidden="true">REQUIRED · 10–2000</span></label>
+  <textarea
+    id="message"
+    name="message"
+    minlength="10"
+    maxlength="2000"
+    rows="6"
+    placeholder="ご相談の背景や、実現したいことをお書きください。"
+    aria-describedby="message-error"
+    class="form-input form-textarea"
+  ></textarea>
+  <div class="field__foot">
+    <p class="form-error" id="message-error" data-error="message"></p>
+    <CharCounter for="message" max={2000} />
+  </div>
+</div>

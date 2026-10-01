@@ -1,10 +1,6 @@
 import { CATEGORIES, CATEGORY_VALUES } from './categories.ts'
 import { MAX_USER_TURNS } from './limits.ts'
 
-/** Shown by the page as the first bubble and prepended to the e-mailed log. Never sent to the model. */
-export const GREETING =
-  'こんにちは。ご相談の内容を一緒に整理します。まず、いま困っていることや実現したいことを、ひとことで教えてください。'
-
 const categoryLines = CATEGORIES.map((c) => `- ${c.value}: ${c.label}`).join('\n')
 
 export const CHAT_INSTRUCTIONS = `あなたは bykamo.dev の相談受付です。bykamo.dev は AI 実装・業務の自動化・プロダクト開発を請け負う個人の開発者のサイトです。
@@ -43,7 +39,8 @@ export const FINAL_TURN_NOTE = `これが最後の返答です(やり取りは${
 export const SUMMARY_INSTRUCTIONS = `以下は bykamo.dev の相談受付チャットの記録です。開発者が読むための要約を作ってください。
 
 書き方:
-- 会話に出てきた事実だけを書きます。推測で補いません。分からない項目は「未確認」と書きます。
+- 会話に出てきた事実だけを書きます。推測で補いません。
+- 見出しの内容が会話にまったく出ていないときだけ、その見出しに「未確認」と一言書きます。聞かれていない細部を「未確認」として並べません。
 - 400〜800字。次の見出しを、この順で使います: 【背景】【実現したいこと】【現状】【時期・予算】【補足】
 - 見出しごとに改行し、Markdown や絵文字は使いません。
 - 氏名、会社名、メールアドレス、電話番号、住所は書きません。

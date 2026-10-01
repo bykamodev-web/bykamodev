@@ -1,0 +1,12 @@
+---
+/**
+ * Mount point for the page's single Turnstile widget. Rendered explicitly by
+ * src/scripts/contact/turnstile.ts (the API script is loaded with `?render=explicit`),
+ * and only takes up space when Cloudflare needs the visitor to interact.
+ */
+interface Props { siteKey: string }
+
+const { siteKey } = Astro.props
+---
+
+<div id="turnstile-container" data-sitekey={siteKey}></div>

@@ -18,8 +18,8 @@ const contactThemes = [
   { icon: 'refresh' as const, label: '自動化', text: '手作業の往復を、壊れにくく運用できる仕組みに変えます。' },
   { icon: 'rocket' as const, label: 'プロダクト開発', text: 'WebアプリからPWAまで、設計と実装を一続きで進めます。' },
 ]
-// The fields the form actually asks for (mirrors /contact/form).
-const formFields = ['お名前', 'メールアドレス', 'ご相談の種類', 'お問い合わせ内容']
+// The steps the form actually walks through (mirrors /contact/form).
+const formFields = ['AI と相談内容を整理', '要約を確認して修正', '連絡先を入力して送信']
 ---
 
 <BaseLayout title="Contact" description="ご相談・お問い合わせ。AI実装・自動化・プロダクト開発について。">
@@ -60,7 +60,7 @@ const formFields = ['お名前', 'メールアドレス', 'ご相談の種類', 
 
         <div class="contact-action__side">
           <div class="contact-action__fields">
-            <p class="annotation">FORM — 04 FIELDS</p>
+            <p class="annotation">FORM — 03 STEPS</p>
             <ol>
               {formFields.map((field, index) => (
                 <li><span class="contact-action__num" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>{field}</li>

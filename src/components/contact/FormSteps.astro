@@ -1,8 +1,9 @@
 ---
-/** "What happens next": three mono steps, each stated by the existing form copy. */
+/** "What happens next": the chat flow as four mono steps. */
 const steps = [
-  { key: 'INPUT', text: '内容を入力して送信してください。' },
-  { key: 'SEND', text: '送信が完了すると、この画面に「送信しました」と表示されます。' },
+  { key: 'TALK', text: 'AI の質問に答えながら、相談内容を整理します。' },
+  { key: 'CONFIRM', text: 'AI がまとめた要約を確認し、必要なら直します。' },
+  { key: 'SEND', text: '連絡先を入力して送信します。連絡先は AI に送信されません。' },
   { key: 'REPLY', text: '折り返しご連絡いたします。' },
 ]
 ---
