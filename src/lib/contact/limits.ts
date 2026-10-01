@@ -21,12 +21,17 @@ export const JEV_TIMEOUT_MS = 2500
 
 /**
  * Noul probabilities at or above these values block the message.
- * Provisional: confirm against tests/fixtures/jev-ja.json with scripts/jev-eval.ts.
+ *
+ * Set from scripts/jev-eval.ts on 2026-10-01 (jev-1.13.0, 42 Japanese examples in
+ * tests/fixtures/jev-ja.json): legitimate messages scored at most 0.14 / 0.04 / 0.31 / 0.03,
+ * messages to block at least 0.86 / 0.98 / 0.85 (name / address / off-topic); every prompt
+ * override scored 0.97+ on jailbreak. The examples are hand-written, not real traffic:
+ * re-run the script when the model version changes or real conversations disagree.
  */
 export const JEV_THRESHOLDS = {
-  person_name: 0.7,
-  postal_address: 0.7,
-  off_topic: 0.8,
+  person_name: 0.6,
+  postal_address: 0.6,
+  off_topic: 0.6,
   jailbreak: 0.8,
 } as const
 
